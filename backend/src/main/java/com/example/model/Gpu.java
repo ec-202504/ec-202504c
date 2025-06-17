@@ -10,20 +10,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** OS情報ドメインクラス. */
+/** GPU情報ドメインクラス. */
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "oss")
-public class OS {
-  /** OS ID. */
+@Table(name = "gpus")
+public class Gpu {
+  /** GPU ID. */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "os_id")
+  @Column(name = "gpu_id")
   private Integer id;
 
-  /** OS名. */
+  /** GPU名. */
   @Column(name = "name", nullable = false, length = 255)
   private String name;
 }

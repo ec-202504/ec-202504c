@@ -20,7 +20,7 @@ import org.hibernate.annotations.ColumnDefault;
 @NoArgsConstructor
 @Entity
 @Table(name = "pcs")
-public class PC {
+public class Pc {
   /** PC ID. */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,17 +55,17 @@ public class PC {
   /** OS. */
   @ManyToOne
   @JoinColumn(name = "os_id", nullable = false)
-  private OS os;
+  private Os os;
 
   /** CPU. */
   @ManyToOne
   @JoinColumn(name = "cpu_id", nullable = false)
-  private CPU cpu;
+  private Cpu cpu;
 
   /** GPU. */
   @ManyToOne
   @JoinColumn(name = "gpu_id", nullable = false)
-  private GPU gpu;
+  private Gpu gpu;
 
   /** 使用目的. */
   @ManyToOne
