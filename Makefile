@@ -3,7 +3,7 @@ open:
 	cd backend && idea64.exe .
 
 front-ready:
-	cd frontend && npm install
+	npm install && cd frontend && npm install
 
 back-ready:
 	cd backend && ./gradlew clean build
