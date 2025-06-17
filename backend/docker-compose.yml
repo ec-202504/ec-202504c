@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+    image: ec-site:latest # Image name
+    container_name: ec-site-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17
+    container_name: ec-site-postgres
+    environment:
+      POSTGRES_DB: ec_site
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data # postgres official directory
+
+volumes:
+  db-data:

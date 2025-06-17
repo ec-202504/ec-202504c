@@ -1,0 +1,18 @@
+pre-commit:
+  # format: apply changes in a front and back end app
+  # lint: don't apply changes in a front and back end app
+  commands:
+    frontend-format:
+      root: "frontend/"
+      glob: "**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: npx @biomejs/biome format --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      stage_fixed: true
+    frontend-lint:
+      root: "frontend/"
+      glob: "**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: npx @biomejs/biome lint --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+    backend-format:
+      root: "backend/"
+      glob: "*.java"
+      run: ./gradlew spotlessApply
+      stage_fixed: true
