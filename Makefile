@@ -17,7 +17,7 @@ front:
 
 # テストを除いてビルド
 build:
-	cd backend && ./gradlew build -x test
+	cd backend && ./gradlew build -x test -x checkstyleMain
 
 # imageをビルドしてコンテナを起動
 up:
@@ -37,7 +37,7 @@ down-v:
 
 # postgreSQL操作
 psql:
-	cd backend && docker compose exec db psql -U postgres -d ec_site_playground
+	cd backend && docker compose exec db psql -U postgres -d ec_site
 
 front-lint:
 	cd frontend && npx biome lint
