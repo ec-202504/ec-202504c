@@ -39,8 +39,15 @@ down-v:
 psql:
 	cd backend && docker compose exec db psql -U postgres -d ec_site_playground
 
-front-check:
+front-lint:
 	cd frontend && npx biome lint
 
-back-check:
+back-format:
+	cd backend && ./gradlew spotlessApply
+
+back-lint:
 	cd backend && ./gradlew checkstyleMain
+
+back-check:
+	make back-format
+	make back-lint
