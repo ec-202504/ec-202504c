@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,8 +38,8 @@ public class Order {
   private Integer totalPrice = 0;
 
   /** 注文日. */
-  @Column(name = "order_date", columnDefinition = "TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP")
-  private ZonedDateTime orderDate = ZonedDateTime.now();
+  @Column(name = "order_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+  private LocalDateTime orderDate = LocalDateTime.now();
 
   /** 宛先氏名. */
   @Column(name = "destination_name", nullable = false)
@@ -70,8 +70,10 @@ public class Order {
   private String destinationTelephone;
 
   /** 配達日時. */
-  @Column(name = "delivery_time", columnDefinition = "TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP")
-  private ZonedDateTime deliveryTime = ZonedDateTime.now();
+  @Column(
+      name = "delivery_date_time",
+      columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP + interval '1 hour'")
+  private LocalDateTime deliveryDateTime = LocalDateTime.now();
 
   /** 支払い方法. 0:現金, 1:クレカ */
   @Column(name = "payment_method", nullable = false)

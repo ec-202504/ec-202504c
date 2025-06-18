@@ -1,0 +1,17 @@
+INSERT INTO Languages (name) VALUES
+--('JavaScript'),
+--('Python'),
+--('Java'),
+--('SQL'),
+--('C#'),
+--('Ruby'),
+--('C++'),
+--('Go'),
+--('TypeScript'),
+--('Swift'),
+--('Rust'),
+--('Kotlin'),
+--('PHP'),
+--('Scala'),
+--('Perl'),
+('Others');
