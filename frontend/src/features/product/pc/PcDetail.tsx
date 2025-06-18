@@ -56,12 +56,17 @@ export default function PcDetail() {
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
 
+  const handleClick = async (quantity: number) => {
+    setQuantity(quantity);
+    console.log(quantity);
+  };
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-8">
       <PcInfo
         pc={pc}
         quantity={quantity}
-        setQuantity={setQuantity}
+        handleClick={handleClick}
         average={average}
         totalReviews={totalReviews}
       />

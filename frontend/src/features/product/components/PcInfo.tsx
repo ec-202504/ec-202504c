@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { PcSpecList } from "./PcSpecList";
 import { RatingStars } from "./RatingStars";
 
@@ -20,7 +21,7 @@ type Pc = {
 type PcInfoProps = {
   pc: Pc;
   quantity: number;
-  setQuantity: (q: number) => void;
+  handleClick: (q: number) => void;
   average: number;
   totalReviews: number;
 };
@@ -28,10 +29,11 @@ type PcInfoProps = {
 const PcInfo = ({
   pc,
   quantity,
-  setQuantity,
+  handleClick,
   average,
   totalReviews,
 }: PcInfoProps) => {
+  const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   return (
     <div className="flex gap-12 w-2/3 max-w-5xl mb-8">
       <img
@@ -46,7 +48,7 @@ const PcInfo = ({
           <span>数量</span>
           <select
             value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
+            onChange={(e) => setSelectedQuantity(Number(e.target.value))}
             className="border rounded px-2 w-16"
           >
             {Array.from({ length: 5 }, (_, i) => i + 1).map((num) => (
@@ -57,6 +59,9 @@ const PcInfo = ({
           </select>
           <button
             type="button"
+            onClick={() => {
+              handleClick(selectedQuantity);
+            }}
             className="ml-4 px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
           >
             カートへ追加
