@@ -24,11 +24,25 @@ public class BookService {
   }
 
   /**
+   * キーワードを含むBookのリストを取得するメソッド.
+   *
+   * @param keyword 検索キーワード
+   * @return Book名にキーワードを含むBookのリスト
+   */
+  public List<Book> findBooks(String keyword) {
+    // キーワードがnullまたは空文字の場合、全件取得
+    if (keyword == null || keyword.isBlank()) {
+      return bookRepository.findAll();
+    }
+    return bookRepository.findByNameContainingIgnoreCase(keyword);
+  }
+
+  /**
    * ページネーション、ソートされたPCのリストを取得するメソッド.
    *
    * @param keyword 検索キーワード
    * @param pageable ページ情報
-   * @return ページネーションされたされたPCのリスト
+   * @return ページネーションされたPCのリスト
    */
   public Page<Book> findBooks(String keyword, Pageable pageable) {
     // キーワードがnullまたは空文字の場合、全件取得
