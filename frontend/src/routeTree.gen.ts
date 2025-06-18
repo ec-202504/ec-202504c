@@ -10,43 +10,219 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AboutIndexRouteImport } from './routes/about/index'
+import { Route as RegisterIndexRouteImport } from './routes/register/index'
+import { Route as ProductIndexRouteImport } from './routes/product/index'
+import { Route as OrderIndexRouteImport } from './routes/order/index'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as CartIndexRouteImport } from './routes/cart/index'
+import { Route as ProductRecommendRouteImport } from './routes/product/recommend'
+import { Route as OrderHistoryRouteImport } from './routes/order/history'
+import { Route as OrderCompleteRouteImport } from './routes/order/complete'
+import { Route as AdminRegisterRouteImport } from './routes/admin/register'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as ProductPcItemIdIndexRouteImport } from './routes/product/pc/$itemId/index'
+import { Route as ProductBookItemIdIndexRouteImport } from './routes/product/book/$itemId/index'
+import { Route as ProductPcItemIdReviewRouteImport } from './routes/product/pc/$itemId/review'
+import { Route as ProductBookItemIdReviewRouteImport } from './routes/product/book/$itemId/review'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutIndexRoute = AboutIndexRouteImport.update({
-  id: '/about/',
-  path: '/about/',
+const RegisterIndexRoute = RegisterIndexRouteImport.update({
+  id: '/register/',
+  path: '/register/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductIndexRoute = ProductIndexRouteImport.update({
+  id: '/product/',
+  path: '/product/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderIndexRoute = OrderIndexRouteImport.update({
+  id: '/order/',
+  path: '/order/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartIndexRoute = CartIndexRouteImport.update({
+  id: '/cart/',
+  path: '/cart/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductRecommendRoute = ProductRecommendRouteImport.update({
+  id: '/product/recommend',
+  path: '/product/recommend',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderHistoryRoute = OrderHistoryRouteImport.update({
+  id: '/order/history',
+  path: '/order/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderCompleteRoute = OrderCompleteRouteImport.update({
+  id: '/order/complete',
+  path: '/order/complete',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRegisterRoute = AdminRegisterRouteImport.update({
+  id: '/admin/register',
+  path: '/admin/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductPcItemIdIndexRoute = ProductPcItemIdIndexRouteImport.update({
+  id: '/product/pc/$itemId/',
+  path: '/product/pc/$itemId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductBookItemIdIndexRoute = ProductBookItemIdIndexRouteImport.update({
+  id: '/product/book/$itemId/',
+  path: '/product/book/$itemId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductPcItemIdReviewRoute = ProductPcItemIdReviewRouteImport.update({
+  id: '/product/pc/$itemId/review',
+  path: '/product/pc/$itemId/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductBookItemIdReviewRoute = ProductBookItemIdReviewRouteImport.update({
+  id: '/product/book/$itemId/review',
+  path: '/product/book/$itemId/review',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/register': typeof AdminRegisterRoute
+  '/order/complete': typeof OrderCompleteRoute
+  '/order/history': typeof OrderHistoryRoute
+  '/product/recommend': typeof ProductRecommendRoute
+  '/cart': typeof CartIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/order': typeof OrderIndexRoute
+  '/product': typeof ProductIndexRoute
+  '/register': typeof RegisterIndexRoute
+  '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
+  '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
+  '/product/book/$itemId': typeof ProductBookItemIdIndexRoute
+  '/product/pc/$itemId': typeof ProductPcItemIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/register': typeof AdminRegisterRoute
+  '/order/complete': typeof OrderCompleteRoute
+  '/order/history': typeof OrderHistoryRoute
+  '/product/recommend': typeof ProductRecommendRoute
+  '/cart': typeof CartIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/order': typeof OrderIndexRoute
+  '/product': typeof ProductIndexRoute
+  '/register': typeof RegisterIndexRoute
+  '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
+  '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
+  '/product/book/$itemId': typeof ProductBookItemIdIndexRoute
+  '/product/pc/$itemId': typeof ProductPcItemIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about/': typeof AboutIndexRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/register': typeof AdminRegisterRoute
+  '/order/complete': typeof OrderCompleteRoute
+  '/order/history': typeof OrderHistoryRoute
+  '/product/recommend': typeof ProductRecommendRoute
+  '/cart/': typeof CartIndexRoute
+  '/login/': typeof LoginIndexRoute
+  '/order/': typeof OrderIndexRoute
+  '/product/': typeof ProductIndexRoute
+  '/register/': typeof RegisterIndexRoute
+  '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
+  '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
+  '/product/book/$itemId/': typeof ProductBookItemIdIndexRoute
+  '/product/pc/$itemId/': typeof ProductPcItemIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/admin/login'
+    | '/admin/register'
+    | '/order/complete'
+    | '/order/history'
+    | '/product/recommend'
+    | '/cart'
+    | '/login'
+    | '/order'
+    | '/product'
+    | '/register'
+    | '/product/book/$itemId/review'
+    | '/product/pc/$itemId/review'
+    | '/product/book/$itemId'
+    | '/product/pc/$itemId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about/'
+  to:
+    | '/'
+    | '/admin/login'
+    | '/admin/register'
+    | '/order/complete'
+    | '/order/history'
+    | '/product/recommend'
+    | '/cart'
+    | '/login'
+    | '/order'
+    | '/product'
+    | '/register'
+    | '/product/book/$itemId/review'
+    | '/product/pc/$itemId/review'
+    | '/product/book/$itemId'
+    | '/product/pc/$itemId'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin/login'
+    | '/admin/register'
+    | '/order/complete'
+    | '/order/history'
+    | '/product/recommend'
+    | '/cart/'
+    | '/login/'
+    | '/order/'
+    | '/product/'
+    | '/register/'
+    | '/product/book/$itemId/review'
+    | '/product/pc/$itemId/review'
+    | '/product/book/$itemId/'
+    | '/product/pc/$itemId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutIndexRoute: typeof AboutIndexRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminRegisterRoute: typeof AdminRegisterRoute
+  OrderCompleteRoute: typeof OrderCompleteRoute
+  OrderHistoryRoute: typeof OrderHistoryRoute
+  ProductRecommendRoute: typeof ProductRecommendRoute
+  CartIndexRoute: typeof CartIndexRoute
+  LoginIndexRoute: typeof LoginIndexRoute
+  OrderIndexRoute: typeof OrderIndexRoute
+  ProductIndexRoute: typeof ProductIndexRoute
+  RegisterIndexRoute: typeof RegisterIndexRoute
+  ProductBookItemIdReviewRoute: typeof ProductBookItemIdReviewRoute
+  ProductPcItemIdReviewRoute: typeof ProductPcItemIdReviewRoute
+  ProductBookItemIdIndexRoute: typeof ProductBookItemIdIndexRoute
+  ProductPcItemIdIndexRoute: typeof ProductPcItemIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +234,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about/': {
-      id: '/about/'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutIndexRouteImport
+    '/register/': {
+      id: '/register/'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/': {
+      id: '/product/'
+      path: '/product'
+      fullPath: '/product'
+      preLoaderRoute: typeof ProductIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/': {
+      id: '/order/'
+      path: '/order'
+      fullPath: '/order'
+      preLoaderRoute: typeof OrderIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart/': {
+      id: '/cart/'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/recommend': {
+      id: '/product/recommend'
+      path: '/product/recommend'
+      fullPath: '/product/recommend'
+      preLoaderRoute: typeof ProductRecommendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/history': {
+      id: '/order/history'
+      path: '/order/history'
+      fullPath: '/order/history'
+      preLoaderRoute: typeof OrderHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/complete': {
+      id: '/order/complete'
+      path: '/order/complete'
+      fullPath: '/order/complete'
+      preLoaderRoute: typeof OrderCompleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/register': {
+      id: '/admin/register'
+      path: '/admin/register'
+      fullPath: '/admin/register'
+      preLoaderRoute: typeof AdminRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/pc/$itemId/': {
+      id: '/product/pc/$itemId/'
+      path: '/product/pc/$itemId'
+      fullPath: '/product/pc/$itemId'
+      preLoaderRoute: typeof ProductPcItemIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/book/$itemId/': {
+      id: '/product/book/$itemId/'
+      path: '/product/book/$itemId'
+      fullPath: '/product/book/$itemId'
+      preLoaderRoute: typeof ProductBookItemIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/pc/$itemId/review': {
+      id: '/product/pc/$itemId/review'
+      path: '/product/pc/$itemId/review'
+      fullPath: '/product/pc/$itemId/review'
+      preLoaderRoute: typeof ProductPcItemIdReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/book/$itemId/review': {
+      id: '/product/book/$itemId/review'
+      path: '/product/book/$itemId/review'
+      fullPath: '/product/book/$itemId/review'
+      preLoaderRoute: typeof ProductBookItemIdReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +337,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutIndexRoute: AboutIndexRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminRegisterRoute: AdminRegisterRoute,
+  OrderCompleteRoute: OrderCompleteRoute,
+  OrderHistoryRoute: OrderHistoryRoute,
+  ProductRecommendRoute: ProductRecommendRoute,
+  CartIndexRoute: CartIndexRoute,
+  LoginIndexRoute: LoginIndexRoute,
+  OrderIndexRoute: OrderIndexRoute,
+  ProductIndexRoute: ProductIndexRoute,
+  RegisterIndexRoute: RegisterIndexRoute,
+  ProductBookItemIdReviewRoute: ProductBookItemIdReviewRoute,
+  ProductPcItemIdReviewRoute: ProductPcItemIdReviewRoute,
+  ProductBookItemIdIndexRoute: ProductBookItemIdIndexRoute,
+  ProductPcItemIdIndexRoute: ProductPcItemIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
