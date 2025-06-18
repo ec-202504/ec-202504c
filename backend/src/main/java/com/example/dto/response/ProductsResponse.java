@@ -8,11 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductsDTO {
+public class ProductsResponse {
   private Integer productCategory; // PC or Book
   private String name;
   private Integer price;
 
-  private PCDetail pcDetail;
-  private BookDetail bookDetail;
+  private PCDetailResponse pcDetailResponse;
+  private BookDetailResponse bookDetailResponse;
 }

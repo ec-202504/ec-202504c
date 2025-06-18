@@ -1,8 +1,8 @@
 package com.example.controller;
 
-import com.example.dto.response.BookDetail;
-import com.example.dto.response.PCDetail;
-import com.example.dto.response.ProductsDTO;
+import com.example.dto.response.BookDetailResponse;
+import com.example.dto.response.PCDetailResponse;
+import com.example.dto.response.ProductsResponse;
 import com.example.service.BookService;
 import com.example.service.PCService;
 import java.util.ArrayList;
@@ -32,30 +32,30 @@ public class ProductController {
       @RequestParam(defaultValue = "0") Integer limit,
       @RequestParam(defaultValue = "20") Integer offset,
       @RequestParam(defaultValue = "") String keyword) {
-    List<ProductsDTO> productsList = new ArrayList<>();
+    List<ProductsResponse> productsList = new ArrayList<>();
 
     var allPcs = pcService.findPcs(keyword);
     productsList.addAll(
         allPcs.stream()
             .map(
                 pc -> {
-                  var productsDto = new ProductsDTO();
-                  productsDto.setProductCategory(0);
-                  productsDto.setName(pc.getName());
-                  productsDto.setPrice(pc.getPrice());
+                  var productsResponse = new ProductsResponse();
+                  productsResponse.setProductCategory(0);
+                  productsResponse.setName(pc.getName());
+                  productsResponse.setPrice(pc.getPrice());
 
-                  var pcDetail = new PCDetail();
-                  pcDetail.setMemory(pc.getMemory());
-                  pcDetail.setStorage(pc.getStorage());
-                  pcDetail.setDeviceSize(pc.getDeviceSize().doubleValue());
-                  pcDetail.setDeviceType(pc.getDeviceType());
-                  pcDetail.setOs(pc.getOs());
-                  pcDetail.setCpu(pc.getCpu());
-                  pcDetail.setGpu(pc.getGpu());
-                  pcDetail.setPurpose(pc.getPurpose());
+                  var pcDetailResponse = new PCDetailResponse();
+                  pcDetailResponse.setMemory(pc.getMemory());
+                  pcDetailResponse.setStorage(pc.getStorage());
+                  pcDetailResponse.setDeviceSize(pc.getDeviceSize().doubleValue());
+                  pcDetailResponse.setDeviceType(pc.getDeviceType());
+                  pcDetailResponse.setOs(pc.getOs());
+                  pcDetailResponse.setCpu(pc.getCpu());
+                  pcDetailResponse.setGpu(pc.getGpu());
+                  pcDetailResponse.setPurpose(pc.getPurpose());
 
-                  productsDto.setPcDetail(pcDetail);
-                  return productsDto;
+                  productsResponse.setPcDetailResponse(pcDetailResponse);
+                  return productsResponse;
                 })
             .toList());
 
@@ -64,30 +64,30 @@ public class ProductController {
         allBooks.stream()
             .map(
                 book -> {
-                  var productsDto = new ProductsDTO();
-                  productsDto.setProductCategory(1);
-                  productsDto.setName(book.getName());
-                  productsDto.setPrice(book.getPrice());
+                  var productsResponse = new ProductsResponse();
+                  productsResponse.setProductCategory(1);
+                  productsResponse.setName(book.getName());
+                  productsResponse.setPrice(book.getPrice());
 
-                  var bookDetail = new BookDetail();
-                  bookDetail.setAuthor(book.getAuthor());
-                  bookDetail.setPublishDate(book.getPublishDate());
-                  bookDetail.setLanguage(book.getLanguage());
-                  bookDetail.setPurpose(book.getPurpose());
+                  var bookDetailResponse = new BookDetailResponse();
+                  bookDetailResponse.setAuthor(book.getAuthor());
+                  bookDetailResponse.setPublishDate(book.getPublishDate());
+                  bookDetailResponse.setLanguage(book.getLanguage());
+                  bookDetailResponse.setPurpose(book.getPurpose());
 
-                  productsDto.setBookDetail(bookDetail);
-                  return productsDto;
+                  productsResponse.setBookDetailResponse(bookDetailResponse);
+                  return productsResponse;
                 })
             .toList());
 
     // ソート処理
-    Comparator<ProductsDTO> comparator =
+    Comparator<ProductsResponse> comparator =
         switch (sort) {
-          case "priceAsc" -> Comparator.comparing(ProductsDTO::getPrice);
-          case "priceDesc" -> Comparator.comparing(ProductsDTO::getPrice).reversed();
-          case "nameDesc" -> Comparator.comparing(ProductsDTO::getName).reversed();
-          case "nameAsc" -> Comparator.comparing(ProductsDTO::getName);
-          default -> Comparator.comparing(ProductsDTO::getName);
+          case "priceAsc" -> Comparator.comparing(ProductsResponse::getPrice);
+          case "priceDesc" -> Comparator.comparing(ProductsResponse::getPrice).reversed();
+          case "nameDesc" -> Comparator.comparing(ProductsResponse::getName).reversed();
+          case "nameAsc" -> Comparator.comparing(ProductsResponse::getName);
+          default -> Comparator.comparing(ProductsResponse::getName);
         };
 
     productsList.sort(comparator);
@@ -95,11 +95,9 @@ public class ProductController {
     // ページング処理（offset, limitに基づいて部分リストを抽出）
     int fromIndex = Math.min(offset, productsList.size());
     int toIndex = Math.min(fromIndex + limit, productsList.size());
-    List<ProductsDTO> pagedList = productsList.subList(fromIndex, toIndex);
+    List<ProductsResponse> pagedList = productsList.subList(fromIndex, toIndex);
 
     return ResponseEntity.ok(pagedList);
-
-    //    return ResponseEntity.ok(productsList);
   }
 
   /**
