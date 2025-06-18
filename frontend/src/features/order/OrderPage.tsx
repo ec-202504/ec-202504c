@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import { Label } from "../../components/ui/label";
+import { axiosInstance } from "../../lib/axiosInstance";
+import { useNavigate } from "@tanstack/react-router";
+import { formatToLocalDate } from "../../utils/formatToLocalDate";
 
 // 仮データ（本来はAPIやContextから取得）
 const mockOrder = {
@@ -31,9 +34,50 @@ const mockOrder = {
   ],
 };
 
+type OrderRequest = {
+  totalPrice: number;
+  destinationName: string;
+  destinationEmail: string;
+  destinationZipcode: string;
+  destinationPrefecture: string;
+  destinationMunicipalities: string;
+  destinationAddress: string;
+  destinationTelephone: string;
+  deliveryDateTime: string;
+  paymentMethod: number;
+  userId: number;
+};
+
 function OrderPage() {
   const { subtotal, destination, products } = mockOrder;
   const [paymentMethod, setPaymentMethod] = useState("0"); // "0":現金, "1":クレジットカード
+
+  const navigate = useNavigate();
+
+  const handleOrder = async () => {
+    const orderRequest: OrderRequest = {
+      totalPrice: subtotal,
+      destinationName: destination.name,
+      destinationEmail: destination.email,
+      destinationZipcode: destination.zipcode.replace("-", ""),
+      destinationPrefecture: destination.prefecture,
+      destinationMunicipalities: destination.municipalities,
+      destinationAddress: destination.address,
+      destinationTelephone: destination.telephone,
+      deliveryDateTime: formatToLocalDate(new Date()),
+      paymentMethod: Number(paymentMethod),
+      userId: 1, // TODO: ユーザーIDを取得する
+    };
+
+    console.log(orderRequest);
+
+    try {
+      await axiosInstance.post("/orders", orderRequest);
+      navigate({ to: "/order/complete" });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -44,7 +88,8 @@ function OrderPage() {
           小計：
           <span className="text-primary">¥{subtotal.toLocaleString()}</span>
         </div>
-        <Button>注文を確定する</Button>
+
+        <Button onClick={handleOrder}>注文を確定する</Button>
       </div>
 
       <section className="mb-8">
@@ -73,6 +118,7 @@ function OrderPage() {
             <RadioGroupItem value="0" id="cash" />
             <Label htmlFor="cash">現金</Label>
           </div>
+
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="1" id="credit" />
             <Label htmlFor="credit">クレジットカード</Label>
