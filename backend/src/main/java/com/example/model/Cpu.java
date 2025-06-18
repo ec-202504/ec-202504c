@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "cpus")
-public class CPU {
+public class Cpu {
   /** CPU ID. */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
