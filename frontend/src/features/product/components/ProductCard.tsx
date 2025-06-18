@@ -8,7 +8,11 @@ type Props = {
 
 export default function ProductCard({ product }: Props) {
   return (
-    <Link to={"/product"} key={product.id}>
+    <Link
+      to={"/product/pc/$itemId"}
+      key={product.id}
+      params={{ itemId: product.id }}
+    >
       <Card
         className="border rounded p-4 flex flex-col items-center"
         key={product.id}
