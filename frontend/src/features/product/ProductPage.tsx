@@ -4,15 +4,8 @@ import {
   TabsTrigger,
   TabsContent,
 } from "../../components/ui/tabs";
-import type { FilterTerm } from "./components/Sidebar";
 import ProductList from "./components/ProductList";
-
-export type Product = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-};
+import type { FilterTerm, Product } from "./types";
 
 export default function ProductListPage() {
   const selectedOption = (option: string) => {
@@ -117,7 +110,7 @@ export default function ProductListPage() {
     e: React.FormEvent<HTMLFormElement>,
     query: string,
   ) => {
-    e.preventDefault(); // ページ遷移を防ぐ
+    e.preventDefault();
     console.log(query);
   };
 
@@ -143,31 +136,6 @@ export default function ProductListPage() {
             selectedOption={selectedOption}
             handleSubmit={handleSubmit}
           />
-          {/* <div className="flex gap-4">
-                        <Sidebar
-                            selectedOption={selectedOption}
-                            filterTerms={filterTerms}
-                        />
-                        <SearchForm onSubmit={handleSubmit} />
-                        <div className="grid grid-cols-3 gap-4">
-                            {techBooks.map((product) => (
-                                <ProductCard
-                                    product={product}
-                                    key={product.id}
-                                />
-                            ))}
-                        </div>
-                        <div className="flex justify-between w-full mt-3">
-                            <div className="mr-auto">
-                                <Button type="button" variant={"outline"}>
-                                    戻る
-                                </Button>
-                            </div>
-                            <div className="ml-auto">
-                                <Button type="button">次へ</Button>
-                            </div>
-                        </div>
-                    </div> */}
         </TabsContent>
       </Tabs>
     </div>

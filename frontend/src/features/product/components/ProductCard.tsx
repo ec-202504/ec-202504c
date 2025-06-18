@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Card } from "../../../components/ui/card";
-import type { Product } from "../ProductPage";
+import type { Product } from "../types";
 
 type Props = {
   product: Product;

@@ -1,8 +1,16 @@
 import Sidebar, { type FilterTerm } from "./Sidebar";
-import type { Product } from "../ProductPage";
+import type { Product } from "../types";
 import SearchForm from "./SearchForm";
 import ProductCard from "./ProductCard";
-import { Button } from "../../../components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../../../components/ui/pagination";
 
 type Props = {
   products: Product[];
@@ -22,21 +30,39 @@ export default function ProductList({
       <Sidebar selectedOption={selectedOption} filterTerms={filterTerms} />
       <div className="flex-1">
         <SearchForm onSubmit={handleSubmit} />
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 mb-4">
           {products.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))}
         </div>
-        <div className="flex justify-between w-full mt-3">
-          <div className="mr-auto">
-            <Button type="button" variant={"outline"}>
-              戻る
-            </Button>
-          </div>
-          <div className="ml-auto">
-            <Button type="button">次へ</Button>
-          </div>
-        </div>
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="/product" size={"sm"} />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="/product" size={"sm"}>
+                1
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="/product" isActive size={"sm"}>
+                2
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="/product" size={"sm"}>
+                3
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext href="/product" size={"sm"} />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
