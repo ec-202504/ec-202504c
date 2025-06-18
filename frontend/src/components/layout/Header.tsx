@@ -7,7 +7,7 @@ function Header() {
   const [isLogin, setIsLogin] = useState(false);
 
   return (
-    <header className="w-full px-4 py-2 flex items-center bg-white shadow">
+    <header className="w-full px-4 py-3 flex items-center bg-white shadow">
       <div className="text-xl font-semibold">
         <Link to="/product">ECサイト</Link>
       </div>
@@ -25,7 +25,9 @@ function Header() {
           カート
         </Link>
 
-        <Separator orientation="vertical" className="h-6 mx-2" />
+        <div className="h-5 mx-2">
+          <Separator orientation="vertical" />
+        </div>
 
         {isLogin ? (
           <Button variant="outline">ログアウト</Button>
