@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +27,7 @@ public class OrderController {
    * @return 全ての注文のリスト
    */
   @PostMapping
-  public ResponseEntity<?> createOrder(OrderRequest request) {
+  public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
     User user = userService.findById(request.getUserId());
 
     Order order = new Order();
