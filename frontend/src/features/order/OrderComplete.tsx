@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import OrderProductTable from "./components/OrderProductTable";
 
 // ダミーデータ
 const orderDate = "2024-06-01";
@@ -9,7 +10,7 @@ const products = [
   { name: "書籍『React入門』", quantity: 2, subtotal: 6000 },
 ];
 
-function OrderComplete() {
+export default function OrderComplete() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">注文完了確認</h1>
@@ -36,28 +37,7 @@ function OrderComplete() {
           </div>
         </div>
         <div className="mb-2 font-semibold text-lg">商品内訳</div>
-        <table className="w-full text-base mb-2 border">
-          <thead>
-            <tr className="bg-gray-100 text-lg">
-              <th className="py-2 px-2 text-left">商品名</th>
-              <th className="py-2 px-2 text-right">数量</th>
-              <th className="py-2 px-2 text-right">小計</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((item) => (
-              <tr key={item.name}>
-                <td className="py-2 px-2 border-t">{item.name}</td>
-                <td className="py-2 px-2 border-t text-right">
-                  {item.quantity}
-                </td>
-                <td className="py-2 px-2 border-t text-right">
-                  ¥{item.subtotal.toLocaleString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <OrderProductTable products={products} />
         <div className="mt-6">
           <Link
             to="/order/history"
@@ -70,5 +50,3 @@ function OrderComplete() {
     </div>
   );
 }
-
-export default OrderComplete;

@@ -1,5 +1,5 @@
-import Sidebar, { type FilterTerm } from "./Sidebar";
-import type { Product } from "../types";
+import Sidebar from "./Sidebar";
+import type { Product, FilterTerm } from "../types";
 import SearchForm from "./SearchForm";
 import ProductCard from "./ProductCard";
 import {
