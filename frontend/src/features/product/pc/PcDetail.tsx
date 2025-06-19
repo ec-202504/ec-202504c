@@ -55,7 +55,7 @@ export default function PcDetail() {
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
 
   const calcPercentage = (count: number, total: number): number => {
-    return (count / total) * 100;
+    return Math.round((count / total) * 100);
   };
 
   const handleClick = async (quantity: number) => {
@@ -89,9 +89,7 @@ export default function PcDetail() {
                     }}
                   />
                 </div>
-                <span>
-                  {Math.round(calcPercentage(r.count, totalReviews))}%
-                </span>
+                <span>{calcPercentage(r.count, totalReviews)}%</span>
               </div>
             ))}
           </div>
