@@ -47,8 +47,8 @@ public class ProductController {
         allPcs.stream()
             .map(
                 pc -> {
-                  var productsResponse = getProductResponse(pc);
-                  var pcDetailResponse = getPcDetailResponse(pc);
+                  ProductsResponse productsResponse = getProductResponse(pc);
+                  PcDetailResponse pcDetailResponse = getPcDetailResponse(pc);
                   productsResponse.setPcDetailResponse(pcDetailResponse);
                   return productsResponse;
                 })
@@ -59,8 +59,8 @@ public class ProductController {
         allBooks.stream()
             .map(
                 book -> {
-                  var productsResponse = getProductResponse(book);
-                  var bookDetailResponse = getBookDetailResponse(book);
+                  ProductsResponse productsResponse = getProductResponse(book);
+                  BookDetailResponse bookDetailResponse = getBookDetailResponse(book);
                   productsResponse.setBookDetailResponse(bookDetailResponse);
                   return productsResponse;
                 })
@@ -117,7 +117,7 @@ public class ProductController {
    * @return pcDetailResponse
    */
   private static PcDetailResponse getPcDetailResponse(Pc pc) {
-    var pcDetailResponse = new PcDetailResponse();
+    PcDetailResponse pcDetailResponse = new PcDetailResponse();
 
     pcDetailResponse.setMemory(pc.getMemory());
     pcDetailResponse.setStorage(pc.getStorage());
@@ -138,7 +138,7 @@ public class ProductController {
    * @return bookDetailResponse
    */
   private static BookDetailResponse getBookDetailResponse(Book book) {
-    var bookDetailResponse = new BookDetailResponse();
+    BookDetailResponse bookDetailResponse = new BookDetailResponse();
     bookDetailResponse.setAuthor(book.getAuthor());
     bookDetailResponse.setPublishDate(book.getPublishDate());
     bookDetailResponse.setLanguage(book.getLanguage());
