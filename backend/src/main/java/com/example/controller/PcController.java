@@ -32,16 +32,16 @@ public class PcController {
    * PC一覧を取得するエンドポイント.
    *
    * @param sort ソート条件
-   * @param limit 1ページあたりの表示件数
-   * @param offset 次ページの開始位置
+   * @param page ページ番号
+   * @param size 1ページあたりの表示件数
    * @param keyword 検索キーワード
    * @return PC一覧結果
    */
   @GetMapping
   public ResponseEntity<?> getPcs(
       @RequestParam(defaultValue = "priceAsc") String sort,
-      @RequestParam(defaultValue = "0") Integer limit,
-      @RequestParam(defaultValue = "20") Integer offset,
+      @RequestParam(defaultValue = "0") Integer page,
+      @RequestParam(defaultValue = "20") Integer size,
       @RequestParam(defaultValue = "") String keyword) {
     Sort sorting =
         switch (sort) {
@@ -49,9 +49,9 @@ public class PcController {
           case "priceDesc" -> Sort.by(Sort.Direction.DESC, "price");
           default -> Sort.by("id");
         };
-    Pageable pageable = PageRequest.of(limit, offset, sorting);
+    Pageable pageable = PageRequest.of(page, size, sorting);
 
-    return ResponseEntity.ok(pcService.findPcs(keyword, pageable));
+    return ResponseEntity.ok(pcService.findPcsWithPageable(keyword, pageable));
   }
 
   /**
