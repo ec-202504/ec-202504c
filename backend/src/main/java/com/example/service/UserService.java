@@ -13,17 +13,17 @@ public class UserService {
   private final UserRepository userRepository;
 
   /**
-   * ユーザーをIDで検索するメソッド.
+   * ユーザーをIDで検索する.
    *
    * @param id ユーザーID
-   * @return 該当するユーザー情報
+   * @return ユーザー
    */
   public Optional<User> findById(Integer id) {
     return userRepository.findById(id);
   }
 
   /**
-   * メールアドレスでユーザーを取得する.
+   * ユーザーをメールアドレスで検索する.
    *
    * @param email メールアドレス
    * @return ユーザー
@@ -35,7 +35,7 @@ public class UserService {
   /**
    * ユーザーを登録する.
    *
-   * @param request ユーザー情報
+   * @param user ユーザー情報
    * @return ユーザー(自動採番されたユーザーIDを保持)
    */
   public User register(User user) {

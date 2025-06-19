@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** 　ユーザー情報を操作するコントローラ. */
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -21,9 +22,9 @@ public class UserController {
   /**
    * ユーザーを登録する.
    *
-   * <p>正常に登録された場合は、HTTP 201 CREATED を返す.
+   * <p>正常に登録された場合は、201 CREATED を返す.
    *
-   * @param request 登録情報
+   * @param request ユーザー情報
    * @return ステータスコード
    */
   @PostMapping("/register")
