@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dto.request.AddBookRequest;
+import com.example.dto.request.UpdateBookRequest;
 import com.example.model.*;
 import com.example.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,40 @@ public class BookController {
     return ResponseEntity.ok().build();
   }
 
+  /**
+   * Book情報を更新しBooksテーブルに登録するエンドポイント.
+   *
+   * @param bookId BookのID
+   * @param request Book更新リクエスト
+   * @return 更新されたBook情報
+   */
+  @PutMapping("/{bookId}")
+  public ResponseEntity<?> updateBook(
+      @PathVariable Integer bookId, @RequestBody UpdateBookRequest request) {
+    return bookService
+        .findById(bookId)
+        .map(
+            existBook -> {
+              existBook.setName(request.getName());
+              existBook.setPrice(request.getPrice());
+              existBook.setAuthor(request.getAuthor());
+              existBook.setPublishDate(request.getPublishDate());
+
+              Language language = new Language();
+              language.setId(request.getLanguageId());
+              existBook.setLanguage(language);
+
+              Purpose purpose = new Purpose();
+              purpose.setId(request.getPurposeId());
+              existBook.setPurpose(purpose);
+
+              bookService.registerBook(existBook);
+
+              return ResponseEntity.ok().build();
+            })
+        .orElse(ResponseEntity.notFound().build());
+  }
+  
   /**
    * BookをBooksテーブルから削除するエンドポイント.
    *
