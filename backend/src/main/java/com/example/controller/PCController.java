@@ -83,12 +83,12 @@ public class PCController {
   /**
    * PCをPCsテーブルから削除するエンドポイント
    *
-   * @param pcIndex PCのID
+   * @param pcId PCのID
    * @return 削除されたPC情報
    */
-  @DeleteMapping("/{pcIndex}")
-  public ResponseEntity<?> removePCFromTable(@PathVariable Integer pcIndex) {
-    pcService.removePC(pcIndex);
+  @DeleteMapping("/{pcId}")
+  public ResponseEntity<?> removePCFromTable(@PathVariable Integer pcId) {
+    pcService.removePC(pcId);
     return ResponseEntity.noContent().build();
   }
 }

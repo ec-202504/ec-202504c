@@ -65,9 +65,9 @@ public class PCService {
   /**
    * PC削除を行うメソッド.
    *
-   * @param pcIndex 削除するPCのID
+   * @param pcId 削除するPCのID
    */
-  public void removePC(Integer pcIndex) {
-    pcRepository.deleteById(pcIndex);
+  public void removePC(Integer pcId) {
+    pcRepository.deleteById(pcId);
   }
 }
