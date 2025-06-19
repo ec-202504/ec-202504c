@@ -5,10 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/** PCを追加するリクエストDTOクラス. */
 @Getter
 @Setter
 @NoArgsConstructor
-public class AddPCRequest {
+public class AddPcRequest {
   private String name;
   private Integer price;
   private Integer memory;

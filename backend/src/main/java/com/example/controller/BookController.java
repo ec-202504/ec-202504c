@@ -19,7 +19,7 @@ public class BookController {
   private final BookService bookService;
 
   /**
-   * Book一覧を取得するエンドポイント
+   * Book一覧を取得するエンドポイント.
    *
    * @param sort ソート条件
    * @param limit 1ページあたりの表示件数

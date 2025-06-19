@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 /** PC操作を行うサービスクラス. */
 @Service
 @RequiredArgsConstructor
-public class PCService {
+public class PcService {
   private final PcRepository pcRepository;
 
   /**
-   * PC一覧を取得するメソッド
+   * PC一覧を取得するメソッド.
    *
    * @return PCのリスト
    */
@@ -25,7 +25,7 @@ public class PCService {
   }
 
   /**
-   * キーワードを含むPCのリストを取得するメソッド
+   * キーワードを含むPCのリストを取得するメソッド.
    *
    * @param keyword 検索キーワード
    * @return PC名にキーワードを含むPCのリスト
@@ -39,7 +39,7 @@ public class PCService {
   }
 
   /**
-   * ページネーション、ソートされたPCのリストを取得するメソッド
+   * ページネーション、ソートされたPCのリストを取得するメソッド.
    *
    * @param keyword 検索キーワード
    * @param pageable ページ情報
@@ -54,7 +54,7 @@ public class PCService {
   }
 
   /**
-   * PCの詳細情報を取得するメソッド
+   * PCの詳細情報を取得するメソッド.
    *
    * @param pcId PCのID
    * @return PCの詳細情報
@@ -64,12 +64,12 @@ public class PCService {
   }
 
   /**
-   * PC登録を行うメソッド
+   * PC登録を行うメソッド.
    *
    * @param pc 登録するPCの詳細情報
    * @return 登録されたPCの詳細情報
    */
-  public Pc registerPC(Pc pc) {
+  public Pc registerPc(Pc pc) {
     return pcRepository.save(pc);
   }
 
@@ -78,7 +78,7 @@ public class PCService {
    *
    * @param pcId 削除するPCのID
    */
-  public void removePC(Integer pcId) {
+  public void removePc(Integer pcId) {
     pcRepository.deleteById(pcId);
   }
 }

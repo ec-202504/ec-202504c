@@ -1,26 +1,37 @@
 package com.example.controller;
 
 import com.example.dto.response.BookDetailResponse;
-import com.example.dto.response.PCDetailResponse;
+import com.example.dto.response.PcDetailResponse;
 import com.example.dto.response.ProductsResponse;
-import com.example.model.*;
 import com.example.service.BookService;
-import com.example.service.PCService;
+import com.example.service.PcService;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /** 全商品の操作を行うコントローラクラス. */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
-  private final PCService pcService;
+  private final PcService pcService;
   private final BookService bookService;
 
+  /**
+   * 全ての商品の一覧を取得するエンドポイント.
+   *
+   * @param sort ソート条件
+   * @param limit 1ページあたりの表示件数
+   * @param offset 次ページの開始位置
+   * @param keyword 検索キーワード
+   * @return 商品一覧結果
+   */
   @GetMapping
   public ResponseEntity<?> getAllProducts(
       @RequestParam(defaultValue = "nameAsc") String sort,
@@ -39,7 +50,7 @@ public class ProductController {
                   productsResponse.setName(pc.getName());
                   productsResponse.setPrice(pc.getPrice());
 
-                  var pcDetailResponse = new PCDetailResponse();
+                  var pcDetailResponse = new PcDetailResponse();
                   pcDetailResponse.setMemory(pc.getMemory());
                   pcDetailResponse.setStorage(pc.getStorage());
                   pcDetailResponse.setDeviceSize(pc.getDeviceSize().doubleValue());

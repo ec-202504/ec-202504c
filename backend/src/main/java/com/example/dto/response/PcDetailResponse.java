@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PCDetailResponse {
+public class PcDetailResponse {
   private int memory;
   private int storage;
   private double deviceSize;
