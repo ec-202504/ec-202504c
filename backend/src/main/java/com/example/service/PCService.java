@@ -15,7 +15,7 @@ public class PCService {
   private final PcRepository pcRepository;
 
   /**
-   * PC一覧を取得するメソッド.
+   * PC一覧を取得するメソッド
    *
    * @return PCのリスト
    */
@@ -24,7 +24,7 @@ public class PCService {
   }
 
   /**
-   * キーワードを含むPCのリストを取得するメソッド.
+   * キーワードを含むPCのリストを取得するメソッド
    *
    * @param keyword 検索キーワード
    * @return PC名にキーワードを含むPCのリスト
@@ -38,7 +38,7 @@ public class PCService {
   }
 
   /**
-   * ページネーション、ソートされたPCのリストを取得するメソッド.
+   * ページネーション、ソートされたPCのリストを取得するメソッド
    *
    * @param keyword 検索キーワード
    * @param pageable ページ情報
@@ -53,12 +53,21 @@ public class PCService {
   }
 
   /**
-   * PC登録を行うメソッド.
+   * PC登録を行うメソッド
    *
    * @param pc 登録するPCの詳細情報
    * @return 登録されたPCの詳細情報
    */
   public Pc registerPC(Pc pc) {
     return pcRepository.save(pc);
+  }
+
+  /**
+   * PC削除を行うメソッド.
+   *
+   * @param pcIndex 削除するPCのID
+   */
+  public void removePC(Integer pcIndex) {
+    pcRepository.deleteById(pcIndex);
   }
 }

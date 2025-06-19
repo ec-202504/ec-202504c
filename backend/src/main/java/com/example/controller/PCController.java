@@ -44,7 +44,7 @@ public class PCController {
   }
 
   /**
-   * PCをPCsテーブルに追加するエンドポイント.
+   * PCをPCsテーブルに追加するエンドポイント
    *
    * @param request PC登録リクエスト
    * @return 登録されたPC情報
@@ -78,5 +78,17 @@ public class PCController {
     pcService.registerPC(pc);
 
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * PCをPCsテーブルから削除するエンドポイント
+   *
+   * @param pcIndex PCのID
+   * @return 削除されたPC情報
+   */
+  @DeleteMapping("/{pcIndex}")
+  public ResponseEntity<?> removePCFromTable(@PathVariable Integer pcIndex) {
+    pcService.removePC(pcIndex);
+    return ResponseEntity.noContent().build();
   }
 }
