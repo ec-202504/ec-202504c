@@ -1,5 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import OrderProductTable from "./components/OrderProductTable";
+import OrderInfoCard from "./components/OrderInfoCard";
+import OrderProductSummaryCard from "./components/OrderProductSummaryCard";
+import { Button } from "../../components/ui/button";
+import { CheckCircle } from "lucide-react";
 
 // ダミーデータ
 const orderDate = "2024-06-01";
@@ -12,40 +15,31 @@ const products = [
 
 export default function OrderComplete() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">注文完了確認</h1>
-      <div className="border rounded p-5 mb-6 bg-white">
-        <div className="mb-2 text-xl">
-          注文ありがとうございました。注文完了メールを送信しました。
-        </div>
-        <div className="mb-2 text-base text-gray-700">
-          <div className="flex justify-between">
-            <span>注文日時：</span>
-            <span className="text-right">{orderDate}</span>
-          </div>
-          <div className="flex justify-between">
-            お届け予定日時：
-            <span className="font-bold text-xl text-lime-600 text-right">
-              {deliveryDate}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            合計金額：
-            <span className="font-bold text-xl text-right">
-              ¥{totalPrice.toLocaleString()}
-            </span>
-          </div>
-        </div>
-        <div className="mb-2 font-semibold text-lg">商品内訳</div>
-        <OrderProductTable products={products} />
-        <div className="mt-6">
-          <Link
-            to="/order/history"
-            className="text-blue-600 hover:underline text-base"
-          >
-            注文履歴へ
-          </Link>
-        </div>
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="text-center mb-8">
+        <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+        <h1 className="text-3xl font-bold mb-2">注文完了</h1>
+        <p className="text-gray-600 text-lg">
+          ご注文ありがとうございました。注文完了メールを送信しました。
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <OrderInfoCard
+          orderDate={orderDate}
+          deliveryDate={deliveryDate}
+          totalPrice={totalPrice}
+        />
+        <OrderProductSummaryCard products={products} />
+      </div>
+
+      <div className="mt-8 text-center flex gap-6 justify-between">
+        <Button asChild variant="outline">
+          <Link to="/order/history">注文履歴を確認</Link>
+        </Button>
+        <Button asChild>
+          <Link to="/">ショッピングを続ける</Link>
+        </Button>
       </div>
     </div>
   );

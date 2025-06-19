@@ -7,15 +7,15 @@ import {
   TableRow,
 } from "../../../components/ui/table";
 
-interface OrderProduct {
+type OrderProduct = {
   name: string;
   quantity: number;
   subtotal: number;
-}
+};
 
-interface OrderProductTableProps {
+type OrderProductTableProps = {
   products: OrderProduct[];
-}
+};
 
 export default function OrderProductTable({
   products,
@@ -32,9 +32,9 @@ export default function OrderProductTable({
       <TableBody>
         {products.map((item) => (
           <TableRow key={item.name}>
-            <TableCell>{item.name}</TableCell>
+            <TableCell className="font-medium">{item.name}</TableCell>
             <TableCell className="text-right">{item.quantity}</TableCell>
-            <TableCell className="text-right">
+            <TableCell className="text-right font-medium">
               ¥{item.subtotal.toLocaleString()}
             </TableCell>
           </TableRow>
