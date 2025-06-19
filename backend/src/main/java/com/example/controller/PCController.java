@@ -44,6 +44,20 @@ public class PCController {
   }
 
   /**
+   * PCの詳細情報を取得するエンドポイント
+   *
+   * @param pcId PCのID
+   * @return PCの詳細情報
+   */
+  @GetMapping("/{pcId}")
+  public ResponseEntity<?> getDetailPC(@PathVariable Integer pcId) {
+    return pcService
+        .findById(pcId)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+  }
+
+  /**
    * PCをPCsテーブルに追加するエンドポイント
    *
    * @param request PC登録リクエスト
