@@ -111,6 +111,13 @@ public class PcController {
     return ResponseEntity.noContent().build();
   }
 
+  /**
+   * PC情報を更新しPcsテーブルに登録するエンドポイント.
+   *
+   * @param pcId PCのID
+   * @param request PC更新リクエスト
+   * @return 更新されたPC情報
+   */
   @PutMapping("/{pcId}")
   public ResponseEntity<?> updatePc(
       @PathVariable Integer pcId, @RequestBody UpdatePcRequest request) {
