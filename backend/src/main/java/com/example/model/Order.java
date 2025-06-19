@@ -25,7 +25,6 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Table(name = "orders")
 public class Order {
-
   /** 注文ID. */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

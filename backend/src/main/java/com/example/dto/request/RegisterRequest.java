@@ -3,6 +3,7 @@ package com.example.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
+/** ユーザー登録リクエストDTO. ユーザー登録に必要な情報を保持する. */
 @Getter
 @Setter
 public class RegisterRequest {
