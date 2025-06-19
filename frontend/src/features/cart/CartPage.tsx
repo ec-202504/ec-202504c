@@ -13,6 +13,11 @@ type CartProduct = {
   imageUrl: string;
 };
 
+type UpdateCartQuantityRequest = {
+  cartProductId: number;
+  quantity: number;
+};
+
 function CartPage() {
   const [cart, setCart] = useState<CartProduct[]>([]);
 
@@ -42,14 +47,35 @@ function CartPage() {
    * @param index カート内の商品のインデックス
    * @param number 変更する数量(プラスの場合は1、マイナスの場合は-1)
    */
-  const handleQuantityChange = (index: number, number: number) => {
+  const handleQuantityChange = async (index: number, number: number) => {
+    const item = cart[index];
+    const newQuantity = Math.max(1, item.quantity + number);
+
+    // 楽観的更新（UIを先に更新）
     setCart((prev) =>
-      prev.map((item, i) =>
-        i === index
-          ? { ...item, quantity: Math.max(1, item.quantity + number) }
-          : item,
+      prev.map((cartItem, i) =>
+        i === index ? { ...cartItem, quantity: newQuantity } : cartItem,
       ),
     );
+
+    try {
+      const requestBody: UpdateCartQuantityRequest = {
+        cartProductId: item.cartProductId,
+        quantity: newQuantity,
+      };
+
+      await axiosInstance.patch("/carts/quantity", requestBody);
+    } catch (err) {
+      console.error("数量の更新に失敗しました:", err);
+      // エラーが発生した場合は元の状態に戻す
+      setCart((prev) =>
+        prev.map((cartItem, i) =>
+          i === index ? { ...cartItem, quantity: item.quantity } : cartItem,
+        ),
+      );
+    }
+
+    fetchCartProducts();
   };
 
   const handleDelete = (index: number) => {
