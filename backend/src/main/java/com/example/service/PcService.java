@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.model.Pc;
 import com.example.repository.PcRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,7 @@ public class PcService {
   private final PcRepository pcRepository;
 
   /**
-   * PC一覧を取得するメソッド.
+   * PC一覧を取得するメソッド
    *
    * @return PCのリスト
    */
@@ -24,7 +25,7 @@ public class PcService {
   }
 
   /**
-   * キーワードを含むPCのリストを取得するメソッド.
+   * キーワードを含むPCのリストを取得するメソッド
    *
    * @param keyword 検索キーワード
    * @return PC名にキーワードを含むPCのリスト
@@ -38,7 +39,7 @@ public class PcService {
   }
 
   /**
-   * ページネーション、ソートされたPCのリストを取得するメソッド.
+   * ページネーション、ソートされたPCのリストを取得するメソッド
    *
    * @param keyword 検索キーワード
    * @param pageable ページ情報
@@ -53,12 +54,31 @@ public class PcService {
   }
 
   /**
-   * PC登録を行うメソッド.
+   * PCの詳細情報を取得するメソッド
+   *
+   * @param pcId PCのID
+   * @return PCの詳細情報
+   */
+  public Optional<Pc> findById(Integer pcId) {
+    return pcRepository.findById(pcId);
+  }
+
+  /**
+   * PC登録を行うメソッド
    *
    * @param pc 登録するPCの詳細情報
    * @return 登録されたPCの詳細情報
    */
   public Pc registerPc(Pc pc) {
     return pcRepository.save(pc);
+  }
+
+  /**
+   * PC削除を行うメソッド.
+   *
+   * @param pcId 削除するPCのID
+   */
+  public void removePC(Integer pcId) {
+    pcRepository.deleteById(pcId);
   }
 }

@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.dto.request.AddPcRequest;
+import com.example.dto.request.AddPCRequest;
 import com.example.dto.response.BookDetailResponse;
 import com.example.dto.response.PcDetailResponse;
 import com.example.dto.response.ProductsResponse;
@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 商品操作を行うコントローラクラス. */
+/** 全商品の操作を行うコントローラクラス. */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
@@ -118,7 +115,7 @@ public class ProductController {
   }
 
   /**
-   * PC一覧を取得するエンドポイント.
+   * PC一覧を取得するエンドポイント
    *
    * @param sort ソート条件
    * @param limit 1ページあたりの表示件数
@@ -127,7 +124,7 @@ public class ProductController {
    * @return PC一覧結果
    */
   @GetMapping("/pcs")
-  public ResponseEntity<?> getPcs(
+  public ResponseEntity<?> getPCs(
       @RequestParam(defaultValue = "priceAsc") String sort,
       @RequestParam(defaultValue = "0") Integer limit,
       @RequestParam(defaultValue = "20") Integer offset,
@@ -150,7 +147,7 @@ public class ProductController {
    * @return 登録されたPC情報
    */
   @PostMapping("/pcs")
-  public ResponseEntity<?> addPcToTable(@RequestBody AddPcRequest request) {
+  public ResponseEntity<?> addPCToTable(@RequestBody AddPCRequest request) {
     Pc pc = new Pc();
     pc.setName(request.getName());
     pc.setPrice(request.getPrice());
@@ -175,13 +172,13 @@ public class ProductController {
     purpose.setId(request.getPurposeId());
     pc.setPurpose(purpose);
 
-    pcService.registerPc(pc);
+    pcService.registerPC(pc);
 
     return ResponseEntity.ok().build();
   }
 
   /**
-   * Book一覧を取得するエンドポイント.
+   * Book一覧を取得するエンドポイント
    *
    * @param sort ソート条件
    * @param limit 1ページあたりの表示件数
