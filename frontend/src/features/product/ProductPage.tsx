@@ -102,7 +102,7 @@ export default function ProductListPage() {
     {
       id: 5,
       label: "ディスプレイサイズ(インチ)",
-      options: ["0", "100"],
+      options: ["27以上", "23~26", "20~22", "17~19", "15~16", "14以下"],
     },
   ];
 

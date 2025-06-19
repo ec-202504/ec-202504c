@@ -1,11 +1,22 @@
 import { useState } from "react";
-import { Button } from "../../components/ui/button";
-import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
-import { Label } from "../../components/ui/label";
-import { Input } from "../../components/ui/input";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { useNavigate } from "@tanstack/react-router";
 import { formatToLocalDate } from "../../utils/formatToLocalDate";
+import { orderSchema, type OrderFormData } from "./schema/orderSchema";
+
+import { Button } from "../../components/ui/button";
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { Input } from "../../components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../components/ui/form";
 
 // TODO: ログインしているUserデータを取得する
 const mockUser = {
@@ -48,38 +59,41 @@ type OrderRequest = {
 };
 
 function OrderPage() {
-  const [paymentMethod, setPaymentMethod] = useState("0"); // "0":現金, "1":クレジットカード
-
-  const [destination, setDestination] = useState({
-    destinationName: mockUser.destinationName,
-    destinationEmail: mockUser.destinationEmail,
-    destinationZipcode: mockUser.destinationZipcode,
-    destinationPrefecture: mockUser.destinationPrefecture,
-    destinationMunicipalities: mockUser.destinationMunicipalities,
-    destinationAddress: mockUser.destinationAddress,
-    destinationTelephone: mockUser.destinationTelephone,
-  });
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState(destination);
-
   const navigate = useNavigate();
+
+  const orderForm = useForm<OrderFormData>({
+    resolver: zodResolver(orderSchema),
+    defaultValues: {
+      destinationName: mockUser.destinationName,
+      destinationEmail: mockUser.destinationEmail,
+      destinationZipcode: mockUser.destinationZipcode,
+      destinationPrefecture: mockUser.destinationPrefecture,
+      destinationMunicipalities: mockUser.destinationMunicipalities,
+      destinationAddress: mockUser.destinationAddress,
+      destinationTelephone: mockUser.destinationTelephone,
+      paymentMethod: "0",
+    },
+  });
+
+  const { setValue, getValues } = orderForm;
 
   // 合計金額を計算する関数
   const getTotalPrice = () =>
     mockCartProducts.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const handleOrder = async () => {
+  const onSubmit = async (data: OrderFormData) => {
     const orderRequest: OrderRequest = {
       totalPrice: getTotalPrice(),
-      destinationName: destination.destinationName,
-      destinationEmail: destination.destinationEmail,
-      destinationZipcode: destination.destinationZipcode.replace("-", ""),
-      destinationPrefecture: destination.destinationPrefecture,
-      destinationMunicipalities: destination.destinationMunicipalities,
-      destinationAddress: destination.destinationAddress,
-      destinationTelephone: destination.destinationTelephone,
+      destinationName: data.destinationName,
+      destinationEmail: data.destinationEmail,
+      destinationZipcode: data.destinationZipcode.replace("-", ""),
+      destinationPrefecture: data.destinationPrefecture,
+      destinationMunicipalities: data.destinationMunicipalities,
+      destinationAddress: data.destinationAddress,
+      destinationTelephone: data.destinationTelephone,
       deliveryDateTime: formatToLocalDate(new Date()),
-      paymentMethod: Number(paymentMethod),
+      paymentMethod: Number(data.paymentMethod),
       userId: 1, // TODO: ユーザーIDを取得する
     };
 
@@ -93,11 +107,8 @@ function OrderPage() {
 
   const searchAddress = () => {
     // 外部APIで取得する想定。ここではダミー値をセット
-    setEditForm({
-      ...editForm,
-      destinationPrefecture: "東京都",
-      destinationMunicipalities: "千代田区",
-    });
+    setValue("destinationPrefecture", "東京都");
+    setValue("destinationMunicipalities", "千代田区");
   };
 
   return (
@@ -112,7 +123,9 @@ function OrderPage() {
           </span>
         </div>
 
-        <Button onClick={handleOrder}>注文を確定する</Button>
+        <Button onClick={orderForm.handleSubmit(onSubmit)}>
+          注文を確定する
+        </Button>
       </div>
 
       <section className="mb-8">
@@ -131,163 +144,203 @@ function OrderPage() {
         </div>
 
         {isEditing ? (
-          <form
-            className="p-5 space-y-4 text-sm bg-gray-50 rounded-lg"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setDestination(editForm);
-              setIsEditing(false);
-            }}
-          >
-            <div className="grid gap-3">
-              <Label htmlFor="destinationName">氏名：</Label>
-              <Input
-                id="destinationName"
-                value={editForm.destinationName}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, destinationName: e.target.value })
-                }
-                required
-              />
-            </div>
+          <Form {...orderForm}>
+            <form
+              className="p-5 space-y-4 text-sm bg-gray-50 rounded-lg"
+              onSubmit={orderForm.handleSubmit(() => setIsEditing(false))}
+            >
+              <FormField
+                control={orderForm.control}
+                name="destinationName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>氏名：</FormLabel>
 
-            <div className="grid gap-3">
-              <Label htmlFor="destinationEmail">メール：</Label>
-              <Input
-                id="destinationEmail"
-                type="email"
-                value={editForm.destinationEmail}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, destinationEmail: e.target.value })
-                }
-                required
-              />
-            </div>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
 
-            <div className="grid gap-3">
-              <Label htmlFor="destinationZipcode">郵便番号：</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="destinationZipcode"
-                  value={editForm.destinationZipcode}
-                  onChange={(e) =>
-                    setEditForm({
-                      ...editForm,
-                      destinationZipcode: e.target.value,
-                    })
-                  }
-                  required
-                />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>メール：</FormLabel>
+
+                    <FormControl>
+                      <Input type="email" {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationZipcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>郵便番号：</FormLabel>
+                    <div className="flex gap-2">
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={searchAddress}
+                      >
+                        住所検索
+                      </Button>
+                    </div>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationPrefecture"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>都道府県：</FormLabel>
+
+                    <FormControl>
+                      <Input
+                        {...field}
+                        readOnly
+                        tabIndex={-1}
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationMunicipalities"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>市区町村：</FormLabel>
+
+                    <FormControl>
+                      <Input
+                        {...field}
+                        readOnly
+                        tabIndex={-1}
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationAddress"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>番地等：</FormLabel>
+
+                    <FormControl>
+                      <Input placeholder="番地等" {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationTelephone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>電話番号：</FormLabel>
+
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex gap-2 mt-2">
+                <Button type="submit">保存</Button>
                 <Button
                   type="button"
-                  variant="secondary"
-                  className="cursor-pointer"
-                  onClick={searchAddress}
+                  variant="outline"
+                  onClick={() => {
+                    setIsEditing(false);
+                    orderForm.reset();
+                  }}
                 >
-                  住所検索
+                  キャンセル
                 </Button>
               </div>
-            </div>
-
-            <div className="grid gap-3">
-              <Label htmlFor="destinationPrefecture">都道府県：</Label>
-              <Input
-                id="destinationPrefecture"
-                value={editForm.destinationPrefecture}
-                readOnly
-                tabIndex={-1}
-                className="bg-gray-100 cursor-not-allowed"
-              />
-            </div>
-
-            <div className="grid gap-3">
-              <Label htmlFor="destinationMunicipalities">市区町村：</Label>
-              <Input
-                id="destinationMunicipalities"
-                value={editForm.destinationMunicipalities}
-                readOnly
-                tabIndex={-1}
-                className="bg-gray-100 cursor-not-allowed"
-              />
-            </div>
-
-            <div className="grid gap-3">
-              <Label htmlFor="destinationAddress">番地等：</Label>
-              <Input
-                id="destinationAddress"
-                placeholder="番地等"
-                value={editForm.destinationAddress}
-                onChange={(e) =>
-                  setEditForm({
-                    ...editForm,
-                    destinationAddress: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-
-            <div className="grid gap-3">
-              <Label htmlFor="destinationTelephone">電話番号：</Label>
-              <Input
-                id="destinationTelephone"
-                value={editForm.destinationTelephone}
-                onChange={(e) =>
-                  setEditForm({
-                    ...editForm,
-                    destinationTelephone: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-
-            <div className="flex gap-2 mt-2">
-              <Button type="submit">保存</Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditForm(destination);
-                }}
-              >
-                キャンセル
-              </Button>
-            </div>
-          </form>
+            </form>
+          </Form>
         ) : (
           <div className="grid gap-1 p-5 bg-gray-50 text-sm rounded-lg">
-            <div>氏名：{destination.destinationName}</div>
-            <div>メール：{destination.destinationEmail}</div>
-            <div>郵便番号：{destination.destinationZipcode}</div>
+            <div>氏名：{getValues("destinationName")}</div>
+            <div>メール：{getValues("destinationEmail")}</div>
+            <div>郵便番号：{getValues("destinationZipcode")}</div>
             <div>
-              住所：{destination.destinationPrefecture}
-              {destination.destinationMunicipalities}
-              {destination.destinationAddress}
+              住所：{getValues("destinationPrefecture")}
+              {getValues("destinationMunicipalities")}
+              {getValues("destinationAddress")}
             </div>
-            <div>電話番号：{destination.destinationTelephone}</div>
+            <div>電話番号：{getValues("destinationTelephone")}</div>
           </div>
         )}
       </section>
 
       <section className="mb-8">
         <h2 className="text-lg font-semibold mb-2">決済方法</h2>
-        <RadioGroup
-          value={paymentMethod}
-          onValueChange={setPaymentMethod}
-          className="flex gap-6"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="0" id="cash" />
-            <Label htmlFor="cash">現金</Label>
-          </div>
+        <Form {...orderForm}>
+          <FormField
+            control={orderForm.control}
+            name="paymentMethod"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <RadioGroup
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="0" id="cash" />
+                      <label htmlFor="cash">現金</label>
+                    </div>
 
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="1" id="credit" />
-            <Label htmlFor="credit">クレジットカード</Label>
-          </div>
-        </RadioGroup>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="1" id="credit" />
+                      <label htmlFor="credit">クレジットカード</label>
+                    </div>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </Form>
       </section>
 
       <section>

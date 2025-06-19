@@ -51,4 +51,14 @@ public class PCService {
     }
     return pcRepository.findByNameContainingIgnoreCase(keyword, pageable);
   }
+
+  /**
+   * PC登録を行うメソッド.
+   *
+   * @param pc 登録するPCの詳細情報
+   * @return 登録されたPCの詳細情報
+   */
+  public Pc registerPC(Pc pc) {
+    return pcRepository.save(pc);
+  }
 }

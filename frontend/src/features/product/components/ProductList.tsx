@@ -1,5 +1,6 @@
-import Sidebar, { type FilterTerm } from "./Sidebar";
-import type { Product } from "../types";
+import Sidebar from "./Sidebar";
+import type { Product, FilterTerm } from "../types";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import SearchForm from "./SearchForm";
 import ProductCard from "./ProductCard";
 import {
@@ -11,6 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../../components/ui/pagination";
+import type { FilterTerm } from "../types/FilterTerm";
 
 type Props = {
   products: Product[];
@@ -38,20 +40,22 @@ export default function ProductList({
         <Pagination>
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="/product" size={"sm"} />
+              <PaginationPrevious href="/product?page=1" size="sm">
+                <ChevronLeft className="h-4 w-4" />
+              </PaginationPrevious>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href="/product" size={"sm"}>
+              <PaginationLink href="/product?page=1" size="sm">
                 1
               </PaginationLink>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href="/product" isActive size={"sm"}>
+              <PaginationLink href="/product?page=2" isActive size="sm">
                 2
               </PaginationLink>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href="/product" size={"sm"}>
+              <PaginationLink href="/product?page=3" size="sm">
                 3
               </PaginationLink>
             </PaginationItem>
@@ -59,7 +63,9 @@ export default function ProductList({
               <PaginationEllipsis />
             </PaginationItem>
             <PaginationItem>
-              <PaginationNext href="/product" size={"sm"} />
+              <PaginationNext href="/product?page=3" size="sm">
+                <ChevronRight className="h-4 w-4" />
+              </PaginationNext>
             </PaginationItem>
           </PaginationContent>
         </Pagination>
