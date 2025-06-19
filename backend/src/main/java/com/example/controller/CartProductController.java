@@ -6,6 +6,7 @@ import com.example.model.User;
 import com.example.service.CartProductService;
 import com.example.service.UserService;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,11 +41,11 @@ public class CartProductController {
    */
   @PostMapping
   public ResponseEntity<?> addCartProduct(@RequestBody AddCartProductRequest request) {
-    User user = userService.findById(request.getUserId());
-
-    if (user == null) {
-      return ResponseEntity.badRequest().body("ユーザーが見つかりません");
+    Optional<User> optionalUser = userService.findById(request.getUserId());
+    if (optionalUser.isEmpty()) {
+      return ResponseEntity.badRequest().build();
     }
+    User user = optionalUser.get();
 
     CartProduct cartProduct = new CartProduct();
     cartProduct.setQuantity(request.getQuantity());

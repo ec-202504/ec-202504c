@@ -19,9 +19,9 @@ public class UserController {
   private final UserService userService;
 
   /**
-   * ユーザーを新規登録します.
+   * ユーザーを登録する.
    *
-   * <p>正常に登録された場合は、HTTP 201 CREATED を返します。
+   * <p>正常に登録された場合は、HTTP 201 CREATED を返す.
    *
    * @param request 登録情報
    * @return ステータスコード

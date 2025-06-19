@@ -2,10 +2,9 @@ package com.example.service;
 
 import com.example.model.User;
 import com.example.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 /** Userエンティティのサービスクラス. */
 @Service
@@ -19,10 +18,28 @@ public class UserService {
    * @param id ユーザーID
    * @return 該当するユーザー情報
    */
-  public User findById(Integer id) {
-    return userRepository
-        .findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ユーザーが見つかりません"));
+  public Optional<User> findById(Integer id) {
+    return userRepository.findById(id);
+  }
+
+  /**
+   * メールアドレスでユーザーを取得する.
+   *
+   * @param email メールアドレス
+   * @return ユーザー
+   */
+  public Optional<User> findByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
+
+  /**
+   * ユーザーを登録する.
+   *
+   * @param request ユーザー情報
+   * @return ユーザー(自動採番されたユーザーIDを保持)
+   */
+  public User register(User user) {
+    return userRepository.save(user);
   }
 
   /**

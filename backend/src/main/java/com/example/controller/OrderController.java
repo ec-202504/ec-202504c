@@ -6,6 +6,7 @@ import com.example.model.User;
 import com.example.service.OrderService;
 import com.example.service.UserService;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,11 @@ public class OrderController {
    */
   @PostMapping
   public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
-    User user = userService.findById(request.getUserId());
+    Optional<User> optionalUser = userService.findById(request.getUserId());
+    if (optionalUser.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+    User user = optionalUser.get();
 
     Order order = new Order();
     order.setTotalPrice(request.getTotalPrice());

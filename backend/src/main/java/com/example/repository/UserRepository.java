@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
   /**
-   * メールアドレスでユーザーを検索する.
+   * ユーザーをメールアドレスで検索する.
    *
    * @param email メールアドレス
    * @return ユーザー
