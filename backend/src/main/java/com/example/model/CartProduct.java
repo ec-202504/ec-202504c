@@ -19,7 +19,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "cart_products")
 public class CartProduct {
-
   /** カート商品ID. */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -13,7 +13,6 @@ public class ProductsResponse {
   private Integer productCategory; // PC or Book
   private String name;
   private Integer price;
-
   private PcDetailResponse pcDetailResponse;
   private BookDetailResponse bookDetailResponse;
 }

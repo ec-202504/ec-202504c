@@ -47,6 +47,7 @@ public class ProductController {
         allPcs.stream()
             .map(
                 pc -> {
+
                   ProductsResponse productsResponse = getProductResponse(pc);
                   PcDetailResponse pcDetailResponse = getPcDetailResponse(pc);
                   productsResponse.setPcDetailResponse(pcDetailResponse);

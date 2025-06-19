@@ -19,7 +19,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "order_products")
 public class OrderProduct {
-
   /** 注文明細ID. */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
