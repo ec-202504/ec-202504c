@@ -20,11 +20,12 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 
-import axios, { type AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import { useState } from "react";
 import { fetchAddress } from "../../api/fetchAddress";
 import type { RegisterRequest } from "../../types/registerRequest";
 import { useNavigate } from "@tanstack/react-router";
+import { axiosInstance } from "../../lib/axiosInstance";
 
 function UserRegisterPage() {
   const [prefecture, setPrefecture] = useState("");
@@ -53,11 +54,11 @@ function UserRegisterPage() {
       municipalities: municipalities,
     };
     try {
-      await axios.post<
+      await axiosInstance.post<
         unknown,
         AxiosResponse<unknown, RegisterRequest>,
         RegisterRequest
-      >("http://localhost:8080/user/register", requestBody);
+      >("/user/register", requestBody);
       navigate({ to: "/user/login", replace: true });
     } catch (error) {
       console.error("登録に失敗しました", error);
