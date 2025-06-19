@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartProductController {
   private final CartProductService cartProductService;
   private final UserService userService;
-
   /**
    * カート内商品を取得するエンドポイント.
    *

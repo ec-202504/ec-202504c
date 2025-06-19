@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/books")
 public class BookController {
   private final BookService bookService;
-
   /**
    * Book一覧を取得するエンドポイント
    *

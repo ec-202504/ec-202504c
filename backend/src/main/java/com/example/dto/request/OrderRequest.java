@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrderRequest {
   private Integer totalPrice;
-
   private String destinationName;
   private String destinationEmail;
   private String destinationZipcode;
@@ -18,7 +17,6 @@ public class OrderRequest {
   private String destinationMunicipalities;
   private String destinationAddress;
   private String destinationTelephone;
-
   private String deliveryDateTime;
   private Integer paymentMethod;
   private Integer userId;

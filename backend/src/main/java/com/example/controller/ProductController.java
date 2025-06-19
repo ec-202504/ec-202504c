@@ -3,7 +3,6 @@ package com.example.controller;
 import com.example.dto.response.BookDetailResponse;
 import com.example.dto.response.PCDetailResponse;
 import com.example.dto.response.ProductsResponse;
-import com.example.model.*;
 import com.example.service.BookService;
 import com.example.service.PCService;
 import java.util.ArrayList;

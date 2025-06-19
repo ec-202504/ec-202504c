@@ -1,10 +1,8 @@
 package com.example.service;
 
-import com.example.dto.request.RegisterRequest;
 import com.example.model.User;
 import com.example.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,8 +14,7 @@ public class UserService {
   private final UserRepository userRepository;
 
   /**
-   * ユーザーをIDで検索する. (異常系:404を返す)
-
+   * ユーザーをIDで検索するメソッド.
    *
    * @param id ユーザーID
    * @return 該当するユーザー情報
@@ -43,13 +40,10 @@ public class UserService {
   /**
    * ユーザーを登録する.
    *
-   * @param request 登録情報
+   * @param user 登録情報
    * @return ユーザー(自動採番されたユーザーIDを保持)
    */
-  public User register(RegisterRequest request) {
-    User user = new User();
-    BeanUtils.copyProperties(request, user);
-    System.out.println(user);
+  public User register(User user) {
     return userRepository.save(user);
   }
 }

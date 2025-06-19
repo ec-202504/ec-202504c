@@ -1,8 +1,10 @@
 package com.example.controller;
 
 import com.example.dto.request.RegisterRequest;
+import com.example.model.User;
 import com.example.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +28,9 @@ public class UserController {
    */
   @PostMapping("/register")
   public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
-    System.out.println(request);
-    userService.register(request);
+    User user = new User();
+    BeanUtils.copyProperties(request, user);
+    userService.register(user);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }
