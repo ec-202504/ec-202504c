@@ -9,7 +9,6 @@ import com.example.service.CartProductService;
 import com.example.service.PcService;
 import com.example.service.UserService;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,8 +40,7 @@ public class CartProductController {
     List<CartProduct> cartProducts = cartProductService.getCartProducts();
 
     try {
-      List<CartProductResponse> responses =
-          cartProducts.stream().map(this::mapToResponse).filter(Objects::nonNull).toList();
+      List<CartProductResponse> responses = cartProducts.stream().map(this::mapToResponse).toList();
       return ResponseEntity.ok(responses);
     } catch (ResponseStatusException e) {
       return ResponseEntity.notFound().build();
