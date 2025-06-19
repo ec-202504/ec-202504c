@@ -125,6 +125,12 @@ public class ProductController {
     return ResponseEntity.ok(pcService.findPcs(keyword, pageable));
   }
 
+  /**
+   * PCをPCsテーブルに追加するエンドポイント.
+   *
+   * @param request PC登録リクエスト
+   * @return 登録されたPC情報
+   */
   @PostMapping("/pcs")
   public ResponseEntity<?> addPCToTable(@RequestBody AddPCRequest request) {
     Pc pc = new Pc();
