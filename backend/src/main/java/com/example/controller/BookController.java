@@ -44,6 +44,20 @@ public class BookController {
   }
 
   /**
+   * Bookの詳細情報を取得するエンドポイント.
+   *
+   * @param bookId BookのID
+   * @return Bookの詳細情報
+   */
+  @GetMapping("/{bookId}")
+  public ResponseEntity<?> getDetailPc(@PathVariable Integer bookId) {
+    return bookService
+        .findById(bookId)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+  }
+
+  /**
    * BookをBooksテーブルに追加するエンドポイント.
    *
    * @param request Book登録リクエスト
