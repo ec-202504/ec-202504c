@@ -21,3 +21,4 @@ jobs:
           reporter: github-pr-review
           level: warning
           workdir: backend
+          checkstyle_config: ./config/checkstyle/google_checks.xml
