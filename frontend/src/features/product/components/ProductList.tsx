@@ -6,19 +6,20 @@ import ProductCard from "./ProductCard";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "../../../components/ui/pagination";
-import type { FilterTerm } from "../types/FilterTerm";
 
 type Props = {
   products: Product[];
   filterTerms: FilterTerm[];
   selectedOption: (value: string) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>, query: string) => void;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  totalPages: number;
 };
 
 export default function ProductList({
@@ -26,44 +27,78 @@ export default function ProductList({
   filterTerms,
   selectedOption,
   handleSubmit,
+  currentPage,
+  onPageChange,
+  totalPages,
 }: Props) {
+  const getPageNumbers = () => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
   return (
     <div className="flex gap-4">
       <Sidebar selectedOption={selectedOption} filterTerms={filterTerms} />
       <div className="flex-1">
         <SearchForm onSubmit={handleSubmit} />
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          {products.map((product) => (
-            <ProductCard product={product} key={product.id} />
-          ))}
-        </div>
+
+        {products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-60 w-full bg-gray-50 rounded-md shadow mt-8 mb-8">
+            <div className="text-lg text-gray-600 font-semibold">
+              該当する商品が見つかりません
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-4 gap-4 mb-4">
+            {products.map((product) => (
+              <ProductCard product={product} key={product.id} />
+            ))}
+          </div>
+        )}
+
         <Pagination>
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="/product?page=1" size="sm">
+              <PaginationPrevious
+                size="sm"
+                href="/product"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage > 1) onPageChange(currentPage - 1);
+                }}
+                aria-disabled={currentPage === 1}
+              >
                 <ChevronLeft className="h-4 w-4" />
               </PaginationPrevious>
             </PaginationItem>
+            {getPageNumbers().map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  href="/product"
+                  size="sm"
+                  isActive={page === currentPage}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (page !== currentPage) onPageChange(page);
+                  }}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
             <PaginationItem>
-              <PaginationLink href="/product?page=1" size="sm">
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="/product?page=2" isActive size="sm">
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="/product?page=3" size="sm">
-                3
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="/product?page=3" size="sm">
+              <PaginationNext
+                size="sm"
+                href="/product"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage < totalPages) onPageChange(currentPage + 1);
+                }}
+                aria-disabled={currentPage === totalPages}
+              >
                 <ChevronRight className="h-4 w-4" />
               </PaginationNext>
             </PaginationItem>

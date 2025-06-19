@@ -45,7 +45,7 @@ public class PcService {
    * @param pageable ページ情報
    * @return ページネーションされたPCのリスト
    */
-  public Page<Pc> findPcs(String keyword, Pageable pageable) {
+  public Page<Pc> findPcsWithPageable(String keyword, Pageable pageable) {
     // キーワードがnullまたは空文字の場合、全件取得
     if (keyword == null || keyword.isBlank()) {
       return pcRepository.findAll(pageable);

@@ -45,7 +45,7 @@ public class BookService {
    * @param pageable ページ情報
    * @return ページネーションされたPCのリスト
    */
-  public Page<Book> findBooks(String keyword, Pageable pageable) {
+  public Page<Book> findBooksWithPageable(String keyword, Pageable pageable) {
     // キーワードがnullまたは空文字の場合、全件取得
     if (keyword == null || keyword.isBlank()) {
       return bookRepository.findAll(pageable);
@@ -61,5 +61,24 @@ public class BookService {
    */
   public Optional<Book> findById(Integer bookId) {
     return bookRepository.findById(bookId);
+  }
+
+  /**
+   * Book登録を行うメソッド.
+   *
+   * @param book 登録するBookの詳細情報
+   * @return 登録されたBookの詳細情報
+   */
+  public Book registerBook(Book book) {
+    return bookRepository.save(book);
+  }
+
+  /**
+   * Book削除を行うメソッド.
+   *
+   * @param bookId 削除するPCのID
+   */
+  public void removeBook(Integer bookId) {
+    bookRepository.deleteById(bookId);
   }
 }
