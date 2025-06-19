@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dto.request.AddPcRequest;
+import com.example.dto.request.UpdatePcRequest;
 import com.example.model.Cpu;
 import com.example.model.Gpu;
 import com.example.model.Os;
@@ -12,14 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** PCの操作を行うコントローラクラス. */
 @RestController
@@ -115,5 +109,49 @@ public class PcController {
   public ResponseEntity<?> removePcFromTable(@PathVariable Integer pcId) {
     pcService.removePc(pcId);
     return ResponseEntity.noContent().build();
+  }
+
+  /**
+   * PC情報を更新しPcsテーブルに登録するエンドポイント.
+   *
+   * @param pcId PCのID
+   * @param request PC更新リクエスト
+   * @return 更新されたPC情報
+   */
+  @PutMapping("/{pcId}")
+  public ResponseEntity<?> updatePc(
+      @PathVariable Integer pcId, @RequestBody UpdatePcRequest request) {
+    return pcService
+        .findById(pcId)
+        .map(
+            existPc -> {
+              existPc.setName(request.getName());
+              existPc.setPrice(request.getPrice());
+              existPc.setMemory(request.getMemory());
+              existPc.setStorage(request.getStorage());
+              existPc.setDeviceSize(request.getDeviceSize());
+              existPc.setDeviceType(request.getDeviceType());
+
+              Os os = new Os();
+              os.setId(request.getOsId());
+              existPc.setOs(os);
+
+              Cpu cpu = new Cpu();
+              cpu.setId(request.getCpuId());
+              existPc.setCpu(cpu);
+
+              Gpu gpu = new Gpu();
+              gpu.setId(request.getGpuId());
+              existPc.setGpu(gpu);
+
+              Purpose purpose = new Purpose();
+              purpose.setId(request.getPurposeId());
+              existPc.setPurpose(purpose);
+
+              pcService.registerPc(existPc);
+
+              return ResponseEntity.ok().build();
+            })
+        .orElse(ResponseEntity.notFound().build());
   }
 }
