@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ProductsResponse {
+  private Integer productId; // PcID or BookID
   private Integer productCategory; // PC or Book
   private String name;
   private Integer price;
