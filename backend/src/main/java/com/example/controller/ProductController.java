@@ -1,12 +1,16 @@
 package com.example.controller;
 
-import com.example.dto.request.AddPCRequest;
+import com.example.dto.request.AddPcRequest;
 import com.example.dto.response.BookDetailResponse;
-import com.example.dto.response.PCDetailResponse;
+import com.example.dto.response.PcDetailResponse;
 import com.example.dto.response.ProductsResponse;
-import com.example.model.*;
+import com.example.model.Cpu;
+import com.example.model.Gpu;
+import com.example.model.Os;
+import com.example.model.Pc;
+import com.example.model.Purpose;
 import com.example.service.BookService;
-import com.example.service.PCService;
+import com.example.service.PcService;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -15,16 +19,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /** 商品操作を行うコントローラクラス. */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
-  private final PCService pcService;
+  private final PcService pcService;
   private final BookService bookService;
 
+  /**
+   * 全ての商品の一覧を取得するエンドポイント.
+   *
+   * @param sort ソート条件
+   * @param limit 1ページあたりの表示件数
+   * @param offset 次ページの開始位置
+   * @param keyword 検索キーワード
+   * @return 商品一覧結果
+   */
   @GetMapping
   public ResponseEntity<?> getAllProducts(
       @RequestParam(defaultValue = "nameAsc") String sort,
@@ -43,7 +61,7 @@ public class ProductController {
                   productsResponse.setName(pc.getName());
                   productsResponse.setPrice(pc.getPrice());
 
-                  var pcDetailResponse = new PCDetailResponse();
+                  var pcDetailResponse = new PcDetailResponse();
                   pcDetailResponse.setMemory(pc.getMemory());
                   pcDetailResponse.setStorage(pc.getStorage());
                   pcDetailResponse.setDeviceSize(pc.getDeviceSize().doubleValue());
@@ -100,7 +118,7 @@ public class ProductController {
   }
 
   /**
-   * PC一覧を取得するエンドポイント
+   * PC一覧を取得するエンドポイント.
    *
    * @param sort ソート条件
    * @param limit 1ページあたりの表示件数
@@ -109,7 +127,7 @@ public class ProductController {
    * @return PC一覧結果
    */
   @GetMapping("/pcs")
-  public ResponseEntity<?> getPCs(
+  public ResponseEntity<?> getPcs(
       @RequestParam(defaultValue = "priceAsc") String sort,
       @RequestParam(defaultValue = "0") Integer limit,
       @RequestParam(defaultValue = "20") Integer offset,
@@ -132,7 +150,7 @@ public class ProductController {
    * @return 登録されたPC情報
    */
   @PostMapping("/pcs")
-  public ResponseEntity<?> addPCToTable(@RequestBody AddPCRequest request) {
+  public ResponseEntity<?> addPcToTable(@RequestBody AddPcRequest request) {
     Pc pc = new Pc();
     pc.setName(request.getName());
     pc.setPrice(request.getPrice());
@@ -157,13 +175,13 @@ public class ProductController {
     purpose.setId(request.getPurposeId());
     pc.setPurpose(purpose);
 
-    pcService.registerPC(pc);
+    pcService.registerPc(pc);
 
     return ResponseEntity.ok().build();
   }
 
   /**
-   * Book一覧を取得するエンドポイント
+   * Book一覧を取得するエンドポイント.
    *
    * @param sort ソート条件
    * @param limit 1ページあたりの表示件数

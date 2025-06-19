@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 /** PC操作を行うサービスクラス. */
 @Service
 @RequiredArgsConstructor
-public class PCService {
+public class PcService {
   private final PcRepository pcRepository;
 
   /**
@@ -58,7 +58,7 @@ public class PCService {
    * @param pc 登録するPCの詳細情報
    * @return 登録されたPCの詳細情報
    */
-  public Pc registerPC(Pc pc) {
+  public Pc registerPc(Pc pc) {
     return pcRepository.save(pc);
   }
 }
