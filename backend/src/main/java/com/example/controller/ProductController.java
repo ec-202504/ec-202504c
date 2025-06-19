@@ -1,8 +1,10 @@
 package com.example.controller;
 
+import com.example.dto.request.AddPCRequest;
 import com.example.dto.response.BookDetailResponse;
 import com.example.dto.response.PCDetailResponse;
 import com.example.dto.response.ProductsResponse;
+import com.example.model.*;
 import com.example.service.BookService;
 import com.example.service.PCService;
 import java.util.ArrayList;
@@ -13,10 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** 商品操作を行うコントローラクラス. */
 @RestController
@@ -124,6 +123,37 @@ public class ProductController {
     Pageable pageable = PageRequest.of(limit, offset, sorting);
 
     return ResponseEntity.ok(pcService.findPcs(keyword, pageable));
+  }
+
+  @PostMapping("/pcs")
+  public ResponseEntity<?> addPCToTable(@RequestBody AddPCRequest request) {
+    Pc pc = new Pc();
+    pc.setName(request.getName());
+    pc.setPrice(request.getPrice());
+    pc.setMemory(request.getMemory());
+    pc.setStorage(request.getStorage());
+    pc.setDeviceSize(request.getDeviceSize());
+    pc.setDeviceType(request.getDeviceType());
+
+    Os os = new Os();
+    os.setId(request.getOsId());
+    pc.setOs(os);
+
+    Cpu cpu = new Cpu();
+    cpu.setId(request.getCpuId());
+    pc.setCpu(cpu);
+
+    Gpu gpu = new Gpu();
+    gpu.setId(request.getGpuId());
+    pc.setGpu(gpu);
+
+    Purpose purpose = new Purpose();
+    purpose.setId(request.getPurposeId());
+    pc.setPurpose(purpose);
+
+    pcService.registerPC(pc);
+
+    return ResponseEntity.ok().build();
   }
 
   /**
