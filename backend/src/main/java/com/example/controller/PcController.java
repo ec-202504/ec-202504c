@@ -1,24 +1,35 @@
 package com.example.controller;
 
-import com.example.dto.request.AddPCRequest;
-import com.example.model.*;
-import com.example.service.PCService;
+import com.example.dto.request.AddPcRequest;
+import com.example.model.Cpu;
+import com.example.model.Gpu;
+import com.example.model.Os;
+import com.example.model.Pc;
+import com.example.model.Purpose;
+import com.example.service.PcService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /** PCの操作を行うコントローラクラス. */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pcs")
-public class PCController {
-  private final PCService pcService;
+public class PcController {
+  private final PcService pcService;
 
   /**
-   * PC一覧を取得するエンドポイント
+   * PC一覧を取得するエンドポイント.
    *
    * @param sort ソート条件
    * @param limit 1ページあたりの表示件数
@@ -27,7 +38,7 @@ public class PCController {
    * @return PC一覧結果
    */
   @GetMapping
-  public ResponseEntity<?> getPCs(
+  public ResponseEntity<?> getPcs(
       @RequestParam(defaultValue = "priceAsc") String sort,
       @RequestParam(defaultValue = "0") Integer limit,
       @RequestParam(defaultValue = "20") Integer offset,
@@ -44,13 +55,13 @@ public class PCController {
   }
 
   /**
-   * PCの詳細情報を取得するエンドポイント
+   * PCの詳細情報を取得するエンドポイント.
    *
    * @param pcId PCのID
    * @return PCの詳細情報
    */
   @GetMapping("/{pcId}")
-  public ResponseEntity<?> getDetailPC(@PathVariable Integer pcId) {
+  public ResponseEntity<?> getDetailPc(@PathVariable Integer pcId) {
     return pcService
         .findById(pcId)
         .map(ResponseEntity::ok)
@@ -58,13 +69,13 @@ public class PCController {
   }
 
   /**
-   * PCをPCsテーブルに追加するエンドポイント
+   * PCをPCsテーブルに追加するエンドポイント.
    *
    * @param request PC登録リクエスト
    * @return 登録されたPC情報
    */
   @PostMapping
-  public ResponseEntity<?> addPCToTable(@RequestBody AddPCRequest request) {
+  public ResponseEntity<?> addPcToTable(@RequestBody AddPcRequest request) {
     Pc pc = new Pc();
     pc.setName(request.getName());
     pc.setPrice(request.getPrice());
@@ -89,20 +100,20 @@ public class PCController {
     purpose.setId(request.getPurposeId());
     pc.setPurpose(purpose);
 
-    pcService.registerPC(pc);
+    pcService.registerPc(pc);
 
     return ResponseEntity.ok().build();
   }
 
   /**
-   * PCをPCsテーブルから削除するエンドポイント
+   * PCをPCsテーブルから削除するエンドポイント.
    *
    * @param pcId PCのID
    * @return 削除されたPC情報
    */
   @DeleteMapping("/{pcId}")
-  public ResponseEntity<?> removePCFromTable(@PathVariable Integer pcId) {
-    pcService.removePC(pcId);
+  public ResponseEntity<?> removePcFromTable(@PathVariable Integer pcId) {
+    pcService.removePc(pcId);
     return ResponseEntity.noContent().build();
   }
 }
