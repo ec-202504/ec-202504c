@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PcInfo from "../components/PcInfo";
-import { ReviewItem } from "../components/ReviewItem";
+import ReviewItem from "../components/ReviewItem";
 
 const mockPcData = {
   id: 1,
@@ -56,8 +56,8 @@ export default function PcDetail() {
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
 
-  const handleClick = async (quantity: number) => {
-    setQuantity(quantity);
+  const handleClick = async (qty: number) => {
+    setQuantity(qty);
     console.log(quantity);
   };
 
@@ -65,7 +65,6 @@ export default function PcDetail() {
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-8">
       <PcInfo
         pc={pc}
-        quantity={quantity}
         handleClick={handleClick}
         average={average}
         totalReviews={totalReviews}

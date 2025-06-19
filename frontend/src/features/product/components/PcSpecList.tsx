@@ -1,17 +1,17 @@
-interface PcSpec {
+type PcSpec = {
   os: string;
   cpu: string;
   gpu: string;
   memory: number;
   storage: number;
   device_size: number;
-}
+};
 
-interface PcSpecListProps {
+type PcSpecListProps = {
   pc: PcSpec;
-}
+};
 
-export const PcSpecList = ({ pc }: PcSpecListProps) => {
+export default function PcSpecList({ pc }: PcSpecListProps) {
   return (
     <ul className="text-base mb-2">
       <li className="flex">
@@ -40,4 +40,4 @@ export const PcSpecList = ({ pc }: PcSpecListProps) => {
       </li>
     </ul>
   );
-};
+}

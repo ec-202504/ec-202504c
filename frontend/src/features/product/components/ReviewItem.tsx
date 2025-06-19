@@ -1,12 +1,16 @@
-import { RatingStars } from "./RatingStars";
+import RatingStars from "./RatingStars";
 
-interface ReviewItemProps {
+type ReviewItemProps = {
   userName: string;
   content: string;
   rating: number;
-}
+};
 
-export const ReviewItem = ({ userName, content, rating }: ReviewItemProps) => {
+export default function ReviewItem({
+  userName,
+  content,
+  rating,
+}: ReviewItemProps) {
   return (
     <div className="border-gray-200 border-2 p-2 rounded mb-2">
       <div className="mb-1">
@@ -16,4 +20,4 @@ export const ReviewItem = ({ userName, content, rating }: ReviewItemProps) => {
       <div>{content}</div>
     </div>
   );
-};
+}
