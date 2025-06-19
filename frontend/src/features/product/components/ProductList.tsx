@@ -1,5 +1,5 @@
 import Sidebar from "./Sidebar";
-import type { Product } from "../types";
+import type { Product, FilterTerm } from "../types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import SearchForm from "./SearchForm";
 import ProductCard from "./ProductCard";
