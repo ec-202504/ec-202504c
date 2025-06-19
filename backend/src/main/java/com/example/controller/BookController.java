@@ -50,7 +50,7 @@ public class BookController {
    * @return 登録されたBook情報
    */
   @PostMapping
-  public ResponseEntity<?> addPcToTable(@RequestBody AddBookRequest request) {
+  public ResponseEntity<?> addBook(@RequestBody AddBookRequest request) {
     Book book = new Book();
     book.setName(request.getName());
     book.setPrice(request.getPrice());

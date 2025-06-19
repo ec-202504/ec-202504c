@@ -75,7 +75,7 @@ public class PcController {
    * @return 登録されたPC情報
    */
   @PostMapping
-  public ResponseEntity<?> addPcToTable(@RequestBody AddPcRequest request) {
+  public ResponseEntity<?> addPc(@RequestBody AddPcRequest request) {
     Pc pc = new Pc();
     pc.setName(request.getName());
     pc.setPrice(request.getPrice());
@@ -112,7 +112,7 @@ public class PcController {
    * @return 削除されたPC情報
    */
   @DeleteMapping("/{pcId}")
-  public ResponseEntity<?> removePcFromTable(@PathVariable Integer pcId) {
+  public ResponseEntity<?> removePc(@PathVariable Integer pcId) {
     pcService.removePc(pcId);
     return ResponseEntity.noContent().build();
   }
