@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.model.CartProduct;
+import com.example.model.User;
 import com.example.repository.CartProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class CartProductService {
    *
    * @return カート内商品リスト
    */
-  public List<CartProduct> getCartProducts() {
-    return cartProductRepository.findAll();
+  public List<CartProduct> getCartProducts(User user) {
+    return cartProductRepository.findByUserId(user);
   }
 
   /**

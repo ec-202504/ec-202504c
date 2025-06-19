@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,20 +31,26 @@ public class CartProductController {
   private final PcService pcService;
   private final BookService bookService;
 
+  // TODO: userIdをjwtから取得するようにする
   /**
    * カート内商品を取得するエンドポイント.
    *
    * @return カート内商品リスト
    */
   @GetMapping
-  public ResponseEntity<?> getCartProducts() {
-    List<CartProduct> cartProducts = cartProductService.getCartProducts();
+  public ResponseEntity<?> getCartProducts(@RequestParam Integer userId) {
+    User user =
+        userService
+            .findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ユーザーが見つかりません"));
+    List<CartProduct> cartProducts = cartProductService.getCartProducts(user);
 
     try {
       List<CartProductResponse> responses = cartProducts.stream().map(this::mapToResponse).toList();
+      System.out.println("responses: " + responses);
       return ResponseEntity.ok(responses);
     } catch (ResponseStatusException e) {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
   }
 
