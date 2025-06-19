@@ -25,6 +25,7 @@ import {
 
 import axios from "axios";
 import { useState } from "react";
+import { fetchAddress } from "../../api/fetchAddress";
 
 function UserRegisterPage() {
   const [prefecture, setPrefecture] = useState("");
@@ -37,7 +38,7 @@ function UserRegisterPage() {
       email: "",
       password: "",
       confirmPassword: "",
-      zipCode: "",
+      zipcode: "",
       address: "",
       telephone: "",
     },
@@ -51,10 +52,20 @@ function UserRegisterPage() {
     }
   };
 
-  const fetchAddress = async () => {
-    const isValid = await form.trigger("zipCode");
+  const handleFetchAddress = async () => {
+    const isValid = await form.trigger("zipcode");
     if (!isValid) {
       return;
+    }
+
+    const address = await fetchAddress(form.getValues("zipcode"));
+    if (address) {
+      const [prefecture, municipalities, rest] = address;
+      form.setValue("address", `${prefecture}${municipalities}${rest}`);
+      setPrefecture(prefecture);
+      setMunicipalities(municipalities);
+    } else {
+      alert("住所が見つかりませんでした");
     }
   };
 
@@ -125,13 +136,21 @@ function UserRegisterPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="zipCode"
+                  name="zipcode"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>郵便番号</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
+                      <div className="flex gap-2">
+                        <Input {...field} className="w-full" />
+                        <Button
+                          type="button"
+                          onClick={handleFetchAddress}
+                          variant="outline"
+                          className="whitespace-nowrap"
+                        >
+                          住所取得
+                        </Button>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}

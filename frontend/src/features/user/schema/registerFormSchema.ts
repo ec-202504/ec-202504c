@@ -10,7 +10,7 @@ export const registerFormSchema = z
       .email("@の形式で入力してください"),
     password: z.string().min(1, "パスワードは必須です"),
     confirmPassword: z.string().min(1, "確認用パスワードは必須です"),
-    zipCode: z
+    zipcode: z
       .string()
       .trim()
       .min(1, "郵便番号は必須です")
