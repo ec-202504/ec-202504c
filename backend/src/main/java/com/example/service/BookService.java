@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.model.Book;
 import com.example.repository.BookRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,5 +51,15 @@ public class BookService {
       return bookRepository.findAll(pageable);
     }
     return bookRepository.findByNameContainingIgnoreCase(keyword, pageable);
+  }
+
+  /**
+   * Bookの詳細情報を取得するメソッド.
+   *
+   * @param bookId BookのID
+   * @return Bookの詳細情報
+   */
+  public Optional<Book> findById(Integer bookId) {
+    return bookRepository.findById(bookId);
   }
 }
