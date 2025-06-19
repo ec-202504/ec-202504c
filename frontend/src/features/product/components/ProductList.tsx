@@ -1,4 +1,4 @@
-import Sidebar, { type FilterTerm } from "./Sidebar";
+import Sidebar from "./Sidebar";
 import type { Product } from "../types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import SearchForm from "./SearchForm";
@@ -12,6 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../../components/ui/pagination";
+import type { FilterTerm } from "../types/FilterTerm";
 
 type Props = {
   products: Product[];

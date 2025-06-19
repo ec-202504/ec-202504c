@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
 
@@ -51,13 +50,15 @@ const dummyReviewContents = [
 
 export default function PcDetail() {
   const pc = mockPcData;
-  const [quantity, setQuantity] = useState(1);
   const totalReviews = dummyReviews.reduce((sum, r) => sum + r.count, 0);
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
 
-  const handleClick = async (qty: number) => {
-    setQuantity(qty);
+  const calcPercentage = (count: number, total: number): number => {
+    return (count / total) * 100;
+  };
+
+  const handleClick = async (quantity: number) => {
     console.log(quantity);
   };
 
@@ -84,11 +85,13 @@ export default function PcDetail() {
                   <div
                     className="bg-orange-400 h-2 rounded"
                     style={{
-                      width: `${(r.count / totalReviews) * 100}%`,
+                      width: `${calcPercentage(r.count, totalReviews)}%`,
                     }}
                   />
                 </div>
-                <span>{Math.round((r.count / totalReviews) * 100)}%</span>
+                <span>
+                  {Math.round(calcPercentage(r.count, totalReviews))}%
+                </span>
               </div>
             ))}
           </div>
