@@ -19,7 +19,7 @@ export default function ProductCard({ product }: Props) {
       params={{ itemId: product.id }}
     >
       <Card
-        className="border rounded p-4 flex flex-col items-center"
+        className="h-64 border rounded p-4 flex flex-col items-center"
         key={product.id}
       >
         <div className="w-24 h-24 bg-gray-200 mb-2" />

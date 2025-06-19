@@ -12,79 +12,17 @@ import LoadingOverlay from "./components/LoadingOverlay";
 
 export default function ProductListPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
   const [pcs, setPcs] = useState<Product[]>([]);
   const [techBooks, setTechBooks] = useState<Product[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>("pcs");
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const PAGE_SIZE = 12;
 
   const selectedOption = (option: string) => {
     console.log(option);
   };
-
-  // const mockPcs: Product[] = [
-  //     {
-  //         id: "1",
-  //         name: "デスクトップPC Alpha",
-  //         price: 98000,
-  //         image: "https://via.placeholder.com/150?text=Alpha+PC",
-  //     },
-  //     {
-  //         id: "2",
-  //         name: "ゲーミングノート Zeta",
-  //         price: 148000,
-  //         image: "https://via.placeholder.com/150?text=Zeta+Gaming",
-  //     },
-  //     {
-  //         id: "3",
-  //         name: "クリエイター向けPC Creator-X",
-  //         price: 198000,
-  //         image: "https://via.placeholder.com/150?text=Creator+X",
-  //     },
-  //     {
-  //         id: "4",
-  //         name: "ビジネスノート BizLite",
-  //         price: 86000,
-  //         image: "https://via.placeholder.com/150?text=BizLite",
-  //     },
-  //     {
-  //         id: "5",
-  //         name: "ミニPC CubeOne",
-  //         price: 56000,
-  //         image: "https://via.placeholder.com/150?text=CubeOne",
-  //     },
-  // ];
-
-  // const mockTechBooks: Product[] = [
-  //     {
-  //         id: "101",
-  //         name: "React完全ガイド",
-  //         price: 3960,
-  //         image: "https://via.placeholder.com/150?text=React+Guide",
-  //     },
-  //     {
-  //         id: "102",
-  //         name: "実践TypeScript",
-  //         price: 3520,
-  //         image: "https://via.placeholder.com/150?text=TypeScript",
-  //     },
-  //     {
-  //         id: "103",
-  //         name: "モダンJavaScriptの教科書",
-  //         price: 3080,
-  //         image: "https://via.placeholder.com/150?text=JavaScript",
-  //     },
-  //     {
-  //         id: "104",
-  //         name: "Spring Boot入門",
-  //         price: 4290,
-  //         image: "https://via.placeholder.com/150?text=Spring+Boot",
-  //     },
-  //     {
-  //         id: "105",
-  //         name: "ドメイン駆動設計入門",
-  //         price: 4950,
-  //         image: "https://via.placeholder.com/150?text=DDD+入門",
-  //     },
-  // ];
 
   const filterTerms: FilterTerm[] = [
     {
@@ -118,14 +56,19 @@ export default function ProductListPage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // await new Promise((resolve) => setTimeout(resolve, 2000));
-        const response = await axiosInstance.get(`/products/${selectedTab}`);
-        console.log("API Response:", response.data);
+        const response = await axiosInstance.get(`/${selectedTab}`, {
+          params: {
+            limit: page,
+            offset: PAGE_SIZE,
+            keyword: query,
+          },
+        });
         if (selectedTab === "pcs") {
           setPcs(response.data?.content);
         } else {
           setTechBooks(response.data?.content);
         }
+        setTotalPages(response.data?.totalPages - 1 || 1);
       } catch (error) {
         console.error("APIリクエストに失敗しました:", error);
       } finally {
@@ -134,14 +77,15 @@ export default function ProductListPage() {
     };
 
     fetchData();
-  }, [selectedTab]);
+  }, [selectedTab, page, query]);
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
     query: string,
   ) => {
     e.preventDefault();
-    console.log(query);
+    setQuery(query);
+    setPage(1);
   };
 
   return (
@@ -151,7 +95,9 @@ export default function ProductListPage() {
       ) : (
         <Tabs
           value={selectedTab}
-          onValueChange={setSelectedTab}
+          onValueChange={(value) => {
+            setSelectedTab(value);
+          }}
           className="mb-4"
         >
           <TabsList>
@@ -164,6 +110,9 @@ export default function ProductListPage() {
               filterTerms={filterTerms}
               selectedOption={selectedOption}
               handleSubmit={handleSubmit}
+              currentPage={page}
+              onPageChange={setPage}
+              totalPages={totalPages}
             />
           </TabsContent>
           <TabsContent value="books">
@@ -172,6 +121,9 @@ export default function ProductListPage() {
               filterTerms={filterTerms}
               selectedOption={selectedOption}
               handleSubmit={handleSubmit}
+              currentPage={page}
+              onPageChange={setPage}
+              totalPages={totalPages}
             />
           </TabsContent>
         </Tabs>
