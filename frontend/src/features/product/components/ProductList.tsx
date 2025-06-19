@@ -12,7 +12,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../../components/ui/pagination";
-import type { FilterTerm } from "../types/FilterTerm";
 
 type Props = {
   products: Product[];
