@@ -104,4 +104,16 @@ public class BookController {
             })
         .orElse(ResponseEntity.notFound().build());
   }
+  
+  /**
+   * BookをBooksテーブルから削除するエンドポイント.
+   *
+   * @param bookId BookのID
+   * @return 削除されたBook情報
+   */
+  @DeleteMapping("/{bookId}")
+  public ResponseEntity<?> removeBook(@PathVariable Integer bookId) {
+    bookService.removeBook(bookId);
+    return ResponseEntity.noContent().build();
+  }
 }

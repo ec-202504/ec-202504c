@@ -72,4 +72,13 @@ public class BookService {
   public Book registerBook(Book book) {
     return bookRepository.save(book);
   }
+
+  /**
+   * Book削除を行うメソッド.
+   *
+   * @param bookId 削除するPCのID
+   */
+  public void removeBook(Integer bookId) {
+    bookRepository.deleteById(bookId);
+  }
 }
