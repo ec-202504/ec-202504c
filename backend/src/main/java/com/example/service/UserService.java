@@ -17,6 +17,7 @@ public class UserService {
 
   /**
    * ユーザーをIDで検索する. (異常系:404を返す)
+
    *
    * @param id ユーザーID
    * @return 該当するユーザー情報

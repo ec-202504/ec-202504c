@@ -1,7 +1,7 @@
 import { Label } from "../../../components/ui/label";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { Separator } from "../../../components/ui/separator";
-import type { FilterTerm } from "../types/FilterTerm";
+import type { FilterTerm } from "../types";
 
 type SidebarProps = {
   filterTerms: FilterTerm[];
