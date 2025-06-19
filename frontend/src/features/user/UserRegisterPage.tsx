@@ -7,7 +7,6 @@ import { Button } from "../../components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,19 +16,20 @@ import { Input } from "../../components/ui/input";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
 
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { useState } from "react";
 import { fetchAddress } from "../../api/fetchAddress";
+import type { RegisterRequest } from "../../types/registerRequest";
+import { useNavigate } from "@tanstack/react-router";
 
 function UserRegisterPage() {
   const [prefecture, setPrefecture] = useState("");
   const [municipalities, setMunicipalities] = useState("");
+  const navigate = useNavigate();
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerFormSchema),
@@ -45,8 +45,20 @@ function UserRegisterPage() {
   });
 
   const onSubmit = async (data: RegisterForm) => {
+    const requestBody: RegisterRequest = {
+      ...data,
+      zipcode: data.zipcode.replace("-", ""),
+      telephone: data.telephone.replace("-", ""),
+      prefecture: prefecture,
+      municipalities: municipalities,
+    };
     try {
-      await axios.post("http://localhost:8080/user/register", data);
+      await axios.post<
+        unknown,
+        AxiosResponse<unknown, RegisterRequest>,
+        RegisterRequest
+      >("http://localhost:8080/user/register", requestBody);
+      navigate({ to: "/user/login", replace: true });
     } catch (error) {
       console.error("登録に失敗しました", error);
     }
