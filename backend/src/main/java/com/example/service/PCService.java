@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.model.Pc;
 import com.example.repository.PcRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +51,16 @@ public class PCService {
       return pcRepository.findAll(pageable);
     }
     return pcRepository.findByNameContainingIgnoreCase(keyword, pageable);
+  }
+
+  /**
+   * PCの詳細情報を取得するメソッド
+   *
+   * @param pcId PCのID
+   * @return PCの詳細情報
+   */
+  public Optional<Pc> findById(Integer pcId) {
+    return pcRepository.findById(pcId);
   }
 
   /**
