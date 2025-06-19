@@ -41,26 +41,4 @@ public class UserService {
   public User register(User user) {
     return userRepository.save(user);
   }
-
-  /**
-   * メールアドレスでユーザーを取得する. (異常系:404を返す)
-   *
-   * @param email メールアドレス
-   * @return ユーザー
-   */
-  public User findByEmail(String email) {
-    return userRepository
-        .findByEmail(email)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ユーザーが見つかりません"));
-  }
-
-  /**
-   * ユーザーを登録する.
-   *
-   * @param user 登録情報
-   * @return ユーザー(自動採番されたユーザーIDを保持)
-   */
-  public User register(User user) {
-    return userRepository.save(user);
-  }
 }

@@ -1,10 +1,10 @@
 package com.example.controller;
 
 import com.example.dto.response.BookDetailResponse;
-import com.example.dto.response.PCDetailResponse;
+import com.example.dto.response.PcDetailResponse;
 import com.example.dto.response.ProductsResponse;
 import com.example.service.BookService;
-import com.example.service.PCService;
+import com.example.service.PcService;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
-  private final PCService pcService;
+  private final PcService pcService;
   private final BookService bookService;
 
   @GetMapping
@@ -38,7 +38,7 @@ public class ProductController {
                   productsResponse.setName(pc.getName());
                   productsResponse.setPrice(pc.getPrice());
 
-                  var pcDetailResponse = new PCDetailResponse();
+                  var pcDetailResponse = new PcDetailResponse();
                   pcDetailResponse.setMemory(pc.getMemory());
                   pcDetailResponse.setStorage(pc.getStorage());
                   pcDetailResponse.setDeviceSize(pc.getDeviceSize().doubleValue());
