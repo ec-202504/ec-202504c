@@ -1,10 +1,22 @@
 import { useState } from "react";
-import { Button } from "../../components/ui/button";
-import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
-import { Label } from "../../components/ui/label";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { useNavigate } from "@tanstack/react-router";
 import { formatToLocalDate } from "../../utils/formatToLocalDate";
+import { orderSchema, type OrderFormData } from "./schema/orderSchema";
+
+import { Button } from "../../components/ui/button";
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { Input } from "../../components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../components/ui/form";
 
 // TODO: ログインしているUserデータを取得する
 const mockUser = {
@@ -47,24 +59,41 @@ type OrderRequest = {
 };
 
 function OrderPage() {
-  // TODO: カートの合計金額を取得する
-  const [totalPrice, setTotalPrice] = useState(156000);
-  const [paymentMethod, setPaymentMethod] = useState("0"); // "0":現金, "1":クレジットカード
-
+  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
-  const handleOrder = async () => {
-    const orderRequest: OrderRequest = {
-      totalPrice,
+  const orderForm = useForm<OrderFormData>({
+    resolver: zodResolver(orderSchema),
+    defaultValues: {
       destinationName: mockUser.destinationName,
       destinationEmail: mockUser.destinationEmail,
-      destinationZipcode: mockUser.destinationZipcode.replace("-", ""),
+      destinationZipcode: mockUser.destinationZipcode,
       destinationPrefecture: mockUser.destinationPrefecture,
       destinationMunicipalities: mockUser.destinationMunicipalities,
       destinationAddress: mockUser.destinationAddress,
       destinationTelephone: mockUser.destinationTelephone,
+      paymentMethod: "0",
+    },
+  });
+
+  const { setValue, getValues } = orderForm;
+
+  // 合計金額を計算する関数
+  const getTotalPrice = () =>
+    mockCartProducts.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const onSubmit = async (data: OrderFormData) => {
+    const orderRequest: OrderRequest = {
+      totalPrice: getTotalPrice(),
+      destinationName: data.destinationName,
+      destinationEmail: data.destinationEmail,
+      destinationZipcode: data.destinationZipcode.replace("-", ""),
+      destinationPrefecture: data.destinationPrefecture,
+      destinationMunicipalities: data.destinationMunicipalities,
+      destinationAddress: data.destinationAddress,
+      destinationTelephone: data.destinationTelephone,
       deliveryDateTime: formatToLocalDate(new Date()),
-      paymentMethod: Number(paymentMethod),
+      paymentMethod: Number(data.paymentMethod),
       userId: 1, // TODO: ユーザーIDを取得する
     };
 
@@ -76,6 +105,12 @@ function OrderPage() {
     }
   };
 
+  const searchAddress = () => {
+    // 外部APIで取得する想定。ここではダミー値をセット
+    setValue("destinationPrefecture", "東京都");
+    setValue("destinationMunicipalities", "千代田区");
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">注文内容確認</h1>
@@ -83,44 +118,229 @@ function OrderPage() {
       <div className="flex justify-end items-center gap-4 mb-8">
         <div className="text-lg font-semibold">
           小計：
-          <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
+          <span className="text-primary">
+            ¥{getTotalPrice().toLocaleString()}
+          </span>
         </div>
 
-        <Button onClick={handleOrder}>注文を確定する</Button>
+        <Button onClick={orderForm.handleSubmit(onSubmit)}>
+          注文を確定する
+        </Button>
       </div>
 
       <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-2">お届け先情報</h2>
-        <div className="bg-gray-50 rounded p-4 text-sm">
-          <div>氏名：{mockUser.destinationName}</div>
-          <div>メール：{mockUser.destinationEmail}</div>
-          <div>郵便番号：{mockUser.destinationZipcode}</div>
-          <div>
-            住所：{mockUser.destinationPrefecture}
-            {mockUser.destinationMunicipalities}
-            {mockUser.destinationAddress}
-          </div>
-          <div>電話番号：{mockUser.destinationTelephone}</div>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-lg font-semibold">お届け先情報</h2>
+          {!isEditing && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsEditing(true)}
+            >
+              変更
+            </Button>
+          )}
         </div>
+
+        {isEditing ? (
+          <Form {...orderForm}>
+            <form
+              className="p-5 space-y-4 text-sm bg-gray-50 rounded-lg"
+              onSubmit={orderForm.handleSubmit(() => setIsEditing(false))}
+            >
+              <FormField
+                control={orderForm.control}
+                name="destinationName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>氏名：</FormLabel>
+
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>メール：</FormLabel>
+
+                    <FormControl>
+                      <Input type="email" {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationZipcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>郵便番号：</FormLabel>
+                    <div className="flex gap-2">
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={searchAddress}
+                      >
+                        住所検索
+                      </Button>
+                    </div>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationPrefecture"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>都道府県：</FormLabel>
+
+                    <FormControl>
+                      <Input
+                        {...field}
+                        readOnly
+                        tabIndex={-1}
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationMunicipalities"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>市区町村：</FormLabel>
+
+                    <FormControl>
+                      <Input
+                        {...field}
+                        readOnly
+                        tabIndex={-1}
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationAddress"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>番地等：</FormLabel>
+
+                    <FormControl>
+                      <Input placeholder="番地等" {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={orderForm.control}
+                name="destinationTelephone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>電話番号：</FormLabel>
+
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex gap-2 mt-2">
+                <Button type="submit">保存</Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsEditing(false);
+                    orderForm.reset();
+                  }}
+                >
+                  キャンセル
+                </Button>
+              </div>
+            </form>
+          </Form>
+        ) : (
+          <div className="grid gap-1 p-5 bg-gray-50 text-sm rounded-lg">
+            <div>氏名：{getValues("destinationName")}</div>
+            <div>メール：{getValues("destinationEmail")}</div>
+            <div>郵便番号：{getValues("destinationZipcode")}</div>
+            <div>
+              住所：{getValues("destinationPrefecture")}
+              {getValues("destinationMunicipalities")}
+              {getValues("destinationAddress")}
+            </div>
+            <div>電話番号：{getValues("destinationTelephone")}</div>
+          </div>
+        )}
       </section>
 
       <section className="mb-8">
         <h2 className="text-lg font-semibold mb-2">決済方法</h2>
-        <RadioGroup
-          value={paymentMethod}
-          onValueChange={setPaymentMethod}
-          className="flex gap-6"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="0" id="cash" />
-            <Label htmlFor="cash">現金</Label>
-          </div>
+        <Form {...orderForm}>
+          <FormField
+            control={orderForm.control}
+            name="paymentMethod"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <RadioGroup
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="0" id="cash" />
+                      <label htmlFor="cash">現金</label>
+                    </div>
 
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="1" id="credit" />
-            <Label htmlFor="credit">クレジットカード</Label>
-          </div>
-        </RadioGroup>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="1" id="credit" />
+                      <label htmlFor="credit">クレジットカード</label>
+                    </div>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </Form>
       </section>
 
       <section>
