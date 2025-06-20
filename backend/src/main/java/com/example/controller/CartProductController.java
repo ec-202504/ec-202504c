@@ -102,7 +102,6 @@ public class CartProductController {
    */
   @DeleteMapping("/{cartProductId}")
   public ResponseEntity<?> deleteCartProduct(@PathVariable Integer cartProductId) {
-    System.out.println("Deleting cart product with ID: " + cartProductId);
     cartProductService.deleteCartProduct(cartProductId);
     return ResponseEntity.noContent().build();
   }
