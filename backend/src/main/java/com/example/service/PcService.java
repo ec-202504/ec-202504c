@@ -66,6 +66,16 @@ public class PcService {
   }
 
   /**
+   * CPUのIDと一致するPcのリストを取得するメソッド.
+   *
+   * @param cpuId CPUのID
+   * @return CPUのIDと一致するPCのリスト
+   */
+  public List<Pc> findByCpuId(Integer cpuId) {
+    return pcRepository.findByCpu_Id(cpuId);
+  }
+
+  /**
    * PC登録を行うメソッド.
    *
    * @param pc 登録するPCの詳細情報
