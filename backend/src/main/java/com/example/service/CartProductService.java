@@ -50,4 +50,13 @@ public class CartProductService {
     cartProduct.setQuantity(quantity);
     cartProductRepository.save(cartProduct);
   }
+
+  /**
+   * カート内商品を削除するメソッド.
+   *
+   * @param cartProductId カート商品ID
+   */
+  public void deleteCartProduct(Integer cartProductId) {
+    cartProductRepository.deleteById(cartProductId);
+  }
 }

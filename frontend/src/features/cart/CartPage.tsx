@@ -62,11 +62,19 @@ function CartPage() {
 
       fetchCartProducts();
     },
-    300,
+    300, // 300ms
   );
 
-  const handleDelete = (index: number) => {
-    setCart((prev) => prev.filter((_, i) => i !== index));
+  const handleDelete = async (cartProductId: number) => {
+    console.log("handleDelete", cartProductId);
+
+    try {
+      await axiosInstance.delete(`/carts/${cartProductId}`);
+    } catch (e) {
+      console.error("商品の削除に失敗しました:", e);
+    }
+
+    fetchCartProducts();
   };
 
   const getTotalPrice = () =>
@@ -82,7 +90,7 @@ function CartPage() {
             カートに商品がありません
           </div>
         ) : (
-          cart.map((item, index) => (
+          cart.map((item) => (
             <Card
               key={item.cartProductId}
               className="border-none shadow-none bg-white/80"
@@ -149,7 +157,7 @@ function CartPage() {
                     size="icon"
                     variant="ghost"
                     className="text-destructive px-2 py-0 h-7"
-                    onClick={() => handleDelete(index)}
+                    onClick={() => handleDelete(item.cartProductId)}
                     aria-label="削除"
                   >
                     <Trash2 className="w-4 h-4" />

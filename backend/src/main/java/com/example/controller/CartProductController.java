@@ -14,8 +14,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -90,6 +92,19 @@ public class CartProductController {
   public ResponseEntity<?> updateCartQuantity(@RequestBody UpdateCartQuantityRequest request) {
     cartProductService.updateCartProductQuantity(request.getCartProductId(), request.getQuantity());
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * カート内商品を削除するエンドポイント.
+   *
+   * @param cartProductId 削除するカート内商品ID
+   * @return 成功レスポンス 404 No Content
+   */
+  @DeleteMapping("/{cartProductId}")
+  public ResponseEntity<?> deleteCartProduct(@PathVariable Integer cartProductId) {
+    System.out.println("Deleting cart product with ID: " + cartProductId);
+    cartProductService.deleteCartProduct(cartProductId);
+    return ResponseEntity.noContent().build();
   }
 
   /**

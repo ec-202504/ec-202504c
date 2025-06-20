@@ -17,7 +17,7 @@ front:
 
 # テストを除いてビルド
 build:
-	cd backend && ./gradlew build -x test -x checkstyleMain -x spotlessCheck
+	cd backend && ./gradlew build -x test -x checkstyleMain -x checkstyleTest -x spotlessCheck
 
 # imageをビルドしてコンテナを起動
 up:
