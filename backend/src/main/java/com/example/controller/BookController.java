@@ -1,15 +1,24 @@
 package com.example.controller;
 
 import com.example.dto.request.AddBookRequest;
+import com.example.model.Book;
+import com.example.model.Language;
+import com.example.model.Purpose;
 import com.example.dto.request.UpdateBookRequest;
-import com.example.model.*;
 import com.example.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /** Bookの操作を行うコントローラクラス. */
 @RestController
@@ -42,6 +51,20 @@ public class BookController {
     Pageable pageable = PageRequest.of(page, size, sorting);
 
     return ResponseEntity.ok(bookService.findBooksWithPageable(keyword, pageable));
+  }
+
+  /**
+   * Bookの詳細情報を取得するエンドポイント.
+   *
+   * @param bookId BookのID
+   * @return Bookの詳細情報
+   */
+  @GetMapping("/{bookId}")
+  public ResponseEntity<?> getDetailPc(@PathVariable Integer bookId) {
+    return bookService
+        .findById(bookId)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   /**
