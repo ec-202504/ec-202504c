@@ -73,7 +73,7 @@ public class BookController {
      * @param purposeId 目的ID
      * @return 目的IDと一致する書籍一覧
      */
-  @GetMapping("/purpose/{purposeId}")
+  @GetMapping("/purposes/{purposeId}")
   public ResponseEntity<?> getBooksByPurpose(@PathVariable Integer purposeId) {
       List<Book> bookListByPurposeId = bookService.findByPurposeId(purposeId);
       return ResponseEntity.ok(bookListByPurposeId);
