@@ -11,8 +11,8 @@ export const Route = createRootRoute({
     const currentPath = state.location.pathname;
 
     const showHeader =
-      currentPath !== "/login" &&
-      currentPath !== "/register" &&
+      currentPath !== "/user/login" &&
+      currentPath !== "/user/register" &&
       currentPath !== "/admin/login" &&
       currentPath !== "/admin/register";
 
