@@ -21,7 +21,7 @@ function Header() {
     checkLoginStatus();
   }, []);
 
-  const logout = async () => {
+  const handleLogout = async () => {
     try {
       await axiosInstance.post("/user/logout");
       setIsLogin(false);
@@ -55,7 +55,7 @@ function Header() {
         </div>
 
         {isLogin ? (
-          <Button variant="outline" onClick={logout}>
+          <Button variant="outline" onClick={handleLogout}>
             ログアウト
           </Button>
         ) : (
