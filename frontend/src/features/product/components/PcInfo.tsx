@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
-import type { Pc } from "../types/Pc";
+import type { Pc } from "../types";
 
 type PcInfoProps = {
   pc: Pc;
