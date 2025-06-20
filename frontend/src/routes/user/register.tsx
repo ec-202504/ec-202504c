@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import RegisterPage from "../../features/user/UserRegisterPage";
+import UserRegisterPage from "../../features/user/UserRegisterPage";
 
 export const Route = createFileRoute("/user/register")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <RegisterPage />;
+  return <UserRegisterPage />;
 }
