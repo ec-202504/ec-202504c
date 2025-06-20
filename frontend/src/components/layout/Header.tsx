@@ -1,10 +1,35 @@
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { axiosInstance } from "../../lib/axiosInstance";
 
 function Header() {
   const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        await axiosInstance.get("/user/me");
+        setIsLogin(true);
+      } catch (error) {
+        console.error("ログイン状態の確認に失敗しました", error);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/user/logout");
+      setIsLogin(false);
+      navigate({ to: "/user/login", replace: true });
+    } catch (error) {
+      console.error("ログアウトに失敗しました", error);
+    }
+  };
 
   return (
     <header className="w-full px-4 py-3 flex items-center bg-white shadow">
@@ -30,15 +55,17 @@ function Header() {
         </div>
 
         {isLogin ? (
-          <Button variant="outline">ログアウト</Button>
+          <Button variant="outline" onClick={handleLogout}>
+            ログアウト
+          </Button>
         ) : (
           <>
-            <Link to="/login">
+            <Link to="/user/login">
               <Button variant="outline" className="mr-0.5">
                 ログイン
               </Button>
             </Link>
-            <Link to="/register">
+            <Link to="/user/register">
               <Button variant="default">新規登録</Button>
             </Link>
           </>
