@@ -5,10 +5,12 @@ import com.example.repository.CartProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /** カート内商品に関するサービスクラス. */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartProductService {
   private final CartProductRepository cartProductRepository;
 
