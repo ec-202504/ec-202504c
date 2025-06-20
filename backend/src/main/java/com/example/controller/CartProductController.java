@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,14 +32,15 @@ public class CartProductController {
   private final PcService pcService;
   private final BookService bookService;
 
-  // TODO: userIdをjwtから取得するようにする
   /**
    * カート内商品を取得するエンドポイント.
    *
    * @return カート内商品リスト
    */
   @GetMapping
-  public ResponseEntity<?> getCartProducts(@RequestParam Integer userId) {
+  public ResponseEntity<?> getCartProducts() {
+    // TODO: userIdをjwtから取得するようにする
+    Integer userId = 1;
     User user =
         userService
             .findById(userId)
@@ -75,6 +75,7 @@ public class CartProductController {
     cartProduct.setSessionId(request.getSessionId());
     cartProduct.setProductCategory(request.getProductCategory());
     cartProduct.setProductId(request.getProductId());
+    cartProduct.setUserId(user);
 
     cartProductService.addCartProduct(cartProduct);
     return ResponseEntity.ok().build();

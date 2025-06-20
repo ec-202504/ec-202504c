@@ -24,13 +24,8 @@ function CartPage() {
   const navigate = useNavigate();
 
   const fetchCartProducts = useCallback(async () => {
-    // TODO: ログインしたユーザーIDを取得する
-    const userId = 1;
-
     try {
-      const response = await axiosInstance.get<CartProduct[]>(
-        `/carts?userId=${userId}`,
-      );
+      const response = await axiosInstance.get<CartProduct[]>("/carts");
       setCart(response.data);
     } catch (err) {
       console.error("カート商品の取得に失敗しました:", err);
