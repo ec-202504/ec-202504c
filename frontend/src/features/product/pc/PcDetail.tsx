@@ -1,9 +1,9 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
-import type { Pc, RawPc } from "../types";
+import type { Pc } from "../types";
 import LoadingOverlay from "../components/LoadingOverlay";
 
 const dummyReviews = [
@@ -53,29 +53,12 @@ export default function PcDetail() {
     console.log(quantity);
   };
 
-  const convertToPc = useCallback((raw: RawPc): Pc => {
-    return {
-      id: raw.id,
-      name: raw.name,
-      price: raw.price,
-      memory: raw.memory,
-      storage: raw.storage,
-      device_size: raw.deviceSize,
-      device_type: raw.deviceType,
-      os: raw.os.name,
-      cpu: raw.cpu.name,
-      gpu: raw.gpu.name,
-      purpose: raw.purpose.name,
-      imageUrl: "", // 初期値として空文字
-    };
-  }, []);
-
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.get(`/pcs/${itemId}`);
-        setPc(convertToPc(response.data));
+        setPc(response.data);
       } catch (error) {
         console.error("APIリクエストに失敗しました:", error);
       } finally {
@@ -84,7 +67,7 @@ export default function PcDetail() {
     };
 
     fetchData();
-  }, [itemId, convertToPc]);
+  }, [itemId]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-4">

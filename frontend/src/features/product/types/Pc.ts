@@ -1,14 +1,14 @@
 export type Pc = {
-  id: number;
+  pcId: number;
   name: string;
+  imageUrl: string;
   price: number;
   memory: number;
   storage: number;
-  device_size: number;
-  device_type: number;
+  deviceSize: number;
+  deviceType: number;
   os: string;
   cpu: string;
   gpu: string;
   purpose: string;
-  imageUrl: string;
 };
