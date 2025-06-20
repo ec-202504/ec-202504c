@@ -4,6 +4,7 @@ import { axiosInstance } from "../../../lib/axiosInstance";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
 import type { Pc, RawPc } from "../types";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const dummyReviews = [
   { rating: 5, count: 340 },
@@ -85,58 +86,64 @@ export default function PcDetail() {
     fetchData();
   }, [itemId, convertToPc]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!pc) {
-    return <div>PC not found</div>;
-  }
-
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-8">
-      <PcInfo
-        pc={pc}
-        handleClick={handleClick}
-        average={average}
-        totalReviews={totalReviews}
-      />
-      <div className="flex gap-8 w-full max-w-5xl mb-8">
-        <div>
-          <h2 className="text-lg font-bold mb-2">カスタマーレビュー</h2>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-2xl font-bold">{average.toFixed(1)}</span>
-            <span>5つのうち</span>
-          </div>
-          <div className="mb-4">
-            {dummyReviews.map((r) => (
-              <div key={r.rating} className="flex items-center gap-2">
-                <span className="w-[30px]">星{r.rating}</span>
-                <div className="bg-gray-200 h-2 w-40 rounded">
-                  <div
-                    className="bg-orange-400 h-2 rounded"
-                    style={{
-                      width: `${calcPercentage(r.count, totalReviews)}%`,
-                    }}
-                  />
+      {isLoading ? (
+        <LoadingOverlay />
+      ) : (
+        <>
+          {pc ? (
+            <>
+              <PcInfo
+                pc={pc}
+                handleClick={handleClick}
+                average={average}
+                totalReviews={totalReviews}
+              />
+              <div className="flex gap-8 w-full max-w-5xl mb-8">
+                <div>
+                  <h2 className="text-lg font-bold mb-2">カスタマーレビュー</h2>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl font-bold">
+                      {average.toFixed(1)}
+                    </span>
+                    <span>5つのうち</span>
+                  </div>
+                  <div className="mb-4">
+                    {dummyReviews.map((r) => (
+                      <div key={r.rating} className="flex items-center gap-2">
+                        <span className="w-[30px]">星{r.rating}</span>
+                        <div className="bg-gray-200 h-2 w-40 rounded">
+                          <div
+                            className="bg-orange-400 h-2 rounded"
+                            style={{
+                              width: `${calcPercentage(r.count, totalReviews)}%`,
+                            }}
+                          />
+                        </div>
+                        <span>{calcPercentage(r.count, totalReviews)}%</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <span>{calcPercentage(r.count, totalReviews)}%</span>
+                <div className="mb-2 w-full">
+                  <div className="font-bold mb-2">レビュー内容</div>
+                  {dummyReviewContents.map((review) => (
+                    <ReviewItem
+                      key={review.id}
+                      userName={review.user}
+                      content={review.content}
+                      rating={review.rating}
+                    />
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="mb-2 w-full">
-          <div className="font-bold mb-2">レビュー内容</div>
-          {dummyReviewContents.map((review) => (
-            <ReviewItem
-              key={review.id}
-              userName={review.user}
-              content={review.content}
-              rating={review.rating}
-            />
-          ))}
-        </div>
-      </div>
+            </>
+          ) : (
+            <div>PC not found</div>
+          )}
+        </>
+      )}
     </div>
   );
 }
