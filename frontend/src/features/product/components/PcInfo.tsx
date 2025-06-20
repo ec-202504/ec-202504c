@@ -10,22 +10,7 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
-
-type Pc = {
-  id: number;
-  name: string;
-  price: number;
-  memory: number;
-  storage: number;
-  device_size: number;
-  device_type: number;
-  os: string;
-  cpu: string;
-  gpu: string;
-  purpose: string;
-  imageUrl: string;
-  warranty: string;
-};
+import type { Pc } from "../types/Pc";
 
 type PcInfoProps = {
   pc: Pc;
