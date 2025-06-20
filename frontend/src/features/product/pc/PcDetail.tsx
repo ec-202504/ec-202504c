@@ -1,21 +1,10 @@
+import { useParams } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
+import { axiosInstance } from "../../../lib/axiosInstance";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
-
-const mockPcData = {
-  id: 1,
-  name: "GALLERIA XA7C-R47",
-  price: 217000,
-  memory: 16,
-  storage: 1000,
-  device_size: 15.6,
-  device_type: 0, // 0=デスクトップ
-  os: "Windows 11 Home",
-  cpu: "Core Ultra 7 265F",
-  gpu: "GeForce RTX 4060 8GB",
-  purpose: "ゲーミング",
-  imageUrl: "https://example.com/images/galleria-xa7c.jpg",
-  warranty: "1年",
-};
+import type { Pc, RawPc } from "../types";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const dummyReviews = [
   { rating: 5, count: 340 },
@@ -49,7 +38,9 @@ const dummyReviewContents = [
 ];
 
 export default function PcDetail() {
-  const pc = mockPcData;
+  const [pc, setPc] = useState<Pc>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { itemId } = useParams({ from: "/product/pc/$itemId/" });
   const totalReviews = dummyReviews.reduce((sum, r) => sum + r.count, 0);
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
@@ -62,50 +53,97 @@ export default function PcDetail() {
     console.log(quantity);
   };
 
+  const convertToPc = useCallback((raw: RawPc): Pc => {
+    return {
+      id: raw.id,
+      name: raw.name,
+      price: raw.price,
+      memory: raw.memory,
+      storage: raw.storage,
+      device_size: raw.deviceSize,
+      device_type: raw.deviceType,
+      os: raw.os.name,
+      cpu: raw.cpu.name,
+      gpu: raw.gpu.name,
+      purpose: raw.purpose.name,
+      imageUrl: "", // 初期値として空文字
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get(`/pcs/${itemId}`);
+        setPc(convertToPc(response.data));
+      } catch (error) {
+        console.error("APIリクエストに失敗しました:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [itemId, convertToPc]);
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-8">
-      <PcInfo
-        pc={pc}
-        handleClick={handleClick}
-        average={average}
-        totalReviews={totalReviews}
-      />
-      <div className="flex gap-8 w-full max-w-5xl mb-8">
-        <div>
-          <h2 className="text-lg font-bold mb-2">カスタマーレビュー</h2>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-2xl font-bold">{average.toFixed(1)}</span>
-            <span>5つのうち</span>
-          </div>
-          <div className="mb-4">
-            {dummyReviews.map((r) => (
-              <div key={r.rating} className="flex items-center gap-2">
-                <span className="w-[30px]">星{r.rating}</span>
-                <div className="bg-gray-200 h-2 w-40 rounded">
-                  <div
-                    className="bg-orange-400 h-2 rounded"
-                    style={{
-                      width: `${calcPercentage(r.count, totalReviews)}%`,
-                    }}
-                  />
+      {isLoading ? (
+        <LoadingOverlay />
+      ) : (
+        <>
+          {pc ? (
+            <>
+              <PcInfo
+                pc={pc}
+                handleClick={handleClick}
+                average={average}
+                totalReviews={totalReviews}
+              />
+              <div className="flex gap-8 w-full max-w-5xl mb-8">
+                <div>
+                  <h2 className="text-lg font-bold mb-2">カスタマーレビュー</h2>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl font-bold">
+                      {average.toFixed(1)}
+                    </span>
+                    <span>5つのうち</span>
+                  </div>
+                  <div className="mb-4">
+                    {dummyReviews.map((r) => (
+                      <div key={r.rating} className="flex items-center gap-2">
+                        <span className="w-[30px]">星{r.rating}</span>
+                        <div className="bg-gray-200 h-2 w-40 rounded">
+                          <div
+                            className="bg-orange-400 h-2 rounded"
+                            style={{
+                              width: `${calcPercentage(r.count, totalReviews)}%`,
+                            }}
+                          />
+                        </div>
+                        <span>{calcPercentage(r.count, totalReviews)}%</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <span>{calcPercentage(r.count, totalReviews)}%</span>
+                <div className="mb-2 w-full">
+                  <div className="font-bold mb-2">レビュー内容</div>
+                  {dummyReviewContents.map((review) => (
+                    <ReviewItem
+                      key={review.id}
+                      userName={review.user}
+                      content={review.content}
+                      rating={review.rating}
+                    />
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="mb-2 w-full">
-          <div className="font-bold mb-2">レビュー内容</div>
-          {dummyReviewContents.map((review) => (
-            <ReviewItem
-              key={review.id}
-              userName={review.user}
-              content={review.content}
-              rating={review.rating}
-            />
-          ))}
-        </div>
-      </div>
+            </>
+          ) : (
+            <div>PC not found</div>
+          )}
+        </>
+      )}
     </div>
   );
 }
