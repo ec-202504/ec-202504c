@@ -1,40 +1,82 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { Trash2, Plus, Minus } from "lucide-react";
+import { axiosInstance } from "../../lib/axiosInstance";
+import { useDebouncedCallback } from "use-debounce";
+import { toast } from "sonner";
 
-const mockCartProducts = [
-  {
-    name: "ゲーミングPC",
-    quantity: 1,
-    price: 150000,
-    imageUrl: "https://placehold.jp/150x100.png?text=PC",
-  },
-  {
-    name: "書籍『React入門』",
-    quantity: 2,
-    price: 3000,
-    imageUrl: "https://placehold.jp/150x100.png?text=Book",
-  },
-];
+type CartProduct = {
+  cartProductId: number;
+  name: string;
+  price: number;
+  quantity: number;
+  imageUrl: string;
+};
+
+type UpdateCartQuantityRequest = {
+  cartProductId: number;
+  quantity: number;
+};
 
 function CartPage() {
-  const [cart, setCart] = useState(mockCartProducts);
+  const [cart, setCart] = useState<CartProduct[]>([]);
+
   const navigate = useNavigate();
 
-  const handleQuantityChange = (index: number, delta: number) => {
-    setCart((prev) =>
-      prev.map((item, i) =>
-        i === index
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item,
-      ),
-    );
-  };
+  const fetchCartProducts = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get<CartProduct[]>("/carts");
+      setCart(response.data);
+    } catch (err) {
+      console.error("カート商品の取得に失敗しました:", err);
+    }
+  }, []);
 
-  const handleDelete = (index: number) => {
-    setCart((prev) => prev.filter((_, i) => i !== index));
+  useEffect(() => {
+    fetchCartProducts();
+  }, [fetchCartProducts]);
+
+  /**
+   * カート内の商品の数量を変更する（デバウンス処理付き）
+   *
+   * @param cartProductId カート内の商品のID
+   * @param quantity 変更する数量
+   */
+  const handleQuantityChange = useDebouncedCallback(
+    async (cartProductId: number, quantity: number) => {
+      if (quantity < 1) {
+        return;
+      }
+
+      try {
+        const requestBody: UpdateCartQuantityRequest = {
+          cartProductId,
+          quantity,
+        };
+
+        await axiosInstance.patch("/carts/quantity", requestBody);
+      } catch (e) {
+        console.error("数量の更新に失敗しました:", e);
+        toast.error("数量の更新に失敗しました");
+      }
+
+      fetchCartProducts();
+    },
+    300, // 300ms
+  );
+
+  const handleDelete = async (cartProductId: number) => {
+    try {
+      await axiosInstance.delete(`/carts/${cartProductId}`);
+      toast.success("商品をカートから削除しました");
+    } catch (e) {
+      console.error("商品の削除に失敗しました:", e);
+      toast.error("商品の削除に失敗しました");
+    }
+
+    fetchCartProducts();
   };
 
   const getTotalPrice = () =>
@@ -50,9 +92,9 @@ function CartPage() {
             カートに商品がありません
           </div>
         ) : (
-          cart.map((item, idx) => (
+          cart.map((item) => (
             <Card
-              key={item.name}
+              key={item.cartProductId}
               className="border-none shadow-none bg-white/80"
             >
               <CardContent className="flex items-center gap-4 py-3 px-2">
@@ -66,7 +108,7 @@ function CartPage() {
                     {item.name}
                   </div>
 
-                  <div className="text-xs text-muted-foreground mb-1">{`¥${item.price.toLocaleString()}`}</div>
+                  <div className="text-xs text-muted-foreground mb-1">{`¥${item.price}`}</div>
 
                   <div className="flex items-center gap-1 mt-1">
                     <Button
@@ -74,7 +116,12 @@ function CartPage() {
                       size="icon"
                       variant="outline"
                       className="w-7 h-7 p-0 text-lg"
-                      onClick={() => handleQuantityChange(idx, -1)}
+                      onClick={() =>
+                        handleQuantityChange(
+                          item.cartProductId,
+                          item.quantity - 1,
+                        )
+                      }
                       aria-label="マイナス"
                     >
                       <Minus className="w-4 h-4" />
@@ -89,7 +136,12 @@ function CartPage() {
                       size="icon"
                       variant="outline"
                       className="w-7 h-7 p-0 text-lg"
-                      onClick={() => handleQuantityChange(idx, 1)}
+                      onClick={() =>
+                        handleQuantityChange(
+                          item.cartProductId,
+                          item.quantity + 1,
+                        )
+                      }
                       aria-label="プラス"
                     >
                       <Plus className="w-4 h-4" />
@@ -107,7 +159,7 @@ function CartPage() {
                     size="icon"
                     variant="ghost"
                     className="text-destructive px-2 py-0 h-7"
-                    onClick={() => handleDelete(idx)}
+                    onClick={() => handleDelete(item.cartProductId)}
                     aria-label="削除"
                   >
                     <Trash2 className="w-4 h-4" />
