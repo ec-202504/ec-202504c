@@ -1,10 +1,11 @@
-import { Link, useParams } from "@tanstack/react-router";
+import { useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
 import type { Pc, RawPc } from "../types";
 import LoadingOverlay from "../components/LoadingOverlay";
+import ProductNotFound from "../components/ProductNotFound";
 
 const dummyReviews = [
   { rating: 5, count: 340 },
@@ -50,7 +51,20 @@ export default function PcDetail() {
   };
 
   const handleClick = async (quantity: number) => {
-    console.log(quantity);
+    try {
+      //userIDを取得する実装を書く必要あり
+      const response = await axiosInstance.post("/carts", {
+        userId: 1,
+        productId: pc?.id,
+        productCategory: 0,
+        quantity: quantity,
+      });
+      console.log(response.data);
+      console.log(response.status);
+    } catch (error) {
+      console.error("APIリクエストに失敗しました:", error);
+      console.log(quantity);
+    }
   };
 
   const convertToPc = useCallback((raw: RawPc): Pc => {
@@ -140,17 +154,7 @@ export default function PcDetail() {
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-[80vh] w-full bg-gray-50 rounded-md shadow">
-              <div className="text-lg text-gray-600 font-semibold mb-4">
-                該当する商品が見つかりません
-              </div>
-              <Link
-                to="/product"
-                className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
-              >
-                商品一覧に戻る
-              </Link>
-            </div>
+            <ProductNotFound />
           )}
         </>
       )}

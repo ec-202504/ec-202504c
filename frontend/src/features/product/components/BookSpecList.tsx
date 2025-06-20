@@ -17,11 +17,11 @@ export default function BookSummary({ book }: BookSummaryProps) {
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">言語：</div>
-        {book.language_id === 1 ? "日本語" : "英語"}
+        {book.language}
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">目的：</div>
-        {book.purpose_id === 1 ? "学習" : "趣味"}
+        {book.purpose}
       </li>
     </ul>
   );
