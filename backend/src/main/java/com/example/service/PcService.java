@@ -66,6 +66,16 @@ public class PcService {
   }
 
   /**
+   * GPUのIDと一致するPCのリストを取得するメソッド.
+   *
+   * @param gpuId GPUのID
+   * @return GPUのIDと一致するPCのリスト
+   */
+  public List<Pc> findByGpuId(Integer gpuId) {
+    return pcRepository.findByGpu_Id(gpuId);
+  }
+
+  /**
    * PC登録を行うメソッド.
    *
    * @param pc 登録するPCの詳細情報
