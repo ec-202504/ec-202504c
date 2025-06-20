@@ -9,7 +9,9 @@ import com.example.service.BookService;
 import com.example.service.CartProductService;
 import com.example.service.PcService;
 import com.example.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -90,7 +92,12 @@ public class CartProductController {
    */
   @PatchMapping("/quantity")
   public ResponseEntity<?> updateCartQuantity(@RequestBody UpdateCartQuantityRequest request) {
-    cartProductService.updateCartProductQuantity(request.getCartProductId(), request.getQuantity());
+    try {
+      cartProductService.updateCartProductQuantity(
+          request.getCartProductId(), request.getQuantity());
+    } catch (EntityNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+    }
     return ResponseEntity.ok().build();
   }
 

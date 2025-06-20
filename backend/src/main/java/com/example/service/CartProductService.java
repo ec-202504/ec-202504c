@@ -3,12 +3,11 @@ package com.example.service;
 import com.example.model.CartProduct;
 import com.example.model.User;
 import com.example.repository.CartProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 /** カート内商品に関するサービスクラス. */
 @Service
@@ -43,7 +42,7 @@ public class CartProductService {
   public void updateCartProductQuantity(Integer cartProductId, Integer quantity) {
     Optional<CartProduct> optionalCartProduct = cartProductRepository.findById(cartProductId);
     if (optionalCartProduct.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "カート商品が見つかりません");
+      throw new EntityNotFoundException("カート商品が見つかりません");
     }
 
     CartProduct cartProduct = optionalCartProduct.get();
