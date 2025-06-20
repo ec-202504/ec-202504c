@@ -10,6 +10,7 @@ import com.example.service.CartProductService;
 import com.example.service.PcService;
 import com.example.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,10 +64,12 @@ public class CartProductController {
    * カート内商品を追加するエンドポイント.
    *
    * @param request カートに追加する商品情報を含むリクエストDTO
+   * @param session HTTPセッション
    * @return 成功メッセージ
    */
   @PostMapping
-  public ResponseEntity<?> addCartProduct(@RequestBody AddCartProductRequest request) {
+  public ResponseEntity<?> addCartProduct(
+      @RequestBody AddCartProductRequest request, HttpSession session) {
     Optional<User> optionalUser = userService.findById(request.getUserId());
     if (optionalUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
@@ -75,7 +78,7 @@ public class CartProductController {
 
     CartProduct cartProduct = new CartProduct();
     cartProduct.setQuantity(request.getQuantity());
-    cartProduct.setSessionId(request.getSessionId());
+    cartProduct.setSessionId(session.getId());
     cartProduct.setProductCategory(request.getProductCategory());
     cartProduct.setProductId(request.getProductId());
     cartProduct.setUserId(user);

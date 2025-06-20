@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AddCartProductRequest {
   private Integer quantity;
-  private String sessionId;
   private Integer userId;
   private Integer productCategory;
   private Integer productId;
