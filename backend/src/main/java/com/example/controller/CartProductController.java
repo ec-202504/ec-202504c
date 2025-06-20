@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dto.request.AddCartProductRequest;
+import com.example.dto.request.UpdateCartQuantityRequest;
 import com.example.dto.response.CartProductResponse;
 import com.example.model.CartProduct;
 import com.example.model.User;
@@ -8,12 +9,17 @@ import com.example.service.BookService;
 import com.example.service.CartProductService;
 import com.example.service.PcService;
 import com.example.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,13 +43,19 @@ public class CartProductController {
    */
   @GetMapping
   public ResponseEntity<?> getCartProducts() {
-    List<CartProduct> cartProducts = cartProductService.getCartProducts();
+    // TODO: userIdをjwtから取得するようにする
+    Integer userId = 1;
+    User user =
+        userService
+            .findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ユーザーが見つかりません"));
+    List<CartProduct> cartProducts = cartProductService.getCartProducts(user);
 
     try {
       List<CartProductResponse> responses = cartProducts.stream().map(this::mapToResponse).toList();
       return ResponseEntity.ok(responses);
     } catch (ResponseStatusException e) {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
   }
 
@@ -66,9 +78,39 @@ public class CartProductController {
     cartProduct.setSessionId(request.getSessionId());
     cartProduct.setProductCategory(request.getProductCategory());
     cartProduct.setProductId(request.getProductId());
+    cartProduct.setUserId(user);
 
     cartProductService.addCartProduct(cartProduct);
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * カート内商品の数量を更新するエンドポイント.
+   *
+   * @param request 更新するカート内商品情報を含むリクエストDTO
+   * @return 成功レスポンス
+   */
+  @PatchMapping("/quantity")
+  public ResponseEntity<?> updateCartQuantity(@RequestBody UpdateCartQuantityRequest request) {
+    try {
+      cartProductService.updateCartProductQuantity(
+          request.getCartProductId(), request.getQuantity());
+    } catch (EntityNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+    }
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * カート内商品を削除するエンドポイント.
+   *
+   * @param cartProductId 削除するカート内商品ID
+   * @return 成功レスポンス 404 No Content
+   */
+  @DeleteMapping("/{cartProductId}")
+  public ResponseEntity<?> deleteCartProduct(@PathVariable Integer cartProductId) {
+    cartProductService.deleteCartProduct(cartProductId);
+    return ResponseEntity.noContent().build();
   }
 
   /**
