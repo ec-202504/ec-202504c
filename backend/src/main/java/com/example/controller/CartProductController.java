@@ -49,7 +49,6 @@ public class CartProductController {
 
     try {
       List<CartProductResponse> responses = cartProducts.stream().map(this::mapToResponse).toList();
-      System.out.println("responses: " + responses);
       return ResponseEntity.ok(responses);
     } catch (ResponseStatusException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

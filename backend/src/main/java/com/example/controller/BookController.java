@@ -128,7 +128,7 @@ public class BookController {
             })
         .orElse(ResponseEntity.notFound().build());
   }
-  
+
   /**
    * BookをBooksテーブルから削除するエンドポイント.
    *
