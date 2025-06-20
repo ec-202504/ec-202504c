@@ -15,7 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { axiosInstance } from "../../lib/axiosInstance";
 
 type LoginForm = {
@@ -39,9 +39,6 @@ function UserLoginPage() {
       const response = await axiosInstance.post("/user/login", data);
       if (response.status === 200) {
         navigate({ to: "/product", replace: true });
-      } else {
-        setError("email", { message: "ログインに失敗しました" });
-        setError("password", { message: "ログインに失敗しました" });
       }
     } catch {
       setError("email", { message: "ログインに失敗しました" });
@@ -87,24 +84,22 @@ function UserLoginPage() {
                     </FormControl>
                     <FormMessage />
                     <div className="flex justify-end mt-1">
-                      <a
-                        // 仮、後で作る
-                        href="/user/password-reset"
-                        className="text-xs text-blue-600 hover:underline"
-                      >
-                        パスワードを忘れた方はこちら
-                      </a>
+                      {/* 仮、後で作る */}
+                      <Link to="/user/password-reset">
+                        <span className="text-xs text-blue-600 hover:underline">
+                          パスワードを忘れた方はこちら
+                        </span>
+                      </Link>
                     </div>
                   </FormItem>
                 )}
                 rules={{ required: "パスワードは必須です" }}
               />
-              <a
-                href="/user/register"
-                className="text-xs text-blue-600 hover:underline"
-              >
-                ユーザー登録がまだの方はこちら
-              </a>
+              <Link to="/user/register">
+                <span className="text-xs text-blue-600 hover:underline">
+                  ユーザー登録がまだの方はこちら
+                </span>
+              </Link>
               <Button type="submit" className="w-full">
                 ログイン
               </Button>

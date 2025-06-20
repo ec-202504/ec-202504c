@@ -89,7 +89,6 @@ public class UserController {
   @GetMapping("/me")
   public ResponseEntity<Void> me(HttpSession session) {
     Object userId = session.getAttribute("userId");
-    System.out.println(userId);
     if (userId != null) {
       return ResponseEntity.ok().build();
     } else {

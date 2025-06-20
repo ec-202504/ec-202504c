@@ -2,7 +2,6 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import axios from "axios";
 import { axiosInstance } from "../../lib/axiosInstance";
 
 function Header() {
@@ -12,19 +11,25 @@ function Header() {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await axiosInstance.get("/user/me");
-        if (response.status === 200) {
-          setIsLogin(true);
-        }
+        await axiosInstance.get("/user/me");
+        setIsLogin(true);
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          setIsLogin(false);
-        }
+        console.error("ログイン状態の確認に失敗しました", error);
       }
     };
 
     checkLoginStatus();
   }, []);
+
+  const logout = async () => {
+    try {
+      await axiosInstance.post("/user/logout");
+      setIsLogin(false);
+      navigate({ to: "/user/login", replace: true });
+    } catch (error) {
+      console.error("ログアウトに失敗しました", error);
+    }
+  };
 
   return (
     <header className="w-full px-4 py-3 flex items-center bg-white shadow">
@@ -50,18 +55,7 @@ function Header() {
         </div>
 
         {isLogin ? (
-          <Button
-            variant="outline"
-            onClick={async () => {
-              try {
-                await axiosInstance.post("/user/logout");
-                setIsLogin(false);
-                navigate({ to: "/user/login", replace: true });
-              } catch (error) {
-                console.error("Logout failed:", error);
-              }
-            }}
-          >
+          <Button variant="outline" onClick={logout}>
             ログアウト
           </Button>
         ) : (

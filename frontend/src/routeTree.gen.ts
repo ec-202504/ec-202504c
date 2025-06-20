@@ -14,7 +14,6 @@ import { Route as ProductIndexRouteImport } from './routes/product/index'
 import { Route as OrderIndexRouteImport } from './routes/order/index'
 import { Route as CartIndexRouteImport } from './routes/cart/index'
 import { Route as UserRegisterRouteImport } from './routes/user/register'
-import { Route as UserLogoutRouteImport } from './routes/user/logout'
 import { Route as UserLoginRouteImport } from './routes/user/login'
 import { Route as ProductRecommendRouteImport } from './routes/product/recommend'
 import { Route as OrderHistoryRouteImport } from './routes/order/history'
@@ -49,11 +48,6 @@ const CartIndexRoute = CartIndexRouteImport.update({
 const UserRegisterRoute = UserRegisterRouteImport.update({
   id: '/user/register',
   path: '/user/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UserLogoutRoute = UserLogoutRouteImport.update({
-  id: '/user/logout',
-  path: '/user/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UserLoginRoute = UserLoginRouteImport.update({
@@ -115,7 +109,6 @@ export interface FileRoutesByFullPath {
   '/order/history': typeof OrderHistoryRoute
   '/product/recommend': typeof ProductRecommendRoute
   '/user/login': typeof UserLoginRoute
-  '/user/logout': typeof UserLogoutRoute
   '/user/register': typeof UserRegisterRoute
   '/cart': typeof CartIndexRoute
   '/order': typeof OrderIndexRoute
@@ -133,7 +126,6 @@ export interface FileRoutesByTo {
   '/order/history': typeof OrderHistoryRoute
   '/product/recommend': typeof ProductRecommendRoute
   '/user/login': typeof UserLoginRoute
-  '/user/logout': typeof UserLogoutRoute
   '/user/register': typeof UserRegisterRoute
   '/cart': typeof CartIndexRoute
   '/order': typeof OrderIndexRoute
@@ -152,7 +144,6 @@ export interface FileRoutesById {
   '/order/history': typeof OrderHistoryRoute
   '/product/recommend': typeof ProductRecommendRoute
   '/user/login': typeof UserLoginRoute
-  '/user/logout': typeof UserLogoutRoute
   '/user/register': typeof UserRegisterRoute
   '/cart/': typeof CartIndexRoute
   '/order/': typeof OrderIndexRoute
@@ -172,7 +163,6 @@ export interface FileRouteTypes {
     | '/order/history'
     | '/product/recommend'
     | '/user/login'
-    | '/user/logout'
     | '/user/register'
     | '/cart'
     | '/order'
@@ -190,7 +180,6 @@ export interface FileRouteTypes {
     | '/order/history'
     | '/product/recommend'
     | '/user/login'
-    | '/user/logout'
     | '/user/register'
     | '/cart'
     | '/order'
@@ -208,7 +197,6 @@ export interface FileRouteTypes {
     | '/order/history'
     | '/product/recommend'
     | '/user/login'
-    | '/user/logout'
     | '/user/register'
     | '/cart/'
     | '/order/'
@@ -227,7 +215,6 @@ export interface RootRouteChildren {
   OrderHistoryRoute: typeof OrderHistoryRoute
   ProductRecommendRoute: typeof ProductRecommendRoute
   UserLoginRoute: typeof UserLoginRoute
-  UserLogoutRoute: typeof UserLogoutRoute
   UserRegisterRoute: typeof UserRegisterRoute
   CartIndexRoute: typeof CartIndexRoute
   OrderIndexRoute: typeof OrderIndexRoute
@@ -273,13 +260,6 @@ declare module '@tanstack/react-router' {
       path: '/user/register'
       fullPath: '/user/register'
       preLoaderRoute: typeof UserRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/user/logout': {
-      id: '/user/logout'
-      path: '/user/logout'
-      fullPath: '/user/logout'
-      preLoaderRoute: typeof UserLogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/user/login': {
@@ -363,7 +343,6 @@ const rootRouteChildren: RootRouteChildren = {
   OrderHistoryRoute: OrderHistoryRoute,
   ProductRecommendRoute: ProductRecommendRoute,
   UserLoginRoute: UserLoginRoute,
-  UserLogoutRoute: UserLogoutRoute,
   UserRegisterRoute: UserRegisterRoute,
   CartIndexRoute: CartIndexRoute,
   OrderIndexRoute: OrderIndexRoute,
