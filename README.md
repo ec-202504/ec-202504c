@@ -1,4 +1,4 @@
-# 🛍️ EC-Site C チーム
+# 🛍️ Tech Mate (Cチーム)
 
 ## 🚀 Getting Started
 
