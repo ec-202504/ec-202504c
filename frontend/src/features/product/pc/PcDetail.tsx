@@ -52,7 +52,7 @@ export default function PcDetail() {
 
   const handleClick = async (quantity: number) => {
     try {
-      //userIDを取得する実装を書く必要あり
+      //userIDを取得する実装を追記する必要あり
       const response = await axiosInstance.post("/carts", {
         userId: 1,
         productId: pc?.id,
