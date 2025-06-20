@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PcSpecList from "./PcSpecList";
+import BookDetails from "./BookSpecList";
 import RatingStars from "./RatingStars";
 import {
   Select,
@@ -10,32 +10,32 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
-import type { Pc } from "../types";
+import type { Book } from "../types";
 
-type PcInfoProps = {
-  pc: Pc;
+type BookInfoProps = {
+  book: Book;
   handleClick: (q: number) => void;
   average: number;
   totalReviews: number;
 };
 
-export default function PcInfo({
-  pc,
+export default function BookInfo({
+  book,
   handleClick,
   average,
   totalReviews,
-}: PcInfoProps) {
+}: BookInfoProps) {
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   return (
     <div className="flex gap-12 w-2/3 max-w-5xl mb-8">
       <img
-        src={pc.imageUrl}
-        alt={pc.name}
+        src={`/api/books/${book.id}/image`}
+        alt={book.name}
         className="w-96 h-96 object-contain border"
       />
       <div className="flex-1">
-        <h1 className="text-2xl font-bold mb-2">{pc.name}</h1>
-        <div className="text-xl mb-4">{pc.price.toLocaleString()}円</div>
+        <h1 className="text-2xl font-bold mb-2">{book.name}</h1>
+        <div className="text-xl mb-4">{book.price.toLocaleString()}円</div>
         <div className="flex items-center gap-2 mb-4">
           <span>数量</span>
           <Select
@@ -72,8 +72,8 @@ export default function PcInfo({
             {totalReviews}件の評価
           </span>
         </div>
-        <div className="font-bold mb-2">仕様</div>
-        <PcSpecList pc={pc} />
+        <div className="font-bold mb-2">詳細情報</div>
+        <BookDetails book={book} />
       </div>
     </div>
   );
