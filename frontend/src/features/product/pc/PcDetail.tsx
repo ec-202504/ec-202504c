@@ -1,3 +1,6 @@
+import { useParams } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
+import { axiosInstance } from "../../../lib/axiosInstance";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
 import type { Pc, RawPc } from "../types";
