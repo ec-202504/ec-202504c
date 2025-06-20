@@ -39,35 +39,26 @@ function CartPage() {
   /**
    * カート内の商品の数量を変更する
    *
-   * @param index カート内の商品のインデックス
-   * @param number 変更する数量(プラスの場合は1、マイナスの場合は-1)
+   * @param cartProductId カート内の商品のID
+   * @param quantity 変更する数量
    */
-  const handleQuantityChange = async (index: number, number: number) => {
-    const item = cart[index];
-    const newQuantity = Math.max(1, item.quantity + number);
-
-    // 楽観的更新（UIを先に更新）
-    setCart((prev) =>
-      prev.map((cartItem, i) =>
-        i === index ? { ...cartItem, quantity: newQuantity } : cartItem,
-      ),
-    );
+  const handleQuantityChange = async (
+    cartProductId: number,
+    quantity: number,
+  ) => {
+    if (quantity < 1) {
+      return;
+    }
 
     try {
       const requestBody: UpdateCartQuantityRequest = {
-        cartProductId: item.cartProductId,
-        quantity: newQuantity,
+        cartProductId,
+        quantity,
       };
 
       await axiosInstance.patch("/carts/quantity", requestBody);
-    } catch (err) {
-      console.error("数量の更新に失敗しました:", err);
-      // エラーが発生した場合は元の状態に戻す
-      setCart((prev) =>
-        prev.map((cartItem, i) =>
-          i === index ? { ...cartItem, quantity: item.quantity } : cartItem,
-        ),
-      );
+    } catch (e) {
+      console.error("数量の更新に失敗しました:", e);
     }
 
     fetchCartProducts();
@@ -114,7 +105,12 @@ function CartPage() {
                       size="icon"
                       variant="outline"
                       className="w-7 h-7 p-0 text-lg"
-                      onClick={() => handleQuantityChange(index, -1)}
+                      onClick={() =>
+                        handleQuantityChange(
+                          item.cartProductId,
+                          item.quantity - 1,
+                        )
+                      }
                       aria-label="マイナス"
                     >
                       <Minus className="w-4 h-4" />
@@ -129,7 +125,12 @@ function CartPage() {
                       size="icon"
                       variant="outline"
                       className="w-7 h-7 p-0 text-lg"
-                      onClick={() => handleQuantityChange(index, 1)}
+                      onClick={() =>
+                        handleQuantityChange(
+                          item.cartProductId,
+                          item.quantity + 1,
+                        )
+                      }
                       aria-label="プラス"
                     >
                       <Plus className="w-4 h-4" />

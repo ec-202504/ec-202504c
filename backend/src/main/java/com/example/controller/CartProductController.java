@@ -88,6 +88,7 @@ public class CartProductController {
    */
   @PatchMapping("/quantity")
   public ResponseEntity<?> updateCartQuantity(@RequestBody UpdateCartQuantityRequest request) {
+    System.out.println("request = " + request);
     cartProductService.updateCartProductQuantity(request.getCartProductId(), request.getQuantity());
     return ResponseEntity.ok().build();
   }
