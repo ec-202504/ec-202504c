@@ -2,7 +2,7 @@ export type RawBook = {
   id: number;
   name: string;
   author: string;
-  publishDate: string; // ← キャメルケース
+  publishDate: string;
   price: number;
   language: {
     id: number;
