@@ -1,6 +1,7 @@
 package com.example.dto.request;
 
 import com.example.validation.UniqueEmail;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ public class RegisterRequest {
   String name;
 
   @NotBlank(message = "メールアドレスは必須です")
-  @NotBlank(message = "メールアドレスの形式が正しくありません")
+  @Email(message = "メールアドレスの形式が正しくありません")
   @UniqueEmail
   String email;
 

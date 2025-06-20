@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.dto.request.LoginRequest;
 import com.example.dto.request.RegisterRequest;
 import com.example.model.User;
 import com.example.service.UserService;
@@ -34,5 +35,24 @@ public class UserController {
     BeanUtils.copyProperties(request, user);
     userService.register(user);
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  /**
+   * ログインする.
+   *
+   * <p>正常に登録された場合は、200 OK を返す.
+   *
+   * <p>失敗した場合は、401 UN UNAUTHORIZEDを返す.
+   *
+   * @param request ログイン情報
+   * @return ユーザー
+   */
+  @PostMapping("/login")
+  public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+    System.out.println(request);
+    return userService
+        .findByEmailAndPassword(request.getEmail(), request.getPassword())
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
   }
 }

@@ -33,6 +33,17 @@ public class UserService {
   }
 
   /**
+   * ユーザーをメールアドレスとパスワードで検索する.
+   *
+   * @param email メールアドレス
+   * @param password パスワード
+   * @return ユーザー
+   */
+  public Optional<User> findByEmailAndPassword(String email, String password) {
+    return userRepository.findByEmailAndPassword(email, password);
+  }
+
+  /**
    * ユーザーを登録する.
    *
    * @param user ユーザー情報
