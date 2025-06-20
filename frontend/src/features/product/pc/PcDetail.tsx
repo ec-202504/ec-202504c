@@ -39,7 +39,9 @@ const dummyReviewContents = [
 ];
 
 export default function PcDetail() {
-  const pc = mockPcData;
+  const [pc, setPc] = useState<Pc>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { itemId } = useParams({ from: "/product/pc/$itemId/" });
   const totalReviews = dummyReviews.reduce((sum, r) => sum + r.count, 0);
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
