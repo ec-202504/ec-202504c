@@ -22,7 +22,7 @@ public class CartProductService {
    * @return カート内商品リスト
    */
   public List<CartProduct> getCartProducts(User user) {
-    return cartProductRepository.findByUserId(user);
+    return cartProductRepository.findByUserIdOrderByCartProductIdDesc(user);
   }
 
   /**

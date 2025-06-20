@@ -13,5 +13,5 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Intege
    * @param user ユーザ
    * @return カート内商品リスト
    */
-  List<CartProduct> findByUserId(User user);
+  List<CartProduct> findByUserIdOrderByCartProductIdDesc(User user);
 }
