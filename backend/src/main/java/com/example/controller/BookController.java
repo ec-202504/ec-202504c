@@ -67,6 +67,18 @@ public class BookController {
     return ResponseEntity.ok(bookListByLanguageId);
   }
 
+    /**
+     * 目的IDと一致する書籍一覧を取得するエンドポイント.
+     *
+     * @param purposeId 目的ID
+     * @return 目的IDと一致する書籍一覧
+     */
+  @GetMapping("/purpose/{purposeId}")
+  public ResponseEntity<?> getBooksByPurpose(@PathVariable Integer purposeId) {
+      List<Book> bookListByPurposeId = bookService.findByPurposeId(purposeId);
+      return ResponseEntity.ok(bookListByPurposeId);
+  }
+
   /**
    * Bookの詳細情報を取得するエンドポイント.
    *

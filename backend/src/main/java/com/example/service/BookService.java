@@ -78,6 +78,15 @@ public class BookService {
   }
 
   /**
+   * 目的IDと一致するBookのリストを取得するメソッド.
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するBookのリスト
+   */
+  public List<Book> findByPurposeId(Integer purposeId) {
+    return bookRepository.findByPurpose_Id(purposeId);
+  }
+
+  /**
    * Book登録を行うメソッド.
    *
    * @param book 登録するBookの詳細情報
