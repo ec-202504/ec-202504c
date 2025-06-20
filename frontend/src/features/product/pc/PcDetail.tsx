@@ -42,6 +42,7 @@ export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { itemId } = useParams({ from: "/product/pc/$itemId/" });
+  
   const totalReviews = dummyReviews.reduce((sum, r) => sum + r.count, 0);
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
@@ -67,6 +68,39 @@ export default function PcDetail() {
     }
   };
 
+  const convertToPc = useCallback((raw: RawPc): Pc => {
+    return {
+      id: raw.id,
+      name: raw.name,
+      price: raw.price,
+      memory: raw.memory,
+      storage: raw.storage,
+      device_size: raw.deviceSize,
+      device_type: raw.deviceType,
+      os: raw.os.name,
+      cpu: raw.cpu.name,
+      gpu: raw.gpu.name,
+      purpose: raw.purpose.name,
+      imageUrl: "", // 初期値として空文字
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get(`/pcs/${itemId}`);
+        setPc(convertToPc(response.data));
+      } catch (error) {
+        console.error("APIリクエストに失敗しました:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [itemId, convertToPc]);
+  
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-4">
       {isLoading ? (
