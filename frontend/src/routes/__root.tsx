@@ -4,6 +4,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import Header from "../components/layout/Header";
+import { Toaster } from "../components/ui/sonner";
 
 export const Route = createRootRoute({
   component: () => {
@@ -20,6 +21,7 @@ export const Route = createRootRoute({
       <>
         {showHeader && <Header />}
         <Outlet />
+        <Toaster />
       </>
     );
   },

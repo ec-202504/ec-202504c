@@ -5,6 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { useDebouncedCallback } from "use-debounce";
+import { toast } from "sonner";
 
 type CartProduct = {
   cartProductId: number;
@@ -58,6 +59,7 @@ function CartPage() {
         await axiosInstance.patch("/carts/quantity", requestBody);
       } catch (e) {
         console.error("数量の更新に失敗しました:", e);
+        toast.error("数量の更新に失敗しました");
       }
 
       fetchCartProducts();
@@ -66,12 +68,12 @@ function CartPage() {
   );
 
   const handleDelete = async (cartProductId: number) => {
-    console.log("handleDelete", cartProductId);
-
     try {
       await axiosInstance.delete(`/carts/${cartProductId}`);
+      toast.success("商品をカートから削除しました");
     } catch (e) {
       console.error("商品の削除に失敗しました:", e);
+      toast.error("商品の削除に失敗しました");
     }
 
     fetchCartProducts();
