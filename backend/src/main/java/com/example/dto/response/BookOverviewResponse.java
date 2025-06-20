@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BookDetailResponse {
+public class BookOverviewResponse {
   private String author;
   private LocalDate publishDate;
   private Language language;
