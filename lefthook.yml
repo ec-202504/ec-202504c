@@ -16,3 +16,7 @@ pre-commit:
       glob: "*.java"
       run: ./gradlew spotlessApply
       stage_fixed: true
+    backend-lint:
+      root: "backend/"
+      glob: "**/*.java"
+      run: ./gradlew checkstyleMain
