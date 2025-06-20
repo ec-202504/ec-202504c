@@ -5,10 +5,12 @@ import com.example.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /** Userエンティティのサービスクラス. */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
   private final UserRepository userRepository;
 
@@ -30,6 +32,17 @@ public class UserService {
    */
   public Optional<User> findByEmail(String email) {
     return userRepository.findByEmail(email);
+  }
+
+  /**
+   * ユーザーをメールアドレスとパスワードで検索する.
+   *
+   * @param email メールアドレス
+   * @param password パスワード
+   * @return ユーザー
+   */
+  public Optional<User> findByEmailAndPassword(String email, String password) {
+    return userRepository.findByEmailAndPassword(email, password);
   }
 
   /**

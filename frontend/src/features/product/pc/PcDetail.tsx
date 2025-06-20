@@ -42,6 +42,7 @@ export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { itemId } = useParams({ from: "/product/pc/$itemId/" });
+  
   const totalReviews = dummyReviews.reduce((sum, r) => sum + r.count, 0);
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
@@ -99,7 +100,7 @@ export default function PcDetail() {
 
     fetchData();
   }, [itemId, convertToPc]);
-
+  
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-4">
       {isLoading ? (
@@ -151,6 +152,7 @@ export default function PcDetail() {
                     />
                   ))}
                 </div>
+                <span>{calcPercentage(r.count, totalReviews)}%</span>
               </div>
             </>
           ) : (
