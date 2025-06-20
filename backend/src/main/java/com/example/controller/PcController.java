@@ -2,12 +2,9 @@ package com.example.controller;
 
 import com.example.dto.request.AddPcRequest;
 import com.example.dto.request.UpdatePcRequest;
-import com.example.model.Cpu;
-import com.example.model.Gpu;
-import com.example.model.Os;
-import com.example.model.Pc;
-import com.example.model.Purpose;
+import com.example.model.*;
 import com.example.service.PcService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +51,18 @@ public class PcController {
     Pageable pageable = PageRequest.of(page, size, sorting);
 
     return ResponseEntity.ok(pcService.findPcsWithPageable(keyword, pageable));
+  }
+
+  /**
+   * 目的IDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するPC一覧
+   */
+  @GetMapping("/purposes/{purposeId}")
+  public ResponseEntity<?> getBooksByLanguage(@PathVariable Integer purposeId) {
+    List<Pc> pcListByPurposeId = pcService.findByPurposeId(purposeId);
+    return ResponseEntity.ok(pcListByPurposeId);
   }
 
   /**
