@@ -51,7 +51,20 @@ export default function PcDetail() {
   };
 
   const handleClick = async (quantity: number) => {
-    console.log(quantity);
+    try {
+      //userIDを取得する実装を追記する必要あり
+      const response = await axiosInstance.post("/carts", {
+        userId: 1,
+        productId: pc?.pcId,
+        productCategory: 0,
+        quantity: quantity,
+      });
+      console.log(response.data);
+      console.log(response.status);
+    } catch (error) {
+      console.error("APIリクエストに失敗しました:", error);
+      console.log(quantity);
+    }
   };
 
   useEffect(() => {
