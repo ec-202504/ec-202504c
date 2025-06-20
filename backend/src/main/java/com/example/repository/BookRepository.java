@@ -32,5 +32,5 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
    * @param languageId 言語ID
    * @return 言語IDと一致する書籍のリスト
    */
-  List<Book> findByLanguageId(Integer languageId);
+  List<Book> findByLanguage_Id(Integer languageId);
 }
