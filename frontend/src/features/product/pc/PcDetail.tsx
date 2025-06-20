@@ -1,4 +1,4 @@
-import { useParams } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import PcInfo from "../components/PcInfo";
@@ -87,7 +87,7 @@ export default function PcDetail() {
   }, [itemId, convertToPc]);
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-white px-4 py-8">
+    <div className="flex flex-col items-center min-h-screen bg-white px-4 py-4">
       {isLoading ? (
         <LoadingOverlay />
       ) : (
@@ -140,7 +140,17 @@ export default function PcDetail() {
               </div>
             </>
           ) : (
-            <div>PC not found</div>
+            <div className="flex flex-col items-center justify-center h-[80vh] w-full bg-gray-50 rounded-md shadow">
+              <div className="text-lg text-gray-600 font-semibold mb-4">
+                該当する商品が見つかりません
+              </div>
+              <Link
+                to="/product"
+                className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
+              >
+                商品一覧に戻る
+              </Link>
+            </div>
           )}
         </>
       )}

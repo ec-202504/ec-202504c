@@ -1,10 +1,10 @@
-import type { Book } from "../types";
+import type { Book, RawBook } from "../types";
 import { axiosInstance } from "../../../lib/axiosInstance";
-import { useParams } from "@tanstack/react-router";
+import { useParams, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import ReviewItem from "../components/ReviewItem";
-import type { Pc, RawPc } from "../types";
 import LoadingOverlay from "../components/LoadingOverlay";
+import ReviewItem from "../components/ReviewItem";
+import BookInfo from "../components/BookInfo";
 
 const dummyReviews = [
   { rating: 5, count: 340 },
@@ -53,22 +53,17 @@ function BookDetail() {
     console.log(quantity);
   };
 
-  // const convertToBook = useCallback((raw: RawPc): Book => {
-  //     return {
-  //         id: raw.id,
-  //         name: raw.name,
-  //         price: raw.price,
-  //         memory: raw.memory,
-  //         storage: raw.storage,
-  //         device_size: raw.deviceSize,
-  //         device_type: raw.deviceType,
-  //         os: raw.os.name,
-  //         cpu: raw.cpu.name,
-  //         gpu: raw.gpu.name,
-  //         purpose: raw.purpose.name,
-  //         imageUrl: "", // 初期値として空文字
-  //     };
-  // }, []);
+  const convertToBook = useCallback((data: RawBook): Book => {
+    return {
+      id: data.id,
+      name: data.name,
+      author: data.author,
+      publish_date: data.publishDate,
+      price: data.price,
+      language_id: data.language.id,
+      purpose_id: data.purpose.id,
+    };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,7 +71,7 @@ function BookDetail() {
       try {
         const response = await axiosInstance.get(`/books/${itemId}`);
         console.log(response.data);
-        // setBook(convertToBook(response.data));
+        setBook(convertToBook(response.data));
       } catch (error) {
         console.error("APIリクエストに失敗しました:", error);
       } finally {
@@ -85,8 +80,78 @@ function BookDetail() {
     };
 
     fetchData();
-  }, [itemId]);
-  return <div>{isLoading ? <LoadingOverlay /> : <div>BookDetail</div>}</div>;
+  }, [itemId, convertToBook]);
+
+  return (
+    <div className="flex flex-col items-center min-h-screen bg-white px-4 py-8">
+      {isLoading ? (
+        <LoadingOverlay />
+      ) : (
+        <>
+          {book ? (
+            <>
+              <BookInfo
+                book={book}
+                handleClick={handleClick}
+                average={average}
+                totalReviews={totalReviews}
+              />
+              <div className="flex gap-8 w-full max-w-5xl mb-8">
+                <div>
+                  <h2 className="text-lg font-bold mb-2">カスタマーレビュー</h2>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl font-bold">
+                      {average.toFixed(1)}
+                    </span>
+                    <span>5つのうち</span>
+                  </div>
+                  <div className="mb-4">
+                    {dummyReviews.map((r) => (
+                      <div key={r.rating} className="flex items-center gap-2">
+                        <span className="w-[30px]">星{r.rating}</span>
+                        <div className="bg-gray-200 h-2 w-40 rounded">
+                          <div
+                            className="bg-orange-400 h-2 rounded"
+                            style={{
+                              width: `${calcPercentage(r.count, totalReviews)}%`,
+                            }}
+                          />
+                        </div>
+                        <span>{calcPercentage(r.count, totalReviews)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="mb-2 w-full">
+                  <div className="font-bold mb-2">レビュー内容</div>
+                  {dummyReviewContents.map((review) => (
+                    <ReviewItem
+                      key={review.id}
+                      userName={review.user}
+                      content={review.content}
+                      rating={review.rating}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-[80vh] w-full bg-gray-50 rounded-md shadow">
+              <div className="text-lg text-gray-600 font-semibold mb-4">
+                該当する商品が見つかりません
+              </div>
+              <Link
+                to="/product"
+                className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
+              >
+                商品一覧に戻る
+              </Link>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
 }
 
 export default BookDetail;

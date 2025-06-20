@@ -61,7 +61,7 @@ public class BookController {
    * @return Bookの詳細情報
    */
   @GetMapping("/{bookId}")
-  public ResponseEntity<?> getDetailPc(@PathVariable Integer bookId) {
+  public ResponseEntity<?> getDetailBook(@PathVariable Integer bookId) {
     return bookService
         .findById(bookId)
         .map(ResponseEntity::ok)
@@ -128,7 +128,7 @@ public class BookController {
             })
         .orElse(ResponseEntity.notFound().build());
   }
-  
+
   /**
    * BookをBooksテーブルから削除するエンドポイント.
    *
