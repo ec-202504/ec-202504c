@@ -63,7 +63,7 @@ public class BookController {
    */
   @GetMapping("/languages/{languageId}")
   public ResponseEntity<?> getBooksByLanguage(@PathVariable Integer languageId) {
-    List<Book> bookListByLanguageId = bookService.findBookByLanguageId(languageId);
+    List<Book> bookListByLanguageId = bookService.findByLanguageId(languageId);
     return ResponseEntity.ok(bookListByLanguageId);
   }
 
