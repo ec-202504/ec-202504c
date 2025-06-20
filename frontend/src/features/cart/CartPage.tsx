@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { axiosInstance } from "../../lib/axiosInstance";
+import { useDebouncedCallback } from "use-debounce";
 
 type CartProduct = {
   cartProductId: number;
@@ -37,32 +38,32 @@ function CartPage() {
   }, [fetchCartProducts]);
 
   /**
-   * カート内の商品の数量を変更する
+   * カート内の商品の数量を変更する（デバウンス処理付き）
    *
    * @param cartProductId カート内の商品のID
    * @param quantity 変更する数量
    */
-  const handleQuantityChange = async (
-    cartProductId: number,
-    quantity: number,
-  ) => {
-    if (quantity < 1) {
-      return;
-    }
+  const handleQuantityChange = useDebouncedCallback(
+    async (cartProductId: number, quantity: number) => {
+      if (quantity < 1) {
+        return;
+      }
 
-    try {
-      const requestBody: UpdateCartQuantityRequest = {
-        cartProductId,
-        quantity,
-      };
+      try {
+        const requestBody: UpdateCartQuantityRequest = {
+          cartProductId,
+          quantity,
+        };
 
-      await axiosInstance.patch("/carts/quantity", requestBody);
-    } catch (e) {
-      console.error("数量の更新に失敗しました:", e);
-    }
+        await axiosInstance.patch("/carts/quantity", requestBody);
+      } catch (e) {
+        console.error("数量の更新に失敗しました:", e);
+      }
 
-    fetchCartProducts();
-  };
+      fetchCartProducts();
+    },
+    300,
+  );
 
   const handleDelete = (index: number) => {
     setCart((prev) => prev.filter((_, i) => i !== index));
