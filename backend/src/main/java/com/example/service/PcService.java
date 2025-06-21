@@ -73,6 +73,14 @@ public class PcService {
    */
   public List<Pc> findByGpuId(Integer gpuId) {
     return pcRepository.findByGpu_Id(gpuId);
+  /**
+   * 目的IDと一致するPCのリストを取得するメソッド.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するPCのリスト
+   */
+  public List<Pc> findByPurposeId(Integer purposeId) {
+    return pcRepository.findByPurpose_Id(purposeId);
   }
 
   /**
