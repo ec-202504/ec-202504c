@@ -54,6 +54,36 @@ public class PcController {
   }
 
   /**
+   * PCのOS一覧を取得するエンドポイント.
+   *
+   * @return PCのOS一覧
+   */
+  @GetMapping("/oses")
+  public ResponseEntity<?> getOses() {
+    return ResponseEntity.ok(pcService.getAllOses());
+  }
+
+  /**
+   * PCのCPU一覧を取得するエンドポイント.
+   *
+   * @return PCのCPU一覧
+   */
+  @GetMapping("/cpus")
+  public ResponseEntity<?> getCpus() {
+    return ResponseEntity.ok(pcService.getAllCpus());
+  }
+
+  /**
+   * PCのGPU一覧を取得するエンドポイント.
+   *
+   * @return PCのGPU一覧
+   */
+  @GetMapping("/gpus")
+  public ResponseEntity<?> getGpus() {
+    return ResponseEntity.ok(pcService.getAllGpus());
+  }
+
+  /**
    * PCの目的一覧を取得するエンドポイント.
    *
    * @return PCの目的一覧
@@ -61,18 +91,6 @@ public class PcController {
   @GetMapping("/purposes")
   public ResponseEntity<?> getPurposes() {
     return ResponseEntity.ok(pcService.getAllPurposes());
-  }
-
-  /**
-   * CPUのIDと一致するPC一覧を取得するエンドポイント.
-   *
-   * @param cpuId 言語ID
-   * @return 言語IDと一致する書籍一覧
-   */
-  @GetMapping("/cpus/{cpuId}")
-  public ResponseEntity<?> getPcsByCpu(@PathVariable Integer cpuId) {
-    List<Pc> pcListByCpuId = pcService.findByCpuId(cpuId);
-    return ResponseEntity.ok(pcListByCpuId);
   }
 
   /**
@@ -85,6 +103,18 @@ public class PcController {
   public ResponseEntity<?> getPcsByOs(@PathVariable Integer osId) {
     List<Pc> pcListByOsId = pcService.findByOsId(osId);
     return ResponseEntity.ok(pcListByOsId);
+  }
+
+  /**
+   * CPUのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param cpuId 言語ID
+   * @return 言語IDと一致する書籍一覧
+   */
+  @GetMapping("/cpus/{cpuId}")
+  public ResponseEntity<?> getPcsByCpu(@PathVariable Integer cpuId) {
+    List<Pc> pcListByCpuId = pcService.findByCpuId(cpuId);
+    return ResponseEntity.ok(pcListByCpuId);
   }
 
   /**

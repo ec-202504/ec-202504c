@@ -1,9 +1,7 @@
 package com.example.service;
 
-import com.example.model.Pc;
-import com.example.model.Purpose;
-import com.example.repository.PcRepository;
-import com.example.repository.PurposeRepository;
+import com.example.model.*;
+import com.example.repository.*;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PcService {
   private final PcRepository pcRepository;
+  private final OsRepository osRepository;
+  private final CpuRepository cpuRepository;
+  private final GpuRepository gpuRepository;
   private final PurposeRepository purposeRepository;
 
   /**
@@ -128,9 +129,36 @@ public class PcService {
   }
 
   /**
-   * 書籍の目的一覧を取得するメソッド.
+   * OS一覧を取得するメソッド.
    *
-   * @return 書籍の目的のリスト
+   * @return OSのリスト
+   */
+  public List<Os> getAllOses() {
+    return osRepository.findAll();
+  }
+
+  /**
+   * CPU一覧を取得するメソッド.
+   *
+   * @return CPUのリスト
+   */
+  public List<Cpu> getAllCpus() {
+    return cpuRepository.findAll();
+  }
+
+  /**
+   * GPU一覧を取得するメソッド.
+   *
+   * @return GPUのリスト
+   */
+  public List<Gpu> getAllGpus() {
+    return gpuRepository.findAll();
+  }
+
+  /**
+   * PCの目的一覧を取得するメソッド.
+   *
+   * @return PCの目的のリスト
    */
   public List<Purpose> getAllPurposes() {
     return purposeRepository.findAllByProductCategory(0);
