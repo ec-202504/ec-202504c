@@ -38,7 +38,7 @@ public class MailService {
   public void sendOrderConfirmationEmail(String to, Order order) throws MessagingException {
     String subject = "【TechMate】注文確認メール";
     String body = buildEmailBody(order);
-    sendEmail("kazu15870@gmail.com", subject, body);
+    sendEmail(to, subject, body);
   }
 
   /**
