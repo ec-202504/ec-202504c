@@ -1,5 +1,6 @@
 package com.example.config;
 
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
@@ -43,5 +44,16 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(EntityNotFoundException.class)
   public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  /**
+   * その他の例外が発生した場合に、500エラーを返すハンドラメソッド.
+   *
+   * @param ex その他の例外
+   * @return 500エラーメッセージ
+   */
+  @ExceptionHandler(MessagingException.class)
+  public ResponseEntity<String> handleMessagingException(MessagingException ex) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("メール送信中にエラーが発生しました。");
   }
 }
