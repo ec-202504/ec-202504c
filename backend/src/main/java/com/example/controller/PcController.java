@@ -54,6 +54,16 @@ public class PcController {
   }
 
   /**
+   * PCの目的一覧を取得するエンドポイント.
+   *
+   * @return PCの目的一覧
+   */
+  @GetMapping("/purposes")
+  public ResponseEntity<?> getPurposes() {
+    return ResponseEntity.ok(pcService.getAllPurposes());
+  }
+
+  /**
    * CPUのIDと一致するPC一覧を取得するエンドポイント.
    *
    * @param cpuId 言語ID

@@ -1,7 +1,9 @@
 package com.example.service;
 
 import com.example.model.Pc;
+import com.example.model.Purpose;
 import com.example.repository.PcRepository;
+import com.example.repository.PurposeRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PcService {
   private final PcRepository pcRepository;
+  private final PurposeRepository purposeRepository;
 
   /**
    * PC一覧を取得するメソッド.
@@ -122,5 +125,14 @@ public class PcService {
    */
   public void removePc(Integer pcId) {
     pcRepository.deleteById(pcId);
+  }
+
+  /**
+   * 書籍の目的一覧を取得するメソッド.
+   *
+   * @return 書籍の目的のリスト
+   */
+  public List<Purpose> getAllPurposes() {
+    return purposeRepository.findAllByProductCategory(0);
   }
 }
