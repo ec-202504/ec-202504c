@@ -2,16 +2,14 @@ package com.example.service;
 
 import com.example.dto.response.OrderHistoryResponse;
 import com.example.dto.response.OrderProductResponse;
-import com.example.model.Book;
 import com.example.model.Order;
 import com.example.model.OrderProduct;
-import com.example.model.Pc;
 import com.example.repository.BookRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.PcRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +23,10 @@ public class OrderService {
   private final PcRepository pcRepository;
   private final BookRepository bookRepository;
 
+  private static final int CATEGORY_PC = 0;
+  private static final int CATEGORY_BOOK = 1;
+  private static final String PLACEHOLDER_IMAGE_URL = "https://placehold.jp/150x100.png";
+
   /**
    * ユーザーIDを指定して注文履歴を取得するメソッド.
    *
@@ -35,54 +37,12 @@ public class OrderService {
     List<OrderHistoryResponse> orderHistoryResponses = new ArrayList<>();
 
     List<Order> orders = orderRepository.findByUserIdUserId(userId);
-    for (Order order : orders) {
-      OrderHistoryResponse orderHistoryResponse = new OrderHistoryResponse();
-      orderHistoryResponse.setOrderId(order.getOrderId());
-      orderHistoryResponse.setTotalPrice(order.getTotalPrice());
-      orderHistoryResponse.setOrderDate(order.getOrderDateTime());
-      orderHistoryResponse.setDeliveryDateTime(order.getDeliveryDateTime());
-      orderHistoryResponse.setPaymentMethod(order.getPaymentMethod());
 
-      List<OrderProductResponse> orderProductResponses = new ArrayList<>();
-
-      for (OrderProduct orderProduct : order.getOrderProductList()) {
-        OrderProductResponse orderProductResponse = new OrderProductResponse();
-
-        // 商品の詳細情報を取得
-        Integer productId = orderProduct.getProductId();
-        Integer productCategory = orderProduct.getProductCategory();
-
-        orderProductResponse.setProductId(productId);
-        orderProductResponse.setProductCategory(productCategory);
-        orderProductResponse.setQuantity(orderProduct.getQuantity());
-
-        // カテゴリーごとに商品名と価格を設定
-        if (productCategory == 0) {
-          Optional<Pc> pc = pcRepository.findById(productId);
-          if (pc.isPresent()) {
-            orderProductResponse.setProductName(pc.get().getName());
-            // TODO: 画像URLの取得方法を修正
-            orderProductResponse.setImageUrl("https://placehold.jp/150x100.png");
-            orderProductResponse.setPrice(pc.get().getPrice());
-          }
-        } else if (productCategory == 1) {
-          Optional<Book> book = bookRepository.findById(productId);
-          if (book.isPresent()) {
-            orderProductResponse.setProductName(book.get().getName());
-            // TODO: 画像URLの取得方法を修正
-            orderProductResponse.setImageUrl("https://placehold.jp/150x100.png");
-            orderProductResponse.setPrice(book.get().getPrice());
-          }
-        }
-
-        orderProductResponses.add(orderProductResponse);
-      }
-
-      orderHistoryResponse.setProducts(orderProductResponses);
-      orderHistoryResponses.add(orderHistoryResponse);
+    if (orders.isEmpty()) {
+      throw new EntityNotFoundException("注文履歴が見つかりません");
     }
 
-    return orderHistoryResponses;
+    return orders.stream().map(this::mapToOrderHistoryResponse).toList();
   }
 
   /**
@@ -92,5 +52,67 @@ public class OrderService {
    */
   public void createOrder(Order order) {
     orderRepository.save(order);
+  }
+
+  /**
+   * OrderエンティティをOrderHistoryResponseに変換するヘルパーメソッド.
+   *
+   * @param order 注文エンティティ
+   * @return 変換されたOrderHistoryResponseオブジェクト
+   */
+  private OrderHistoryResponse mapToOrderHistoryResponse(Order order) {
+    List<OrderProductResponse> productResponses =
+        order.getOrderProductList().stream().map(this::mapToOrderProductResponse).toList();
+
+    return new OrderHistoryResponse(
+        order.getOrderId(),
+        order.getTotalPrice(),
+        order.getOrderDateTime(),
+        order.getDeliveryDateTime(),
+        order.getPaymentMethod(),
+        productResponses);
+  }
+
+  /**
+   * OrderProductエンティティをOrderProductResponseに変換するヘルパーメソッド.
+   *
+   * @param orderProduct 注文商品エンティティ
+   * @return 変換されたOrderProductResponseオブジェクト
+   */
+  private OrderProductResponse mapToOrderProductResponse(OrderProduct orderProduct) {
+    Integer productId = orderProduct.getProductId();
+    Integer category = orderProduct.getProductCategory();
+
+    OrderProductResponse response = new OrderProductResponse();
+    response.setProductId(productId);
+    response.setProductCategory(category);
+    response.setQuantity(orderProduct.getQuantity());
+    response.setImageUrl(PLACEHOLDER_IMAGE_URL); // TODO: DBから画像URLを取得するように修正する
+
+    switch (category) {
+      case CATEGORY_PC -> {
+        return pcRepository
+            .findById(productId)
+            .map(
+                pc -> {
+                  response.setProductName(pc.getName());
+                  response.setPrice(pc.getPrice());
+                  return response;
+                })
+            .orElseThrow(() -> new EntityNotFoundException("PC (ID: " + productId + ") が見つかりません"));
+      }
+      case CATEGORY_BOOK -> {
+        return bookRepository
+            .findById(productId)
+            .map(
+                book -> {
+                  response.setProductName(book.getName());
+                  response.setPrice(book.getPrice());
+                  return response;
+                })
+            .orElseThrow(() -> new EntityNotFoundException("書籍 (ID: " + productId + ") が見つかりません"));
+      }
+      default -> throw new EntityNotFoundException("不正なカテゴリ: " + category);
+    }
   }
 }
