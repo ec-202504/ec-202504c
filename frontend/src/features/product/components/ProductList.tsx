@@ -43,7 +43,12 @@ export default function ProductList({
 
   return (
     <div className="flex gap-4">
-      <Sidebar selectedOption={selectedOption} filterTerms={filterTerms} />
+      <Sidebar
+        selectedTab={selectedTab}
+        selectedOption={selectedOption}
+        filterTerms={filterTerms}
+      />
+
       <div className="flex-1">
         <SearchForm onSubmit={handleSubmit} />
 
