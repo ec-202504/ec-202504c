@@ -7,6 +7,7 @@ import type { Pc, RawPc } from "../types";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
 import { toast } from "sonner";
+import { PRODUCT_CATEGORY } from "../../../types/constants";
 
 const dummyReviews = [
   { rating: 5, count: 340 },
@@ -54,12 +55,18 @@ export default function PcDetail() {
     return Math.round((count / total) * 100);
   };
 
+  /**
+   * カートにPCを追加する
+   *
+   * @param quantity カートに追加する数量
+   */
   const handleClick = async (quantity: number) => {
+    // TODO: ログインしているユーザーのIDを取得する
     try {
       await axiosInstance.post("/carts", {
         userId: 1,
         productId: pc?.id,
-        productCategory: 0,
+        productCategory: PRODUCT_CATEGORY.PC,
         quantity: quantity,
       });
       toast.success(`${pc?.name}を${quantity}個カートに追加しました`);
