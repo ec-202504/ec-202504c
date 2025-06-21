@@ -6,14 +6,7 @@ import { Trash2, Plus, Minus } from "lucide-react";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "sonner";
-
-type CartProduct = {
-  cartProductId: number;
-  name: string;
-  price: number;
-  quantity: number;
-  imageUrl: string;
-};
+import type { CartProduct } from "../../types/cartProduct";
 
 type UpdateCartQuantityRequest = {
   cartProductId: number;
