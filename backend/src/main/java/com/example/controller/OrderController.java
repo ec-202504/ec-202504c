@@ -5,9 +5,11 @@ import com.example.dto.response.OrderHistoryResponse;
 import com.example.model.Order;
 import com.example.model.OrderProduct;
 import com.example.model.User;
+import com.example.service.MailService;
 import com.example.service.OrderProductService;
 import com.example.service.OrderService;
 import com.example.service.UserService;
+import jakarta.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ public class OrderController {
   private final OrderService orderService;
   private final OrderProductService orderProductService;
   private final UserService userService;
+  private final MailService mailService;
 
   /**
    * 全ての注文を取得するエンドポイント.
@@ -37,7 +40,8 @@ public class OrderController {
    * @return 全ての注文のリスト
    */
   @PostMapping
-  public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
+  public ResponseEntity<?> createOrder(@RequestBody OrderRequest request)
+      throws MessagingException {
     Optional<User> optionalUser = userService.findById(request.getUserId());
     if (optionalUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
@@ -67,6 +71,9 @@ public class OrderController {
 
     // 相互補完のために注文商品のリストを注文ドメインにも保存する（なくても動くと思うけど念のため）
     order.setOrderProductList(orderProductList);
+
+    // 注文完了メールを送信、エラーが発生した場合はMessagingExceptionをスロー
+    mailService.sendOrderConfirmationEmail(user.getEmail(), order);
 
     return ResponseEntity.ok("Order created successfully");
   }
