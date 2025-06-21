@@ -27,6 +27,13 @@ public interface PcRepository extends JpaRepository<Pc, Integer> {
   Page<Pc> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
 
   /**
+   * OSのIDと一致するPCのリストを取得する.
+   *
+   * @param osId OSのID
+   * @return OSのIDと一致するPCのリスト
+   */
+  List<Pc> findByOs_Id(Integer osId);
+  /**
    * GPUのIDと一致するPCのリストを取得する.
    *
    * @param gpuId GPUのID

@@ -54,6 +54,17 @@ public class PcController {
   }
 
   /**
+   * OSのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param osId OSのID
+   * @return OSのIDと一致するPC一覧
+   */
+  @GetMapping("/oses/{osId}")
+  public ResponseEntity<?> getPcsByOs(@PathVariable Integer osId) {
+    List<Pc> pcListByOsId = pcService.findByOsId(osId);
+    return ResponseEntity.ok(pcListByOsId);
+  }
+  /**
    * GPUのIDと一致するPC一覧を取得するエンドポイント.
    *
    * @param gpuId GPUのID

@@ -66,6 +66,15 @@ public class PcService {
   }
 
   /**
+   * OSのIDと一致するPCのリストを取得するメソッド.
+   *
+   * @param osId OSのID
+   * @return OSのIDと一致するPCのリスト
+   */
+  public List<Pc> findByOsId(Integer osId) {
+    return pcRepository.findByOs_Id(osId);
+  }
+  /**
    * GPUのIDと一致するPCのリストを取得するメソッド.
    *
    * @param gpuId GPUのID
