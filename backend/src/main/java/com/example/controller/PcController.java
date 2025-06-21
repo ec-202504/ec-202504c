@@ -64,6 +64,39 @@ public class PcController {
     List<Pc> pcListByCpuId = pcService.findByCpuId(cpuId);
     return ResponseEntity.ok(pcListByCpuId);
   }
+  /**
+   * OSのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param osId OSのID
+   * @return OSのIDと一致するPC一覧
+   */
+  @GetMapping("/oses/{osId}")
+  public ResponseEntity<?> getPcsByOs(@PathVariable Integer osId) {
+    List<Pc> pcListByOsId = pcService.findByOsId(osId);
+    return ResponseEntity.ok(pcListByOsId);
+  }
+  /**
+   * GPUのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param gpuId GPUのID
+   * @return GPUのIDと一致するPC一覧
+   */
+  @GetMapping("/gpus/{gpuId}")
+  public ResponseEntity<?> getPcsByGpu(@PathVariable Integer gpuId) {
+    List<Pc> pcListByGpuId = pcService.findByGpuId(gpuId);
+    return ResponseEntity.ok(pcListByGpuId);
+  }
+  /**
+   * 目的IDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するPC一覧
+   */
+  @GetMapping("/purposes/{purposeId}")
+  public ResponseEntity<?> getBooksByLanguage(@PathVariable Integer purposeId) {
+    List<Pc> pcListByPurposeId = pcService.findByPurposeId(purposeId);
+    return ResponseEntity.ok(pcListByPurposeId);
+  }
 
   /**
    * PCの詳細情報を取得するエンドポイント.
