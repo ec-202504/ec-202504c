@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.model.Book;
+import com.example.model.Language;
 import com.example.repository.BookRepository;
 import com.example.repository.LanguageRepository;
 import java.util.List;
@@ -103,5 +104,14 @@ public class BookService {
    */
   public void removeBook(Integer bookId) {
     bookRepository.deleteById(bookId);
+  }
+
+  /**
+   * 言語一覧を取得するメソッド.
+   *
+   * @return 言語のリスト
+   */
+  public List<Language> getAllLanguages() {
+    return languageRepository.findAll();
   }
 }

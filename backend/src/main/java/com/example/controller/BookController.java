@@ -55,6 +55,11 @@ public class BookController {
     return ResponseEntity.ok(bookService.findBooksWithPageable(keyword, pageable));
   }
 
+  @GetMapping("/languages")
+  public ResponseEntity<?> getLanguages() {
+    return ResponseEntity.ok(bookService.getAllLanguages());
+  }
+
   /**
    * 言語IDと一致する書籍一覧を取得するエンドポイント.
    *
