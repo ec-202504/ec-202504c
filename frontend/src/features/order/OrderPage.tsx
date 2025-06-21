@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "../../lib/axiosInstance";
@@ -20,6 +20,8 @@ import {
   FormLabel,
   FormMessage,
 } from "../../components/ui/form";
+import type { CartProduct } from "../../types/cartProduct";
+import { toast } from "sonner";
 
 // TODO: ログインしているUserデータを取得する
 const mockUser = {
@@ -31,25 +33,6 @@ const mockUser = {
   destinationAddress: "1-2-3",
   destinationTelephone: "03-1234-5678",
 };
-
-const mockCartProducts = [
-  {
-    productId: 1,
-    productCategory: 0,
-    name: "ゲーミングPC",
-    quantity: 1,
-    price: 150000,
-    imageUrl: "https://placehold.jp/150x100.png?text=PC",
-  },
-  {
-    productId: 100,
-    productCategory: 1,
-    name: "書籍『React入門』",
-    quantity: 2,
-    price: 3000,
-    imageUrl: "https://placehold.jp/150x100.png?text=Book",
-  },
-];
 
 type OrderProduct = {
   productId: number;
@@ -77,6 +60,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 function OrderPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [clientSecret, setClientSecret] = useState<string>();
+  const [cart, setCart] = useState<CartProduct[]>([]);
 
   const navigate = useNavigate();
 
@@ -98,12 +82,12 @@ function OrderPage() {
 
   // 合計金額を計算する関数
   const getTotalPrice = () =>
-    mockCartProducts.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const onSubmit = async (data: OrderFormData) => {
-    const productList: OrderProduct[] = mockCartProducts.map((item) => ({
-      productId: item.productId,
-      productCategory: item.productCategory,
+    const productList: OrderProduct[] = cart.map((item) => ({
+      productId: item.cartProductId,
+      productCategory: 0,
       quantity: item.quantity,
     }));
     const orderRequest: OrderRequest = {
@@ -145,6 +129,20 @@ function OrderPage() {
     };
     fetchClientSecret();
   }, []);
+
+  // TODO: カートページにおいても一覧を取得しているため冗長。一元管理したい。
+  const fetchCartProducts = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get<CartProduct[]>("/carts");
+      setCart(response.data);
+    } catch (error) {
+      toast.error("カート商品の取得に失敗しました");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCartProducts();
+  }, [fetchCartProducts]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -387,7 +385,7 @@ function OrderPage() {
       <section>
         <h2 className="text-lg font-semibold mb-4">カート内容</h2>
         <ul className="space-y-4">
-          {mockCartProducts.map((item) => (
+          {cart.map((item) => (
             <li
               key={item.name}
               className="flex items-center gap-4 border-b pb-4 last:border-b-0"
