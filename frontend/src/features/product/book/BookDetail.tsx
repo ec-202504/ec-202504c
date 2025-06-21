@@ -61,12 +61,12 @@ function BookDetail() {
    * @param quantity カートに追加する数量
    */
   const handleClick = async (quantity: number) => {
-    if (!book?.id) {
+    if (!book?.bookId) {
       return;
     }
 
     const addCartRequestBody: AddCartRequest = {
-      productId: book?.id,
+      productId: book?.bookId,
       productCategory: PRODUCT_CATEGORY.BOOK,
       quantity: quantity,
     };
@@ -110,15 +110,18 @@ function BookDetail() {
                 average={average}
                 totalReviews={totalReviews}
               />
+
               <div className="flex gap-8 w-full max-w-5xl mb-8">
                 <div>
                   <h2 className="text-lg font-bold mb-2">カスタマーレビュー</h2>
+
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-2xl font-bold">
                       {average.toFixed(1)}
                     </span>
                     <span>5つのうち</span>
                   </div>
+
                   <div className="mb-4">
                     {dummyReviews.map((r) => (
                       <div key={r.rating} className="flex items-center gap-2">
@@ -136,6 +139,7 @@ function BookDetail() {
                     ))}
                   </div>
                 </div>
+
                 <div className="mb-2 w-full">
                   <div className="font-bold mb-2">レビュー内容</div>
                   {dummyReviewContents.map((review) => (
