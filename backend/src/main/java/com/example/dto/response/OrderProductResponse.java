@@ -11,7 +11,8 @@ import lombok.Setter;
 public class OrderProductResponse {
   private Integer productId;
   private Integer productCategory; // "PC" or "Book
-  private String productName;
   private Integer quantity;
+  private String productName;
+  private String imageUrl;
   private Integer price;
 }

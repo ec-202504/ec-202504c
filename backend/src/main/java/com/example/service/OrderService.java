@@ -61,12 +61,16 @@ public class OrderService {
           Optional<Pc> pc = pcRepository.findById(productId);
           if (pc.isPresent()) {
             orderProductResponse.setProductName(pc.get().getName());
+            // TODO: 画像URLの取得方法を修正
+            orderProductResponse.setImageUrl("https://placehold.jp/150x100.png");
             orderProductResponse.setPrice(pc.get().getPrice());
           }
         } else if (productCategory == 1) {
           Optional<Book> book = bookRepository.findById(productId);
           if (book.isPresent()) {
             orderProductResponse.setProductName(book.get().getName());
+            // TODO: 画像URLの取得方法を修正
+            orderProductResponse.setImageUrl("https://placehold.jp/150x100.png");
             orderProductResponse.setPrice(book.get().getPrice());
           }
         }
