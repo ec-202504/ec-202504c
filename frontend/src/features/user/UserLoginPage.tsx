@@ -36,7 +36,7 @@ function UserLoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const response = await axiosInstance.post("/user/login", data);
+      await axiosInstance.post("/user/login", data);
       navigate({ to: "/product", replace: true });
     } catch {
       setError("email", { message: "ログインに失敗しました" });
