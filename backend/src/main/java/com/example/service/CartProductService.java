@@ -27,6 +27,18 @@ public class CartProductService {
   }
 
   /**
+   * カート内商品をIDで取得するメソッド.
+   *
+   * @param cartProductId カート商品ID
+   * @return カート内商品
+   */
+  public Optional<CartProduct> getExistingProduct(
+      Integer userId, Integer cartProductId, Integer productCategory) {
+    return cartProductRepository.findByUserIdUserIdAndProductIdAndProductCategory(
+        userId, cartProductId, productCategory);
+  }
+
+  /**
    * カート内商品を追加するメソッド.
    *
    * @param cartProduct 追加するカート内商品

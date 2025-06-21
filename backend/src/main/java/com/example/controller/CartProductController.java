@@ -70,20 +70,35 @@ public class CartProductController {
   @PostMapping
   public ResponseEntity<?> addCartProduct(
       @RequestBody AddCartProductRequest request, HttpSession session) {
+    // ユーザが存在するか確認
     Optional<User> optionalUser = userService.findById(request.getUserId());
     if (optionalUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }
-    User user = optionalUser.get();
+    // 商品がすでにカートに存在するか確認し、存在すれば数量を更新する
+    Integer productId = request.getProductId();
+    Integer productCategory = request.getProductCategory();
+    Optional<CartProduct> existingCartProduct =
+        cartProductService.getExistingProduct(
+            optionalUser.get().getUserId(), productId, request.getProductCategory());
+    if (existingCartProduct.isEmpty()) {
+      CartProduct cartProduct = new CartProduct();
+      cartProduct.setQuantity(request.getQuantity());
+      cartProduct.setSessionId(session.getId());
+      cartProduct.setProductCategory(request.getProductCategory());
+      cartProduct.setProductId(request.getProductId());
 
-    CartProduct cartProduct = new CartProduct();
-    cartProduct.setQuantity(request.getQuantity());
-    cartProduct.setSessionId(session.getId());
-    cartProduct.setProductCategory(request.getProductCategory());
-    cartProduct.setProductId(request.getProductId());
-    cartProduct.setUserId(user);
+      User user = optionalUser.get();
+      cartProduct.setUserId(user);
 
-    cartProductService.addCartProduct(cartProduct);
+      cartProductService.addCartProduct(cartProduct);
+    } else {
+      // 既存のカート商品があれば数量を更新
+      Integer quantity = existingCartProduct.get().getQuantity() + request.getQuantity();
+      cartProductService.updateCartProductQuantity(
+          existingCartProduct.get().getCartProductId(), quantity);
+    }
+
     return ResponseEntity.ok().build();
   }
 

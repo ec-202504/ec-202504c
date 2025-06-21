@@ -1,4 +1,4 @@
-import { useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import PcInfo from "../components/PcInfo";
@@ -6,6 +6,7 @@ import ReviewItem from "../components/ReviewItem";
 import type { Pc, RawPc } from "../types";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
+import { toast } from "sonner";
 
 const dummyReviews = [
   { rating: 5, count: 340 },
@@ -41,8 +42,10 @@ const dummyReviewContents = [
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { itemId } = useParams({ from: "/product/pc/$itemId/" });
-  
+  const navigate = useNavigate();
+
   const totalReviews = dummyReviews.reduce((sum, r) => sum + r.count, 0);
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
@@ -53,18 +56,16 @@ export default function PcDetail() {
 
   const handleClick = async (quantity: number) => {
     try {
-      //userIDを取得する実装を追記する必要あり
-      const response = await axiosInstance.post("/carts", {
+      await axiosInstance.post("/carts", {
         userId: 1,
         productId: pc?.id,
         productCategory: 0,
         quantity: quantity,
       });
-      console.log(response.data);
-      console.log(response.status);
+      toast.success(`${pc?.name}を${quantity}個カートに追加しました`);
+      navigate({ to: "/cart" });
     } catch (error) {
       console.error("APIリクエストに失敗しました:", error);
-      console.log(quantity);
     }
   };
 
@@ -100,7 +101,7 @@ export default function PcDetail() {
 
     fetchData();
   }, [itemId, convertToPc]);
-  
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-4">
       {isLoading ? (
@@ -152,7 +153,6 @@ export default function PcDetail() {
                     />
                   ))}
                 </div>
-                <span>{calcPercentage(r.count, totalReviews)}%</span>
               </div>
             </>
           ) : (
