@@ -4,7 +4,7 @@ type PcSpec = {
   gpu: string;
   memory: number;
   storage: number;
-  device_size: number;
+  deviceSize: number;
 };
 
 type PcSpecListProps = {
@@ -36,7 +36,7 @@ export default function PcSpecList({ pc }: PcSpecListProps) {
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">サイズ：</div>
-        {pc.device_size}インチ
+        {pc.deviceSize}インチ
       </li>
     </ul>
   );
