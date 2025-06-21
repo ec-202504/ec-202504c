@@ -13,6 +13,7 @@ import {
 } from "../../../components/ui/pagination";
 
 type Props = {
+  selectedTab: string;
   products: Product[];
   filterTerms: FilterTerm[];
   selectedOption: (value: string) => void;
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export default function ProductList({
+  selectedTab,
   products,
   filterTerms,
   selectedOption,
@@ -54,7 +56,11 @@ export default function ProductList({
         ) : (
           <div className="grid grid-cols-4 gap-4 mb-4">
             {products.map((product) => (
-              <ProductCard product={product} key={product.id} />
+              <ProductCard
+                selectedTab={selectedTab}
+                product={product}
+                key={product.id}
+              />
             ))}
           </div>
         )}

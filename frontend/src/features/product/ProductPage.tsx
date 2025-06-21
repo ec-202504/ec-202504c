@@ -9,13 +9,15 @@ import ProductList from "./components/ProductList";
 import type { FilterTerm, Product } from "./types";
 import { axiosInstance } from "../../lib/axiosInstance";
 import LoadingOverlay from "./components/LoadingOverlay";
+import { toast } from "sonner";
+import { TAB_VALUES } from "./types/constants";
 
 export default function ProductListPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [pcs, setPcs] = useState<Product[]>([]);
   const [techBooks, setTechBooks] = useState<Product[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>("pcs");
+  const [selectedTab, setSelectedTab] = useState<string>(TAB_VALUES.PC);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const PAGE_SIZE = 12;
@@ -63,14 +65,14 @@ export default function ProductListPage() {
             keyword: query,
           },
         });
-        if (selectedTab === "pcs") {
+        if (selectedTab === TAB_VALUES.PC) {
           setPcs(response.data?.content);
         } else {
           setTechBooks(response.data?.content);
         }
         setTotalPages(response.data?.totalPages - 1 || 1);
       } catch (error) {
-        console.error("APIリクエストに失敗しました:", error);
+        toast.error("APIリクエストに失敗しました");
       } finally {
         setIsLoading(false);
       }
@@ -101,11 +103,13 @@ export default function ProductListPage() {
           className="mb-4"
         >
           <TabsList>
-            <TabsTrigger value="pcs">PC</TabsTrigger>
-            <TabsTrigger value="books">技術書</TabsTrigger>
+            <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
+            <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
           </TabsList>
-          <TabsContent value="pcs">
+
+          <TabsContent value={TAB_VALUES.PC}>
             <ProductList
+              selectedTab={selectedTab}
               products={pcs}
               filterTerms={filterTerms}
               selectedOption={selectedOption}
@@ -115,8 +119,10 @@ export default function ProductListPage() {
               totalPages={totalPages}
             />
           </TabsContent>
-          <TabsContent value="books">
+
+          <TabsContent value={TAB_VALUES.BOOK}>
             <ProductList
+              selectedTab={selectedTab}
               products={techBooks}
               filterTerms={filterTerms}
               selectedOption={selectedOption}
