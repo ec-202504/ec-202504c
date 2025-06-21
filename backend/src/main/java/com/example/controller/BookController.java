@@ -6,6 +6,7 @@ import com.example.model.Book;
 import com.example.model.Language;
 import com.example.model.Purpose;
 import com.example.service.BookService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -55,13 +56,25 @@ public class BookController {
   }
 
   /**
+   * 言語IDと一致する書籍一覧を取得するエンドポイント.
+   *
+   * @param languageId 言語ID
+   * @return 言語IDと一致する書籍一覧
+   */
+  @GetMapping("/languages/{languageId}")
+  public ResponseEntity<?> getBooksByLanguage(@PathVariable Integer languageId) {
+    List<Book> bookListByLanguageId = bookService.findByLanguageId(languageId);
+    return ResponseEntity.ok(bookListByLanguageId);
+  }
+
+  /**
    * Bookの詳細情報を取得するエンドポイント.
    *
    * @param bookId BookのID
    * @return Bookの詳細情報
    */
   @GetMapping("/{bookId}")
-  public ResponseEntity<?> getDetailPc(@PathVariable Integer bookId) {
+  public ResponseEntity<?> getDetailBook(@PathVariable Integer bookId) {
     return bookService
         .findById(bookId)
         .map(ResponseEntity::ok)

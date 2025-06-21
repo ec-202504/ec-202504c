@@ -58,8 +58,8 @@ export default function ProductListPage() {
       try {
         const response = await axiosInstance.get(`/${selectedTab}`, {
           params: {
-            limit: page,
-            offset: PAGE_SIZE,
+            page: page,
+            size: PAGE_SIZE,
             keyword: query,
           },
         });

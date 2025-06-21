@@ -25,4 +25,12 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
    * @return ページネーションされたBookのリスト
    */
   Page<Book> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
+
+  /**
+   * 言語IDと一致する書籍のリストを取得する.
+   *
+   * @param languageId 言語ID
+   * @return 言語IDと一致する書籍のリスト
+   */
+  List<Book> findByLanguageId(Integer languageId);
 }

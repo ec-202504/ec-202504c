@@ -31,18 +31,28 @@ const mockUser = {
 
 const mockCartProducts = [
   {
+    productId: 1,
+    productCategory: 0,
     name: "ゲーミングPC",
     quantity: 1,
     price: 150000,
     imageUrl: "https://placehold.jp/150x100.png?text=PC",
   },
   {
+    productId: 100,
+    productCategory: 1,
     name: "書籍『React入門』",
     quantity: 2,
     price: 3000,
     imageUrl: "https://placehold.jp/150x100.png?text=Book",
   },
 ];
+
+type OrderProduct = {
+  productId: number;
+  productCategory: number;
+  quantity: number;
+};
 
 type OrderRequest = {
   totalPrice: number;
@@ -56,6 +66,7 @@ type OrderRequest = {
   deliveryDateTime: string;
   paymentMethod: number;
   userId: number;
+  productList: OrderProduct[];
 };
 
 function OrderPage() {
@@ -83,6 +94,11 @@ function OrderPage() {
     mockCartProducts.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const onSubmit = async (data: OrderFormData) => {
+    const productList: OrderProduct[] = mockCartProducts.map((item) => ({
+      productId: item.productId,
+      productCategory: item.productCategory,
+      quantity: item.quantity,
+    }));
     const orderRequest: OrderRequest = {
       totalPrice: getTotalPrice(),
       destinationName: data.destinationName,
@@ -95,6 +111,7 @@ function OrderPage() {
       deliveryDateTime: formatToLocalDate(new Date()),
       paymentMethod: Number(data.paymentMethod),
       userId: 1, // TODO: ユーザーIDを取得する
+      productList: productList,
     };
 
     try {
