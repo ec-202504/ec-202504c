@@ -1,8 +1,10 @@
 package com.example.config;
 
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,5 +32,16 @@ public class GlobalExceptionHandler {
             .toList();
 
     return ResponseEntity.badRequest().body(Map.of("errors", errors));
+  }
+
+  /**
+   * エンティティが見つからない場合に、404エラーを返すハンドラメソッド.
+   *
+   * @param ex エンティティが見つからない例外
+   * @return 404エラーメッセージ
+   */
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 }
