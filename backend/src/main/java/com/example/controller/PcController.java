@@ -54,6 +54,17 @@ public class PcController {
   }
 
   /**
+   * CPUのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param cpuId 言語ID
+   * @return 言語IDと一致する書籍一覧
+   */
+  @GetMapping("/cpus/{cpuId}")
+  public ResponseEntity<?> getPcsByCpu(@PathVariable Integer cpuId) {
+    List<Pc> pcListByCpuId = pcService.findByCpuId(cpuId);
+    return ResponseEntity.ok(pcListByCpuId);
+  }
+  /**
    * OSのIDと一致するPC一覧を取得するエンドポイント.
    *
    * @param osId OSのID
