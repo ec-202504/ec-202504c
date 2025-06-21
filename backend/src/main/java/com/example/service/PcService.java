@@ -66,6 +66,46 @@ public class PcService {
   }
 
   /**
+   * CPUのIDと一致するPcのリストを取得するメソッド.
+   *
+   * @param cpuId CPUのID
+   * @return CPUのIDと一致するPCのリスト
+   */
+  public List<Pc> findByCpuId(Integer cpuId) {
+    return pcRepository.findByCpu_Id(cpuId);
+  }
+  
+  /**
+   * OSのIDと一致するPCのリストを取得するメソッド.
+   *
+   * @param osId OSのID
+   * @return OSのIDと一致するPCのリスト
+   */
+  public List<Pc> findByOsId(Integer osId) {
+    return pcRepository.findByOs_Id(osId);
+  }
+  
+  /**
+   * GPUのIDと一致するPCのリストを取得するメソッド.
+   *
+   * @param gpuId GPUのID
+   * @return GPUのIDと一致するPCのリスト
+   */
+  public List<Pc> findByGpuId(Integer gpuId) {
+    return pcRepository.findByGpu_Id(gpuId);
+  }
+  
+  /**
+   * 目的IDと一致するPCのリストを取得するメソッド.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するPCのリスト
+   */
+  public List<Pc> findByPurposeId(Integer purposeId) {
+    return pcRepository.findByPurpose_Id(purposeId);
+  }
+
+  /**
    * PC登録を行うメソッド.
    *
    * @param pc 登録するPCの詳細情報

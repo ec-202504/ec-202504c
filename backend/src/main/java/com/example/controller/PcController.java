@@ -9,6 +9,7 @@ import com.example.model.Os;
 import com.example.model.Pc;
 import com.example.model.Purpose;
 import com.example.service.PcService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +56,51 @@ public class PcController {
     Pageable pageable = PageRequest.of(page, size, sorting);
 
     return ResponseEntity.ok(pcService.findPcsWithPageable(keyword, pageable));
+  }
+
+  /**
+   * CPUのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param cpuId 言語ID
+   * @return 言語IDと一致する書籍一覧
+   */
+  @GetMapping("/cpus/{cpuId}")
+  public ResponseEntity<?> getPcsByCpu(@PathVariable Integer cpuId) {
+    List<Pc> pcListByCpuId = pcService.findByCpuId(cpuId);
+    return ResponseEntity.ok(pcListByCpuId);
+  }
+  /**
+   * OSのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param osId OSのID
+   * @return OSのIDと一致するPC一覧
+   */
+  @GetMapping("/oses/{osId}")
+  public ResponseEntity<?> getPcsByOs(@PathVariable Integer osId) {
+    List<Pc> pcListByOsId = pcService.findByOsId(osId);
+    return ResponseEntity.ok(pcListByOsId);
+  }
+  /**
+   * GPUのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param gpuId GPUのID
+   * @return GPUのIDと一致するPC一覧
+   */
+  @GetMapping("/gpus/{gpuId}")
+  public ResponseEntity<?> getPcsByGpu(@PathVariable Integer gpuId) {
+    List<Pc> pcListByGpuId = pcService.findByGpuId(gpuId);
+    return ResponseEntity.ok(pcListByGpuId);
+  }
+  /**
+   * 目的IDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するPC一覧
+   */
+  @GetMapping("/purposes/{purposeId}")
+  public ResponseEntity<?> getBooksByLanguage(@PathVariable Integer purposeId) {
+    List<Pc> pcListByPurposeId = pcService.findByPurposeId(purposeId);
+    return ResponseEntity.ok(pcListByPurposeId);
   }
 
   /**
