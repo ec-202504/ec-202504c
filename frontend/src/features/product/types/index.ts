@@ -4,3 +4,4 @@ export * from "./RawPc";
 export * from "./Pc";
 export * from "./Book";
 export * from "./RawBook";
+export * from "./addCartRequest";

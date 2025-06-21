@@ -1,4 +1,4 @@
-import type { Book, RawBook } from "../types";
+import type { AddCartRequest, Book, RawBook } from "../types";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
@@ -61,13 +61,14 @@ function BookDetail() {
    * @param quantity カートに追加する数量
    */
   const handleClick = async (quantity: number) => {
+    const addCartRequestBody: AddCartRequest = {
+      productId: book?.id ?? 0,
+      productCategory: PRODUCT_CATEGORY.BOOK,
+      quantity: quantity,
+    };
+
     try {
-      await axiosInstance.post("/carts", {
-        userId: 1,
-        productId: book?.id,
-        productCategory: PRODUCT_CATEGORY.BOOK,
-        quantity: quantity,
-      });
+      await axiosInstance.post("/carts", addCartRequestBody);
       toast.success(`${book?.name}を${quantity}個カートに追加しました`);
       navigate({ to: "/cart" });
     } catch (error) {

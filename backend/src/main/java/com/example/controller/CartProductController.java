@@ -70,8 +70,9 @@ public class CartProductController {
   @PostMapping
   public ResponseEntity<?> addCartProduct(
       @RequestBody AddCartProductRequest request, HttpSession session) {
+    Integer userId = 1;
     // ユーザが存在するか確認
-    Optional<User> existingUser = userService.findById(request.getUserId());
+    Optional<User> existingUser = userService.findById(userId);
     if (existingUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }

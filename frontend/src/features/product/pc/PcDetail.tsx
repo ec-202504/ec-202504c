@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
-import type { Pc, RawPc } from "../types";
+import type { AddCartRequest, Pc, RawPc } from "../types";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
 import { toast } from "sonner";
@@ -61,14 +61,15 @@ export default function PcDetail() {
    * @param quantity カートに追加する数量
    */
   const handleClick = async (quantity: number) => {
+    const addCartRequestBody: AddCartRequest = {
+      productId: pc?.id ?? 0,
+      productCategory: PRODUCT_CATEGORY.PC,
+      quantity: quantity,
+    };
+
     // TODO: ログインしているユーザーのIDを取得する
     try {
-      await axiosInstance.post("/carts", {
-        userId: 1,
-        productId: pc?.id,
-        productCategory: PRODUCT_CATEGORY.PC,
-        quantity: quantity,
-      });
+      await axiosInstance.post("/carts", addCartRequestBody);
       toast.success(`${pc?.name}を${quantity}個カートに追加しました`);
       navigate({ to: "/cart" });
     } catch (error) {
