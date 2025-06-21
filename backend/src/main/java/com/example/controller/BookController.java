@@ -55,9 +55,24 @@ public class BookController {
     return ResponseEntity.ok(bookService.findBooksWithPageable(keyword, pageable));
   }
 
+  /**
+   * 言語一覧を取得するエンドポイント.
+   *
+   * @return 言語一覧
+   */
   @GetMapping("/languages")
   public ResponseEntity<?> getLanguages() {
     return ResponseEntity.ok(bookService.getAllLanguages());
+  }
+
+  /**
+   * 書籍の目的一覧を取得するエンドポイント.
+   *
+   * @return 書籍の目的一覧
+   */
+  @GetMapping("/purposes")
+  public ResponseEntity<?> getPurposes() {
+    return ResponseEntity.ok(bookService.getAllPurposes());
   }
 
   /**
@@ -72,16 +87,16 @@ public class BookController {
     return ResponseEntity.ok(bookListByLanguageId);
   }
 
-    /**
-     * 目的IDと一致する書籍一覧を取得するエンドポイント.
-     *
-     * @param purposeId 目的ID
-     * @return 目的IDと一致する書籍一覧
-     */
+  /**
+   * 目的IDと一致する書籍一覧を取得するエンドポイント.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致する書籍一覧
+   */
   @GetMapping("/purposes/{purposeId}")
   public ResponseEntity<?> getBooksByPurpose(@PathVariable Integer purposeId) {
-      List<Book> bookListByPurposeId = bookService.findByPurposeId(purposeId);
-      return ResponseEntity.ok(bookListByPurposeId);
+    List<Book> bookListByPurposeId = bookService.findByPurposeId(purposeId);
+    return ResponseEntity.ok(bookListByPurposeId);
   }
 
   /**

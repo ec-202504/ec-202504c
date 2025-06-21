@@ -2,8 +2,10 @@ package com.example.service;
 
 import com.example.model.Book;
 import com.example.model.Language;
+import com.example.model.Purpose;
 import com.example.repository.BookRepository;
 import com.example.repository.LanguageRepository;
+import com.example.repository.PurposeRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookService {
   private final BookRepository bookRepository;
   private final LanguageRepository languageRepository;
+  private final PurposeRepository purposeRepository;
 
   /**
    * Book一覧を取得するメソッド.
@@ -80,6 +83,7 @@ public class BookService {
 
   /**
    * 目的IDと一致するBookのリストを取得するメソッド.
+   *
    * @param purposeId 目的ID
    * @return 目的IDと一致するBookのリスト
    */
@@ -113,5 +117,14 @@ public class BookService {
    */
   public List<Language> getAllLanguages() {
     return languageRepository.findAll();
+  }
+
+  /**
+   * 書籍の目的一覧を取得するメソッド.
+   *
+   * @return 書籍の目的のリスト
+   */
+  public List<Purpose> getAllPurposes() {
+    return purposeRepository.findAllByProductCategory(1);
   }
 }
