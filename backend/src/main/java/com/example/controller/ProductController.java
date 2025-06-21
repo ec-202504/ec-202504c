@@ -1,7 +1,7 @@
 package com.example.controller;
 
-import com.example.dto.response.BookDetailResponse;
-import com.example.dto.response.PcDetailResponse;
+import com.example.dto.response.BookOverviewResponse;
+import com.example.dto.response.PcOverviewResponse;
 import com.example.dto.response.ProductsResponse;
 import com.example.model.Book;
 import com.example.model.Pc;
@@ -48,7 +48,7 @@ public class ProductController {
             .map(
                 pc -> {
                   ProductsResponse productsResponse = getProductResponse(pc);
-                  PcDetailResponse pcDetailResponse = getPcDetailResponse(pc);
+                  PcOverviewResponse pcDetailResponse = getPcDetailResponse(pc);
                   productsResponse.setPcDetailResponse(pcDetailResponse);
                   return productsResponse;
                 })
@@ -60,7 +60,7 @@ public class ProductController {
             .map(
                 book -> {
                   ProductsResponse productsResponse = getProductResponse(book);
-                  BookDetailResponse bookDetailResponse = getBookDetailResponse(book);
+                  BookOverviewResponse bookDetailResponse = getBookDetailResponse(book);
                   productsResponse.setBookDetailResponse(bookDetailResponse);
                   return productsResponse;
                 })
@@ -116,8 +116,8 @@ public class ProductController {
    * @param pc PCの詳細情報
    * @return pcDetailResponse
    */
-  private static PcDetailResponse getPcDetailResponse(Pc pc) {
-    PcDetailResponse pcDetailResponse = new PcDetailResponse();
+  private static PcOverviewResponse getPcDetailResponse(Pc pc) {
+    PcOverviewResponse pcDetailResponse = new PcOverviewResponse();
 
     pcDetailResponse.setMemory(pc.getMemory());
     pcDetailResponse.setStorage(pc.getStorage());
@@ -137,8 +137,8 @@ public class ProductController {
    * @param book Bookの詳細情報
    * @return bookDetailResponse
    */
-  private static BookDetailResponse getBookDetailResponse(Book book) {
-    BookDetailResponse bookDetailResponse = new BookDetailResponse();
+  private static BookOverviewResponse getBookDetailResponse(Book book) {
+    BookOverviewResponse bookDetailResponse = new BookOverviewResponse();
     bookDetailResponse.setAuthor(book.getAuthor());
     bookDetailResponse.setPublishDate(book.getPublishDate());
     bookDetailResponse.setLanguage(book.getLanguage());
