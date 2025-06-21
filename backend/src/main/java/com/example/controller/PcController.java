@@ -63,7 +63,7 @@ public class PcController {
   public ResponseEntity<?> getPcsByOs(@PathVariable Integer osId) {
     List<Pc> pcListByOsId = pcService.findByOsId(osId);
     return ResponseEntity.ok(pcListByOsId);
-　}
+  }
   /**
    * GPUのIDと一致するPC一覧を取得するエンドポイント.
    *
