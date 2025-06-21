@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { useNavigate } from "@tanstack/react-router";
 import { formatToLocalDate } from "../../utils/formatToLocalDate";
 import { orderSchema, type OrderFormData } from "./schema/orderSchema";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import PaymentForm from "./components/PaymentForm";
 
 import { Button } from "../../components/ui/button";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
@@ -69,8 +72,12 @@ type OrderRequest = {
   productList: OrderProduct[];
 };
 
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
 function OrderPage() {
   const [isEditing, setIsEditing] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string>();
+
   const navigate = useNavigate();
 
   const orderForm = useForm<OrderFormData>({
@@ -87,7 +94,7 @@ function OrderPage() {
     },
   });
 
-  const { setValue, getValues } = orderForm;
+  const { setValue, getValues, watch } = orderForm;
 
   // 合計金額を計算する関数
   const getTotalPrice = () =>
@@ -127,6 +134,14 @@ function OrderPage() {
     setValue("destinationPrefecture", "東京都");
     setValue("destinationMunicipalities", "千代田区");
   };
+
+  useEffect(() => {
+    const fetchClientSecret = async () => {
+      const response = await axiosInstance.post("/payments/verify-card");
+      setClientSecret(response.data.clientSecret);
+    };
+    fetchClientSecret();
+  }, []);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -358,6 +373,12 @@ function OrderPage() {
             )}
           />
         </Form>
+
+        {watch("paymentMethod") === "1" && clientSecret && (
+          <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <PaymentForm />
+          </Elements>
+        )}
       </section>
 
       <section>
