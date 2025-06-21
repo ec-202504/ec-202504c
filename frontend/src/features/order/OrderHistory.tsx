@@ -5,15 +5,17 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
 
 // ダミー注文履歴データ（画像付き）
 const mockOrders = [
   {
-    id: 2,
-    orderDate: "2024-06-10",
-    deliveryStatus: "配達済み",
-    deliveryDate: "2024-06-12",
+    orderId: 2,
     totalPrice: 12000,
+    orderDate: "2024-06-10",
+    deliveryDateTime: "2024-06-12 10:00:00",
+    paymentMethod: 0,
     products: [
       {
         name: "書籍『Next.js実践』",
@@ -32,11 +34,10 @@ const mockOrders = [
     ],
   },
   {
-    id: 1,
-    orderDate: "2024-05-20",
-    deliveryStatus: "配達中",
-    deliveryDate: "2024-05-25",
+    orderId: 1,
     totalPrice: 156000,
+    orderDate: "2024-05-20",
+    deliveryDateTime: "2024-05-25 10:00:00",
     products: [
       {
         name: "ゲーミングPC",
@@ -57,25 +58,33 @@ const mockOrders = [
 ];
 
 function OrderHistory() {
+  // 配達予定時刻を時まで表示する関数
+  const formatDeliveryTime = (dateTimeString: string) => {
+    const date = new Date(dateTimeString);
+    return format(date, "M/d HH時", { locale: ja });
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       <h1 className="text-2xl font-bold mb-6">注文履歴</h1>
       {mockOrders.map((order) => (
-        <Card key={order.id} className="shadow-md">
+        <Card key={order.orderId} className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between gap-4">
-            <div>
-              <CardTitle className="text-lg">
-                注文日: {order.orderDate}
-              </CardTitle>
+            <CardTitle className="text-lg">注文日: {order.orderDate}</CardTitle>
+
+            <div className="flex items-center gap-2">
+              <Badge variant="outline">
+                配達予定日時: {formatDeliveryTime(order.deliveryDateTime)}
+              </Badge>
+
+              <Badge
+                variant={order.paymentMethod === 0 ? "default" : "secondary"}
+              >
+                {order.paymentMethod === 0 ? "現金" : "クレジットカード"}
+              </Badge>
             </div>
-            <Badge
-              variant={
-                order.deliveryStatus === "配達済み" ? "secondary" : "default"
-              }
-            >
-              {order.deliveryStatus}
-            </Badge>
           </CardHeader>
+
           <CardContent>
             <div className="mb-4">
               <span className="text-gray-600 mr-2">合計金額:</span>
@@ -83,6 +92,7 @@ function OrderHistory() {
                 ¥{order.totalPrice.toLocaleString()}
               </span>
             </div>
+
             <div className="divide-y">
               {order.products.map((item) => (
                 <div key={item.name} className="flex items-center gap-4 py-4">

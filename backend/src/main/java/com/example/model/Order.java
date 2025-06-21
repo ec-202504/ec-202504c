@@ -38,7 +38,7 @@ public class Order {
 
   /** 注文日. */
   @Column(name = "order_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-  private LocalDateTime orderDate = LocalDateTime.now();
+  private LocalDateTime orderDateTime = LocalDateTime.now();
 
   /** 宛先氏名. */
   @Column(name = "destination_name", nullable = false)
