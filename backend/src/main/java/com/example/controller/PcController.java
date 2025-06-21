@@ -4,11 +4,11 @@ import com.example.dto.request.AddPcRequest;
 import com.example.dto.request.UpdatePcRequest;
 import com.example.model.*;
 import com.example.service.PcService;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,29 +28,53 @@ public class PcController {
   private final PcService pcService;
 
   /**
-   * PC一覧を取得するエンドポイント.
+   * 条件に合致するPC一覧結果を取得するエンドポイント.
    *
    * @param sort ソート条件
    * @param page ページ番号
    * @param size 1ページあたりの表示件数
-   * @param keyword 検索キーワード
-   * @return PC一覧結果
+   * @param name デバイス名
+   * @param price 価格
+   * @param memory メモリ
+   * @param storage ストレージ
+   * @param deviceSize デバイスサイズ
+   * @param deviceType デバイスタイプ
+   * @param osId OS
+   * @param cpuId CPU
+   * @param gpuId GPU
+   * @param purposeId 使用目的
+   * @return 条件に合致するPC一覧結果
    */
   @GetMapping
-  public ResponseEntity<?> getPcs(
+  public ResponseEntity<?> getMultipleConditionsPcs(
       @RequestParam(defaultValue = "priceAsc") String sort,
       @RequestParam(defaultValue = "0") Integer page,
       @RequestParam(defaultValue = "20") Integer size,
-      @RequestParam(defaultValue = "") String keyword) {
-    Sort sorting =
-        switch (sort) {
-          case "priceAsc" -> Sort.by(Sort.Direction.ASC, "price");
-          case "priceDesc" -> Sort.by(Sort.Direction.DESC, "price");
-          default -> Sort.by("id");
-        };
-    Pageable pageable = PageRequest.of(page, size, sorting);
-
-    return ResponseEntity.ok(pcService.findPcsWithPageable(keyword, pageable));
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) Integer price,
+      @RequestParam(required = false) Integer memory,
+      @RequestParam(required = false) Integer storage,
+      @RequestParam(required = false) BigDecimal deviceSize,
+      @RequestParam(required = false) Integer deviceType,
+      @RequestParam(required = false) Integer osId,
+      @RequestParam(required = false) Integer cpuId,
+      @RequestParam(required = false) Integer gpuId,
+      @RequestParam(required = false) Integer purposeId) {
+    Pageable pageable = PageRequest.of(page, size);
+    return ResponseEntity.ok(
+        pcService.findByMultipleConditions(
+            sort,
+            name,
+            price,
+            memory,
+            storage,
+            deviceSize,
+            deviceType,
+            osId,
+            cpuId,
+            gpuId,
+            purposeId,
+            pageable));
   }
 
   /**

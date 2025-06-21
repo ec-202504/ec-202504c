@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.model.*;
 import com.example.repository.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -42,21 +43,6 @@ public class PcService {
       return pcRepository.findAll();
     }
     return pcRepository.findByNameContainingIgnoreCase(keyword);
-  }
-
-  /**
-   * ページネーション、ソートされたPCのリストを取得するメソッド.
-   *
-   * @param keyword 検索キーワード
-   * @param pageable ページ情報
-   * @return ページネーションされたPCのリスト
-   */
-  public Page<Pc> findPcsWithPageable(String keyword, Pageable pageable) {
-    // キーワードがnullまたは空文字の場合、全件取得
-    if (keyword == null || keyword.isBlank()) {
-      return pcRepository.findAll(pageable);
-    }
-    return pcRepository.findByNameContainingIgnoreCase(keyword, pageable);
   }
 
   /**
@@ -162,5 +148,50 @@ public class PcService {
    */
   public List<Purpose> getAllPurposes() {
     return purposeRepository.findAllByProductCategory(0);
+  }
+
+  /**
+   * 　検索結果が含まれるページネーションされたPCのリストを取得するメソッド.
+   *
+   * @param sort ソート条件（ASC or DESC）
+   * @param name　デバイス名
+   * @param price　価格
+   * @param memory　メモリ
+   * @param storage　ストレージ
+   * @param deviceSize デバイスサイズ
+   * @param deviceType デバイスタイプ
+   * @param osId OSのID
+   * @param cpuId CPUのID
+   * @param gpuId GPUのID
+   * @param purposeId 目的ID
+   * @param pageable ページネーション情報
+   * @return　検索結果が含まれるページネーションされたPCのリスト
+   */
+  public Page<Pc> findByMultipleConditions(
+      String sort,
+      String name,
+      Integer price,
+      Integer memory,
+      Integer storage,
+      BigDecimal deviceSize,
+      Integer deviceType,
+      Integer osId,
+      Integer cpuId,
+      Integer gpuId,
+      Integer purposeId,
+      Pageable pageable) {
+    return pcRepository.findByMultipleConditions(
+        sort,
+        name,
+        price,
+        memory,
+        storage,
+        deviceSize,
+        deviceType,
+        osId,
+        cpuId,
+        gpuId,
+        purposeId,
+        pageable);
   }
 }
