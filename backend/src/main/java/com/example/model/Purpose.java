@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 /** 使用目的(Web開発, AI etc.)ドメインクラス. */
 @Getter
@@ -26,4 +27,9 @@ public class Purpose {
   /** 使用目的名. */
   @Column(name = "name", nullable = false, length = 255)
   private String name;
+
+  /** 商品カテゴリ（0 → PC，1 → Book） */
+  @Column(name = "product_category", nullable = false)
+  @ColumnDefault("0")
+  private Integer productCategory;
 }
