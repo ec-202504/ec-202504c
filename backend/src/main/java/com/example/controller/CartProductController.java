@@ -46,11 +46,11 @@ public class CartProductController {
   public ResponseEntity<?> getCartProducts() {
     // TODO: userIdをjwtから取得するようにする
     Integer userId = 1;
-    User user =
-        userService
-            .findById(userId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ユーザーが見つかりません"));
-    List<CartProduct> cartProducts = cartProductService.getCartProducts(user);
+    Optional<User> user = userService.findById(userId);
+    if (user.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "ユーザが見つかりません"));
+    }
+    List<CartProduct> cartProducts = cartProductService.getCartProducts(user.get());
 
     try {
       List<CartProductResponse> responses = cartProducts.stream().map(this::mapToResponse).toList();

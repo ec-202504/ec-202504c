@@ -61,8 +61,12 @@ function BookDetail() {
    * @param quantity カートに追加する数量
    */
   const handleClick = async (quantity: number) => {
+    if (!book?.id) {
+      return;
+    }
+
     const addCartRequestBody: AddCartRequest = {
-      productId: book?.id ?? 0,
+      productId: book?.id,
       productCategory: PRODUCT_CATEGORY.BOOK,
       quantity: quantity,
     };
