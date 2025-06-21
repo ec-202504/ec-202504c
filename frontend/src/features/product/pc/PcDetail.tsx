@@ -61,8 +61,12 @@ export default function PcDetail() {
    * @param quantity カートに追加する数量
    */
   const handleClick = async (quantity: number) => {
+    if (!pc?.pcId) {
+      return;
+    }
+
     const addCartRequestBody: AddCartRequest = {
-      productId: pc?.pcId ?? 0,
+      productId: pc?.pcId,
       productCategory: PRODUCT_CATEGORY.PC,
       quantity: quantity,
     };

@@ -1,8 +1,9 @@
 export type Book = {
-  id: number;
+  bookId: number;
+  imageUrl: string;
   name: string;
   author: string;
-  publish_date: string;
+  publishDate: string;
   price: number;
   language: string;
   purpose: string;
