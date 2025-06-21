@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.model.Book;
+import com.example.model.Language;
 import com.example.repository.BookRepository;
 import com.example.repository.LanguageRepository;
 import java.util.List;
@@ -74,7 +75,17 @@ public class BookService {
    * @return 言語IDと一致するBookのリスト
    */
   public List<Book> findByLanguageId(Integer languageId) {
-    return bookRepository.findByLanguageId(languageId);
+    return bookRepository.findByLanguage_Id(languageId);
+  }
+
+  /**
+   * 目的IDと一致するBookのリストを取得するメソッド.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するBookのリスト
+   */
+  public List<Book> findByPurposeId(Integer purposeId) {
+    return bookRepository.findByPurpose_Id(purposeId);
   }
 
   /**
@@ -94,5 +105,14 @@ public class BookService {
    */
   public void removeBook(Integer bookId) {
     bookRepository.deleteById(bookId);
+  }
+
+  /**
+   * 言語一覧を取得するメソッド.
+   *
+   * @return 言語のリスト
+   */
+  public List<Language> getAllLanguages() {
+    return languageRepository.findAll();
   }
 }

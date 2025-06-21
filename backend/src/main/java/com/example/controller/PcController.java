@@ -2,12 +2,14 @@ package com.example.controller;
 
 import com.example.dto.request.AddPcRequest;
 import com.example.dto.request.UpdatePcRequest;
+import com.example.dto.response.PcDetailResponse;
 import com.example.model.Cpu;
 import com.example.model.Gpu;
 import com.example.model.Os;
 import com.example.model.Pc;
 import com.example.model.Purpose;
 import com.example.service.PcService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,6 +59,54 @@ public class PcController {
   }
 
   /**
+   * CPUのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param cpuId 言語ID
+   * @return 言語IDと一致する書籍一覧
+   */
+  @GetMapping("/cpus/{cpuId}")
+  public ResponseEntity<?> getPcsByCpu(@PathVariable Integer cpuId) {
+    List<Pc> pcListByCpuId = pcService.findByCpuId(cpuId);
+    return ResponseEntity.ok(pcListByCpuId);
+  }
+
+  /**
+   * OSのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param osId OSのID
+   * @return OSのIDと一致するPC一覧
+   */
+  @GetMapping("/oses/{osId}")
+  public ResponseEntity<?> getPcsByOs(@PathVariable Integer osId) {
+    List<Pc> pcListByOsId = pcService.findByOsId(osId);
+    return ResponseEntity.ok(pcListByOsId);
+  }
+
+  /**
+   * GPUのIDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param gpuId GPUのID
+   * @return GPUのIDと一致するPC一覧
+   */
+  @GetMapping("/gpus/{gpuId}")
+  public ResponseEntity<?> getPcsByGpu(@PathVariable Integer gpuId) {
+    List<Pc> pcListByGpuId = pcService.findByGpuId(gpuId);
+    return ResponseEntity.ok(pcListByGpuId);
+  }
+
+  /**
+   * 目的IDと一致するPC一覧を取得するエンドポイント.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するPC一覧
+   */
+  @GetMapping("/purposes/{purposeId}")
+  public ResponseEntity<?> getBooksByLanguage(@PathVariable Integer purposeId) {
+    List<Pc> pcListByPurposeId = pcService.findByPurposeId(purposeId);
+    return ResponseEntity.ok(pcListByPurposeId);
+  }
+
+  /**
    * PCの詳細情報を取得するエンドポイント.
    *
    * @param pcId PCのID
@@ -66,6 +116,7 @@ public class PcController {
   public ResponseEntity<?> getDetailPc(@PathVariable Integer pcId) {
     return pcService
         .findById(pcId)
+        .map(this::mapToPcDetailResponse)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
@@ -161,5 +212,30 @@ public class PcController {
               return ResponseEntity.ok().build();
             })
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  /**
+   * PCの詳細情報をPcDetailResponseにマッピングするヘルパーメソッド.
+   *
+   * @param pc PCオブジェクト
+   * @return PcDetailResponseオブジェクト
+   */
+  private PcDetailResponse mapToPcDetailResponse(Pc pc) {
+    PcDetailResponse response = new PcDetailResponse();
+    response.setPcId(pc.getId());
+    response.setName(pc.getName());
+    // TODO: 画像URLは実際の画像URLに置き換える必要があります
+    response.setImageUrl("https://placehold.jp/150x100.png");
+    response.setPrice(pc.getPrice());
+    response.setMemory(pc.getMemory());
+    response.setStorage(pc.getStorage());
+    response.setDeviceSize(pc.getDeviceSize());
+    response.setDeviceType(pc.getDeviceType());
+
+    response.setOs(pc.getOs().getName());
+    response.setCpu(pc.getCpu().getName());
+    response.setGpu(pc.getGpu().getName());
+    response.setPurpose(pc.getPurpose().getName());
+    return response;
   }
 }
