@@ -33,4 +33,19 @@ public interface PcRepository extends JpaRepository<Pc, Integer> {
    * @return OSのIDと一致するPCのリスト
    */
   List<Pc> findByOs_Id(Integer osId);
+  /**
+   * GPUのIDと一致するPCのリストを取得する.
+   *
+   * @param gpuId GPUのID
+   * @return GPUのIDと一致するPCのリスト
+   */
+  List<Pc> findByGpu_Id(Integer gpuId);
+
+  /**
+   * 目的IDと一致するPCのリストを取得する.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するPCのリスト
+   */
+  List<Pc> findByPurpose_Id(Integer purposeId);
 }
