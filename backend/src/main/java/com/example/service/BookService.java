@@ -80,6 +80,7 @@ public class BookService {
 
   /**
    * 目的IDと一致するBookのリストを取得するメソッド.
+   *
    * @param purposeId 目的ID
    * @return 目的IDと一致するBookのリスト
    */

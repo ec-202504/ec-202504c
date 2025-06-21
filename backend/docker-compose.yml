@@ -1,5 +1,7 @@
 services:
   app:
+    env_file:
+      - .env
     build:
       context: .
     image: ec-site:latest # Image name

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Card } from "../../../components/ui/card";
 import type { Product } from "../types";
+import { TAB_VALUES } from "../types/constants";
 
 // 価格をカンマ区切りで整形する関数
 function formatPrice(price: number) {
@@ -9,12 +10,17 @@ function formatPrice(price: number) {
 
 type Props = {
   product: Product;
+  selectedTab: string;
 };
 
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product, selectedTab }: Props) {
   return (
     <Link
-      to={"/product/pc/$itemId"}
+      to={
+        selectedTab === TAB_VALUES.PC
+          ? "/product/pc/$itemId"
+          : "/product/book/$itemId"
+      }
       key={product.id}
       params={{ itemId: product.id }}
     >

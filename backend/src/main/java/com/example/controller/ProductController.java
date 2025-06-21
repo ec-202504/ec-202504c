@@ -42,7 +42,7 @@ public class ProductController {
       @RequestParam(defaultValue = "") String keyword) {
     List<ProductsResponse> productsList = new ArrayList<>();
 
-    var allPcs = pcService.findPcs(keyword);
+    List<Pc> allPcs = pcService.findPcs(keyword);
     productsList.addAll(
         allPcs.stream()
             .map(
@@ -54,7 +54,7 @@ public class ProductController {
                 })
             .toList());
 
-    var allBooks = bookService.findBooks(keyword);
+    List<Book> allBooks = bookService.findBooks(keyword);
     productsList.addAll(
         allBooks.stream()
             .map(

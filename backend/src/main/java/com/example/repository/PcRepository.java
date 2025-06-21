@@ -33,7 +33,7 @@ public interface PcRepository extends JpaRepository<Pc, Integer> {
    * @return CPUのIDと一致するPCのリスト
    */
   List<Pc> findByCpu_Id(Integer cpuId);
-  
+
   /**
    * OSのIDと一致するPCのリストを取得する.
    *
@@ -41,7 +41,7 @@ public interface PcRepository extends JpaRepository<Pc, Integer> {
    * @return OSのIDと一致するPCのリスト
    */
   List<Pc> findByOs_Id(Integer osId);
-  
+
   /**
    * GPUのIDと一致するPCのリストを取得する.
    *

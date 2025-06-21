@@ -13,7 +13,7 @@ export default function BookSummary({ book }: BookSummaryProps) {
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">出版日：</div>
-        {book.publish_date}
+        {book.publishDate}
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">言語：</div>

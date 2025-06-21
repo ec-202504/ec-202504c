@@ -29,8 +29,8 @@ function CartPage() {
     try {
       const response = await axiosInstance.get<CartProduct[]>("/carts");
       setCart(response.data);
-    } catch (err) {
-      console.error("カート商品の取得に失敗しました:", err);
+    } catch (error) {
+      toast.error("カート商品の取得に失敗しました");
     }
   }, []);
 
@@ -57,8 +57,7 @@ function CartPage() {
         };
 
         await axiosInstance.patch("/carts/quantity", requestBody);
-      } catch (e) {
-        console.error("数量の更新に失敗しました:", e);
+      } catch (error) {
         toast.error("数量の更新に失敗しました");
       }
 

@@ -35,8 +35,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
   List<Book> findByLanguage_Id(Integer languageId);
 
   /**
-   * 目的IDと一致する書籍のリストを取得する.
-   * findByPurposeIDでは正しい個数を取得できないためfindByPurpose_IDにする必要ある
+   * 目的IDと一致する書籍のリストを取得する. findByPurposeIDでは正しい個数を取得できないためfindByPurpose_IDにする必要ある
+   *
    * @param purposeId 目的ID
    * @return 目的IDと一致する書籍のリスト
    */
