@@ -10,6 +10,7 @@ import com.example.service.CartProductService;
 import com.example.service.PcService;
 import com.example.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,24 +64,41 @@ public class CartProductController {
    * カート内商品を追加するエンドポイント.
    *
    * @param request カートに追加する商品情報を含むリクエストDTO
+   * @param session HTTPセッション
    * @return 成功メッセージ
    */
   @PostMapping
-  public ResponseEntity<?> addCartProduct(@RequestBody AddCartProductRequest request) {
-    Optional<User> optionalUser = userService.findById(request.getUserId());
-    if (optionalUser.isEmpty()) {
+  public ResponseEntity<?> addCartProduct(
+      @RequestBody AddCartProductRequest request, HttpSession session) {
+    Integer userId = 1;
+    // ユーザが存在するか確認
+    Optional<User> existingUser = userService.findById(userId);
+    if (existingUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }
-    User user = optionalUser.get();
+    // 商品がすでにカートに存在するか確認し、存在すれば数量を更新する
+    Optional<CartProduct> existingCartProduct =
+        cartProductService.getExistingProduct(
+            existingUser.get().getUserId(), request.getProductId(), request.getProductCategory());
 
-    CartProduct cartProduct = new CartProduct();
-    cartProduct.setQuantity(request.getQuantity());
-    cartProduct.setSessionId(request.getSessionId());
-    cartProduct.setProductCategory(request.getProductCategory());
-    cartProduct.setProductId(request.getProductId());
-    cartProduct.setUserId(user);
+    // 既に商品がカートあれば数量を更新
+    if (existingCartProduct.isPresent()) {
+      CartProduct cartProduct = existingCartProduct.get();
+      Integer quantity = cartProduct.getQuantity() + request.getQuantity();
+      cartProductService.updateCartProductQuantity(cartProduct.getCartProductId(), quantity);
+    } else {
+      CartProduct cartProduct = new CartProduct();
+      cartProduct.setQuantity(request.getQuantity());
+      cartProduct.setSessionId(session.getId());
+      cartProduct.setProductCategory(request.getProductCategory());
+      cartProduct.setProductId(request.getProductId());
 
-    cartProductService.addCartProduct(cartProduct);
+      User user = existingUser.get();
+      cartProduct.setUserId(user);
+
+      cartProductService.addCartProduct(cartProduct);
+    }
+
     return ResponseEntity.ok().build();
   }
 
