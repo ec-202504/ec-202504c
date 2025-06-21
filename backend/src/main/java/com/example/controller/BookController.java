@@ -8,6 +8,7 @@ import com.example.model.Language;
 import com.example.model.Purpose;
 import com.example.service.BookService;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +55,18 @@ public class BookController {
     Pageable pageable = PageRequest.of(page, size, sorting);
 
     return ResponseEntity.ok(bookService.findBooksWithPageable(keyword, pageable));
+  }
+
+  /**
+   * 言語IDと一致する書籍一覧を取得するエンドポイント.
+   *
+   * @param languageId 言語ID
+   * @return 言語IDと一致する書籍一覧
+   */
+  @GetMapping("/languages/{languageId}")
+  public ResponseEntity<?> getBooksByLanguage(@PathVariable Integer languageId) {
+    List<Book> bookListByLanguageId = bookService.findByLanguageId(languageId);
+    return ResponseEntity.ok(bookListByLanguageId);
   }
 
   /**
