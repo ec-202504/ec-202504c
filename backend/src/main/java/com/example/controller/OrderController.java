@@ -8,7 +8,9 @@ import com.example.service.OrderProductService;
 import com.example.service.OrderService;
 import com.example.service.UserService;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +39,12 @@ public class OrderController {
     if (optionalUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }
-    User user = optionalUser.get();
-
     Order order = new Order();
     BeanUtils.copyProperties(request, order);
     order.setOrderDate(LocalDateTime.now());
     order.setDeliveryDateTime(LocalDateTime.parse(request.getDeliveryDateTime()));
+
+    User user = optionalUser.get();
     order.setUserId(user);
 
     orderService.createOrder(order);
