@@ -72,9 +72,9 @@ public class PcService {
    * @return CPUのIDと一致するPCのリスト
    */
   public List<Pc> findByCpuId(Integer cpuId) {
-    return pcRepository.findByCpu_Id(cpuId);
+    return pcRepository.findByCpuId(cpuId);
   }
-  
+
   /**
    * OSのIDと一致するPCのリストを取得するメソッド.
    *
@@ -82,9 +82,9 @@ public class PcService {
    * @return OSのIDと一致するPCのリスト
    */
   public List<Pc> findByOsId(Integer osId) {
-    return pcRepository.findByOs_Id(osId);
+    return pcRepository.findByOsId(osId);
   }
-  
+
   /**
    * GPUのIDと一致するPCのリストを取得するメソッド.
    *
@@ -92,9 +92,9 @@ public class PcService {
    * @return GPUのIDと一致するPCのリスト
    */
   public List<Pc> findByGpuId(Integer gpuId) {
-    return pcRepository.findByGpu_Id(gpuId);
+    return pcRepository.findByGpuId(gpuId);
   }
-  
+
   /**
    * 目的IDと一致するPCのリストを取得するメソッド.
    *
@@ -102,7 +102,7 @@ public class PcService {
    * @return 目的IDと一致するPCのリスト
    */
   public List<Pc> findByPurposeId(Integer purposeId) {
-    return pcRepository.findByPurpose_Id(purposeId);
+    return pcRepository.findByPurposeId(purposeId);
   }
 
   /**

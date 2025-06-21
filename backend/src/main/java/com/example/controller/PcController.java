@@ -64,6 +64,7 @@ public class PcController {
     List<Pc> pcListByCpuId = pcService.findByCpuId(cpuId);
     return ResponseEntity.ok(pcListByCpuId);
   }
+
   /**
    * OSのIDと一致するPC一覧を取得するエンドポイント.
    *
@@ -75,6 +76,7 @@ public class PcController {
     List<Pc> pcListByOsId = pcService.findByOsId(osId);
     return ResponseEntity.ok(pcListByOsId);
   }
+
   /**
    * GPUのIDと一致するPC一覧を取得するエンドポイント.
    *
@@ -86,6 +88,7 @@ public class PcController {
     List<Pc> pcListByGpuId = pcService.findByGpuId(gpuId);
     return ResponseEntity.ok(pcListByGpuId);
   }
+
   /**
    * 目的IDと一致するPC一覧を取得するエンドポイント.
    *

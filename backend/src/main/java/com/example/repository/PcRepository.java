@@ -32,23 +32,23 @@ public interface PcRepository extends JpaRepository<Pc, Integer> {
    * @param cpuId CPUのID
    * @return CPUのIDと一致するPCのリスト
    */
-  List<Pc> findByCpu_Id(Integer cpuId);
-  
+  List<Pc> findByCpuId(Integer cpuId);
+
   /**
    * OSのIDと一致するPCのリストを取得する.
    *
    * @param osId OSのID
    * @return OSのIDと一致するPCのリスト
    */
-  List<Pc> findByOs_Id(Integer osId);
-  
+  List<Pc> findByOsId(Integer osId);
+
   /**
    * GPUのIDと一致するPCのリストを取得する.
    *
    * @param gpuId GPUのID
    * @return GPUのIDと一致するPCのリスト
    */
-  List<Pc> findByGpu_Id(Integer gpuId);
+  List<Pc> findByGpuId(Integer gpuId);
 
   /**
    * 目的IDと一致するPCのリストを取得する.
@@ -56,5 +56,5 @@ public interface PcRepository extends JpaRepository<Pc, Integer> {
    * @param purposeId 目的ID
    * @return 目的IDと一致するPCのリスト
    */
-  List<Pc> findByPurpose_Id(Integer purposeId);
+  List<Pc> findByPurposeId(Integer purposeId);
 }
