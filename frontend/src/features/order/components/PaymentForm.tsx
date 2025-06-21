@@ -5,6 +5,14 @@ import {
 } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { Button } from "../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/card";
+import { Alert, AlertDescription } from "../../../components/ui/alert";
+import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 
 function PaymentForm() {
   const stripe = useStripe();
@@ -32,33 +40,62 @@ function PaymentForm() {
     if (error) {
       setErrorMessage(error.message || "エラーが発生しました");
     } else if (paymentIntent?.status === "requires_capture") {
-      setResult("✅ カードは有効です（ホールド完了）");
+      setResult("カードは有効です");
     } else {
-      setResult(`⚠️ 支払いステータス: ${paymentIntent?.status}`);
+      setResult(`支払いステータス: ${paymentIntent?.status}`);
     }
 
     setIsProcessing(false);
   };
 
   return (
-    <div className="mt-4">
-      <PaymentElement />
+    <Card className="mt-3">
+      <CardHeader>
+        <CardTitle className="text-lg">クレジットカード情報</CardTitle>
+      </CardHeader>
 
-      <div className="text-right">
-        <Button
-          variant="default"
-          type="submit"
-          disabled={!stripe || isProcessing}
-          className="mt-4"
-          onClick={handleSubmit}
-        >
-          {isProcessing ? "確認中..." : "カードの有効性を確認"}
-        </Button>
-      </div>
+      <CardContent className="space-y-4">
+        {result && (
+          <Alert
+            variant="default"
+            className="border-green-200 bg-green-50 text-green-800"
+          >
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              {result}
+            </AlertDescription>
+          </Alert>
+        )}
 
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-      {result && <p>{result}</p>}
-    </div>
+        {errorMessage && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+
+        <PaymentElement />
+
+        <div className="flex justify-end">
+          <Button
+            variant="default"
+            type="submit"
+            disabled={!stripe || isProcessing}
+            onClick={handleSubmit}
+            className="w-full sm:w-auto"
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                確認中...
+              </>
+            ) : (
+              "カードの有効性を確認"
+            )}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
