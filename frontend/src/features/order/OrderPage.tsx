@@ -135,6 +135,9 @@ function OrderPage() {
     setValue("destinationMunicipalities", "千代田区");
   };
 
+  /**
+   * Backend側の設定によって、クレジットカードの有効性を確認する
+   */
   useEffect(() => {
     const fetchClientSecret = async () => {
       const response = await axiosInstance.post("/payments/verify-card");
