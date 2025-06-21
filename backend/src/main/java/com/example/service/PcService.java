@@ -66,6 +66,16 @@ public class PcService {
   }
 
   /**
+   * 目的IDと一致するPCのリストを取得するメソッド.
+   *
+   * @param purposeId 目的ID
+   * @return 目的IDと一致するPCのリスト
+   */
+  public List<Pc> findByPurposeId(Integer purposeId) {
+    return pcRepository.findByPurpose_Id(purposeId);
+  }
+
+  /**
    * PC登録を行うメソッド.
    *
    * @param pc 登録するPCの詳細情報
