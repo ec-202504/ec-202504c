@@ -68,9 +68,14 @@ function PaymentForm() {
         )}
 
         {errorMessage && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{errorMessage}</AlertDescription>
+          <Alert
+            variant="default"
+            className="border-red-200 bg-red-50 text-red-800"
+          >
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              {errorMessage}
+            </AlertDescription>
           </Alert>
         )}
 
