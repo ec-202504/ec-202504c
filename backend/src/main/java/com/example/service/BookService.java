@@ -74,7 +74,7 @@ public class BookService {
    * @return 言語IDと一致するBookのリスト
    */
   public List<Book> findByLanguageId(Integer languageId) {
-    return bookRepository.findByLanguage_Id(languageId);
+    return bookRepository.findByLanguageId(languageId);
   }
 
   /**

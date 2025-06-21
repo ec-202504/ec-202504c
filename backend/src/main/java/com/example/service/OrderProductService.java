@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** 注文商品サービスクラス. */
 @Service
 @Transactional
 @RequiredArgsConstructor
