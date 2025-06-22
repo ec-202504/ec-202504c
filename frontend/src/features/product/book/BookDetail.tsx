@@ -1,7 +1,7 @@
-import type { Book, RawBook } from "../types";
+import type { Book } from "../types";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import { useParams } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ReviewItem from "../components/ReviewItem";
 import BookInfo from "../components/BookInfo";
@@ -54,25 +54,12 @@ function BookDetail() {
     console.log(quantity);
   };
 
-  const convertToBook = useCallback((data: RawBook): Book => {
-    return {
-      id: data.id,
-      name: data.name,
-      author: data.author,
-      publish_date: data.publishDate,
-      price: data.price,
-      language: data.language.name,
-      purpose: data.purpose.name,
-    };
-  }, []);
-
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.get(`/books/${itemId}`);
-        console.log(response.data);
-        setBook(convertToBook(response.data));
+        setBook(response.data);
       } catch (error) {
         console.error("APIリクエストに失敗しました:", error);
       } finally {
@@ -81,7 +68,7 @@ function BookDetail() {
     };
 
     fetchData();
-  }, [itemId, convertToBook]);
+  }, [itemId]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-8">

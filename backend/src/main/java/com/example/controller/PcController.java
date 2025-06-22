@@ -2,7 +2,12 @@ package com.example.controller;
 
 import com.example.dto.request.AddPcRequest;
 import com.example.dto.request.UpdatePcRequest;
-import com.example.model.*;
+import com.example.dto.response.PcDetailResponse;
+import com.example.model.Cpu;
+import com.example.model.Gpu;
+import com.example.model.Os;
+import com.example.model.Pc;
+import com.example.model.Purpose;
 import com.example.service.PcService;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
@@ -174,6 +179,7 @@ public class PcController {
   public ResponseEntity<?> getDetailPc(@PathVariable Integer pcId) {
     return pcService
         .findById(pcId)
+        .map(this::mapToPcDetailResponse)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
@@ -269,5 +275,30 @@ public class PcController {
               return ResponseEntity.ok().build();
             })
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  /**
+   * PCの詳細情報をPcDetailResponseにマッピングするヘルパーメソッド.
+   *
+   * @param pc PCオブジェクト
+   * @return PcDetailResponseオブジェクト
+   */
+  private PcDetailResponse mapToPcDetailResponse(Pc pc) {
+    PcDetailResponse response = new PcDetailResponse();
+    response.setPcId(pc.getId());
+    response.setName(pc.getName());
+    // TODO: 画像URLは実際の画像URLに置き換える必要があります
+    response.setImageUrl("https://placehold.jp/150x100.png");
+    response.setPrice(pc.getPrice());
+    response.setMemory(pc.getMemory());
+    response.setStorage(pc.getStorage());
+    response.setDeviceSize(pc.getDeviceSize());
+    response.setDeviceType(pc.getDeviceType());
+
+    response.setOs(pc.getOs().getName());
+    response.setCpu(pc.getCpu().getName());
+    response.setGpu(pc.getGpu().getName());
+    response.setPurpose(pc.getPurpose().getName());
+    return response;
   }
 }

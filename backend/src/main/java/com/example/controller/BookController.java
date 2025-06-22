@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.dto.request.AddBookRequest;
 import com.example.dto.request.UpdateBookRequest;
+import com.example.dto.response.BookDetailResponse;
 import com.example.model.Book;
 import com.example.model.Language;
 import com.example.model.Purpose;
@@ -114,8 +115,30 @@ public class BookController {
   public ResponseEntity<?> getDetailBook(@PathVariable Integer bookId) {
     return bookService
         .findById(bookId)
+        .map(this::mapToBookDetailResponse)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  /**
+   * BookをBookDetailResponseに変換するヘルパーメソッド.
+   *
+   * @param book Bookエンティティ
+   * @return BookDetailResponse DTO
+   */
+  private BookDetailResponse mapToBookDetailResponse(Book book) {
+    BookDetailResponse response = new BookDetailResponse();
+    response.setBookId(book.getId());
+    response.setName(book.getName());
+    // TODO: 画像URLは実際の画像URLに置き換える必要があります
+    response.setImageUrl("https://placehold.jp/150x100.png");
+    response.setAuthor(book.getAuthor());
+    response.setPublishDate(
+        book.getPublishDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    response.setPrice(book.getPrice());
+    response.setLanguage(book.getLanguage().getName());
+    response.setPurpose(book.getPurpose().getName());
+    return response;
   }
 
   /**
