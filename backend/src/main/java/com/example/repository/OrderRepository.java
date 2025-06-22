@@ -12,5 +12,5 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
    * @param userId ユーザーID
    * @return 指定されたユーザーIDに対応する注文のリスト
    */
-  List<Order> findByUserIdUserId(Integer userId);
+  List<Order> findByUserIdUserIdOrderByOrderDateTimeDesc(Integer userId);
 }

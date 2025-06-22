@@ -36,7 +36,7 @@ public class OrderService {
   public List<OrderHistoryResponse> getOrderHistoryByUserId(Integer userId) {
     List<OrderHistoryResponse> orderHistoryResponses = new ArrayList<>();
 
-    List<Order> orders = orderRepository.findByUserIdUserId(userId);
+    List<Order> orders = orderRepository.findByUserIdUserIdOrderByOrderDateTimeDesc(userId);
 
     if (orders.isEmpty()) {
       throw new EntityNotFoundException("注文履歴が見つかりません");

@@ -1,20 +1,16 @@
-package com.example.dto.response;
+package com.example.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** カートのレスポンスを表すDTOクラス. */
+/** 注文商品リクエストDTOクラス. 注文時にカートに入っている商品の情報 */
 @Getter
 @Setter
 @NoArgsConstructor
-public class CartProductResponse {
+public class OrderProductRequest {
   private Integer cartProductId;
   private Integer quantity;
   private Integer productId;
   private Integer productCategory;
-  // pcs, booksからそれぞれ取得
-  private String name;
-  private Integer price;
-  private String imageUrl;
 }

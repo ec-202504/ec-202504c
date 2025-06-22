@@ -73,10 +73,12 @@ function UserRegisterPage() {
 
     const address = await fetchAddress(form.getValues("zipcode"));
     if (address) {
-      const [prefecture, municipalities, rest] = address;
-      form.setValue("address", `${prefecture}${municipalities}${rest}`);
-      setPrefecture(prefecture);
-      setMunicipalities(municipalities);
+      form.setValue(
+        "address",
+        `${address.prefecture}${address.municipalities}${address.rest}`,
+      );
+      setPrefecture(address.prefecture);
+      setMunicipalities(address.municipalities);
     } else {
       alert("住所が見つかりませんでした");
     }

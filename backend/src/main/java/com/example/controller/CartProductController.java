@@ -141,6 +141,8 @@ public class CartProductController {
     CartProductResponse response = new CartProductResponse();
     response.setCartProductId(cartProduct.getCartProductId());
     response.setQuantity(cartProduct.getQuantity());
+    response.setProductId(cartProduct.getProductId());
+    response.setProductCategory(cartProduct.getProductCategory());
 
     return switch (cartProduct.getProductCategory()) {
       case 0 -> buildPcResponse(response, cartProduct.getProductId());

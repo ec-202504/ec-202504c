@@ -33,8 +33,20 @@ function OrderHistory() {
 
   // 配達予定時刻を時まで表示する関数
   const formatDeliveryTime = (dateTimeString: string) => {
-    const date = new Date(dateTimeString);
-    return format(date, "M/d HH時", { locale: ja });
+    const date = new Date(`${dateTimeString}Z`);
+    return format(date, "M月d日 HH時", { locale: ja });
+  };
+
+  /**
+   * 注文日時をフォーマットする
+   * バックエンドではUTC(タイムゾーンなし)で返却されるため、Zを追加してUTCからJSTに変換する
+   *
+   * @param dateTimeString 注文日時
+   * @returns フォーマットされた注文日時
+   */
+  const formatOrderDate = (dateTimeString: string) => {
+    const date = new Date(`${dateTimeString}Z`);
+    return format(date, "yyyy年M月d日 HH:mm:ss", { locale: ja });
   };
 
   /**
@@ -57,7 +69,7 @@ function OrderHistory() {
         <Card key={order.orderId} className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <CardTitle className="text-lg">
-              注文日: {format(new Date(order.orderDate), "yyyy-MM-dd")}
+              注文日: {formatOrderDate(order.orderDate)}
             </CardTitle>
 
             <div className="flex items-center gap-2">

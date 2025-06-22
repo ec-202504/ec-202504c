@@ -1,10 +1,12 @@
 package com.example.controller;
 
+import com.example.dto.request.OrderProductRequest;
 import com.example.dto.request.OrderRequest;
 import com.example.dto.response.OrderHistoryResponse;
 import com.example.model.Order;
 import com.example.model.OrderProduct;
 import com.example.model.User;
+import com.example.service.CartProductService;
 import com.example.service.MailService;
 import com.example.service.OrderProductService;
 import com.example.service.OrderService;
@@ -33,6 +35,7 @@ public class OrderController {
   private final OrderProductService orderProductService;
   private final UserService userService;
   private final MailService mailService;
+  private final CartProductService cartProductService;
 
   /**
    * 全ての注文を取得するエンドポイント.
@@ -42,14 +45,17 @@ public class OrderController {
   @PostMapping
   public ResponseEntity<?> createOrder(@RequestBody OrderRequest request)
       throws MessagingException {
-    Optional<User> optionalUser = userService.findById(request.getUserId());
+    // TODO: userIdをjwtから取得するようにする
+    Integer userId = 1;
+    Optional<User> optionalUser = userService.findById(userId);
     if (optionalUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }
+    // 　注文情報を登録
     Order order = new Order();
     BeanUtils.copyProperties(request, order);
     order.setOrderDateTime(LocalDateTime.now());
-    order.setDeliveryDateTime(LocalDateTime.parse(request.getDeliveryDateTime()));
+    order.setDeliveryDateTime(LocalDateTime.now().plusDays(3)); // 配送予定日を注文日から3日後に設定
 
     User user = optionalUser.get();
     order.setUserId(user);
@@ -57,9 +63,8 @@ public class OrderController {
     orderService.createOrder(order);
 
     List<OrderProduct> orderProductList = new ArrayList<>();
-
     // リクエストに入っている商品リストを注文商品オブジェクトに格納後、オブジェクトをorder_productsテーブルに保存
-    for (OrderProduct orderProduct : request.getProductList()) {
+    for (OrderProductRequest orderProduct : request.getProductList()) {
       OrderProduct product = new OrderProduct();
       product.setProductId(orderProduct.getProductId());
       product.setProductCategory(orderProduct.getProductCategory());
@@ -67,6 +72,9 @@ public class OrderController {
       product.setOrder(order);
       orderProductList.add(product);
       orderProductService.createOrderProduct(product);
+
+      // カートから商品を削除する処理
+      cartProductService.deleteCartProduct(orderProduct.getCartProductId());
     }
 
     // 相互補完のために注文商品のリストを注文ドメインにも保存する（なくても動くと思うけど念のため）

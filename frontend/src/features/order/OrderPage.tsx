@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { useNavigate } from "@tanstack/react-router";
-import { formatToLocalDate } from "../../utils/formatToLocalDate";
-import { orderSchema, type OrderFormData } from "./schema/orderSchema";
+import { orderSchema, type OrderForm } from "./schema/orderSchema";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import PaymentForm from "./components/PaymentForm";
@@ -20,38 +19,13 @@ import {
   FormLabel,
   FormMessage,
 } from "../../components/ui/form";
-
-// TODO: ログインしているUserデータを取得する
-const mockUser = {
-  destinationName: "山田 太郎",
-  destinationEmail: "taro@example.com",
-  destinationZipcode: "123-4567",
-  destinationPrefecture: "東京都",
-  destinationMunicipalities: "千代田区",
-  destinationAddress: "1-2-3",
-  destinationTelephone: "03-1234-5678",
-};
-
-const mockCartProducts = [
-  {
-    productId: 1,
-    productCategory: 0,
-    name: "ゲーミングPC",
-    quantity: 1,
-    price: 150000,
-    imageUrl: "https://placehold.jp/150x100.png?text=PC",
-  },
-  {
-    productId: 100,
-    productCategory: 1,
-    name: "書籍『React入門』",
-    quantity: 2,
-    price: 3000,
-    imageUrl: "https://placehold.jp/150x100.png?text=Book",
-  },
-];
+import type { CartProduct } from "../../types/cartProduct";
+import { toast } from "sonner";
+import { fetchAddress } from "../../api/fetchAddress";
+import { Loader2 } from "lucide-react";
 
 type OrderProduct = {
+  cartProductId: number;
   productId: number;
   productCategory: number;
   quantity: number;
@@ -66,10 +40,17 @@ type OrderRequest = {
   destinationMunicipalities: string;
   destinationAddress: string;
   destinationTelephone: string;
-  deliveryDateTime: string;
   paymentMethod: number;
-  userId: number;
   productList: OrderProduct[];
+};
+
+type UserResponse = {
+  userId: number;
+  name: string;
+  email: string;
+  zipcode: string;
+  address: string;
+  telephone: string;
 };
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -77,62 +58,113 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 function OrderPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [clientSecret, setClientSecret] = useState<string>();
+  const [cart, setCart] = useState<CartProduct[]>([]);
+  const [prefecture, setPrefecture] = useState("");
+  const [municipalities, setMunicipalities] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
-  const orderForm = useForm<OrderFormData>({
+  const orderForm = useForm<OrderForm>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      destinationName: mockUser.destinationName,
-      destinationEmail: mockUser.destinationEmail,
-      destinationZipcode: mockUser.destinationZipcode,
-      destinationPrefecture: mockUser.destinationPrefecture,
-      destinationMunicipalities: mockUser.destinationMunicipalities,
-      destinationAddress: mockUser.destinationAddress,
-      destinationTelephone: mockUser.destinationTelephone,
+      destinationName: "",
+      destinationEmail: "",
+      destinationZipcode: "",
+      destinationAddress: "",
+      destinationTelephone: "",
       paymentMethod: "0",
     },
   });
+  const { setValue, getValues, watch, reset, trigger } = orderForm;
 
-  const { setValue, getValues, watch } = orderForm;
+  /**
+   * カート内の商品の合計金額を計算する
+   *
+   * @returns 合計金額
+   */
+  const totalPrice = useMemo(
+    () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cart],
+  );
 
-  // 合計金額を計算する関数
-  const getTotalPrice = () =>
-    mockCartProducts.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  /**
+   * ログインしているユーザー情報を取得する
+   */
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axiosInstance.get<UserResponse>("/user");
+        const user = response.data;
 
-  const onSubmit = async (data: OrderFormData) => {
-    const productList: OrderProduct[] = mockCartProducts.map((item) => ({
-      productId: item.productId,
-      productCategory: item.productCategory,
-      quantity: item.quantity,
-    }));
-    const orderRequest: OrderRequest = {
-      totalPrice: getTotalPrice(),
-      destinationName: data.destinationName,
-      destinationEmail: data.destinationEmail,
-      destinationZipcode: data.destinationZipcode.replace("-", ""),
-      destinationPrefecture: data.destinationPrefecture,
-      destinationMunicipalities: data.destinationMunicipalities,
-      destinationAddress: data.destinationAddress,
-      destinationTelephone: data.destinationTelephone,
-      deliveryDateTime: formatToLocalDate(new Date()),
-      paymentMethod: Number(data.paymentMethod),
-      userId: 1, // TODO: ユーザーIDを取得する
-      productList: productList,
+        // ユーザー情報をフォームにセット
+        reset({
+          destinationName: user.name,
+          destinationEmail: user.email,
+          destinationZipcode: user.zipcode,
+          destinationAddress: user.address,
+          destinationTelephone: user.telephone,
+          paymentMethod: "0",
+        });
+        // isValidの状態を更新
+        trigger();
+      } catch (error) {
+        toast.error("ユーザー情報の取得に失敗しました");
+      }
     };
+    fetchUser();
+  }, [reset, trigger]);
+
+  const onSubmit = async (data: OrderForm) => {
+    setIsSubmitting(true);
 
     try {
+      const productList: OrderProduct[] = cart.map((item) => ({
+        cartProductId: item.cartProductId,
+        productId: item.productId,
+        productCategory: item.productCategory,
+        quantity: item.quantity,
+      }));
+
+      const orderRequest: OrderRequest = {
+        totalPrice: totalPrice,
+        destinationName: data.destinationName,
+        destinationEmail: data.destinationEmail,
+        destinationZipcode: data.destinationZipcode.replace("-", ""),
+        destinationPrefecture: prefecture,
+        destinationMunicipalities: municipalities,
+        destinationAddress: data.destinationAddress,
+        destinationTelephone: data.destinationTelephone,
+        paymentMethod: Number(data.paymentMethod),
+        productList: productList,
+      };
+
       await axiosInstance.post("/orders", orderRequest);
       navigate({ to: "/order/complete" });
     } catch (error) {
-      console.error(error);
+      toast.error("注文に失敗しました");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const searchAddress = () => {
-    // 外部APIで取得する想定。ここではダミー値をセット
-    setValue("destinationPrefecture", "東京都");
-    setValue("destinationMunicipalities", "千代田区");
+  /**
+   * 郵便番号から住所を検索する
+   */
+  const searchAddress = async () => {
+    const zipcode = getValues("destinationZipcode");
+
+    const address = await fetchAddress(zipcode);
+    if (address) {
+      setValue(
+        "destinationAddress",
+        `${address.prefecture}${address.municipalities}${address.rest}`,
+      );
+      setPrefecture(address.prefecture);
+      setMunicipalities(address.municipalities);
+    } else {
+      toast.error("住所が見つかりませんでした");
+    }
   };
 
   /**
@@ -146,6 +178,20 @@ function OrderPage() {
     fetchClientSecret();
   }, []);
 
+  // TODO: カートページにおいても一覧を取得しているため冗長。一元管理したい。
+  const fetchCartProducts = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get<CartProduct[]>("/carts");
+      setCart(response.data);
+    } catch (error) {
+      toast.error("カート商品の取得に失敗しました");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCartProducts();
+  }, [fetchCartProducts]);
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">注文内容確認</h1>
@@ -153,13 +199,23 @@ function OrderPage() {
       <div className="flex justify-end items-center gap-4 mb-8">
         <div className="text-lg font-semibold">
           小計：
-          <span className="text-primary">
-            ¥{getTotalPrice().toLocaleString()}
-          </span>
+          <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
         </div>
 
-        <Button onClick={orderForm.handleSubmit(onSubmit)}>
-          注文を確定する
+        <Button
+          onClick={orderForm.handleSubmit(onSubmit)}
+          disabled={
+            cart.length === 0 || !orderForm.formState.isValid || isSubmitting
+          }
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              注文処理中...
+            </>
+          ) : (
+            "注文を確定する"
+          )}
         </Button>
       </div>
 
@@ -229,7 +285,7 @@ function OrderPage() {
 
                       <Button
                         type="button"
-                        variant="secondary"
+                        variant="default"
                         className="cursor-pointer"
                         onClick={searchAddress}
                       >
@@ -244,55 +300,13 @@ function OrderPage() {
 
               <FormField
                 control={orderForm.control}
-                name="destinationPrefecture"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>都道府県：</FormLabel>
-
-                    <FormControl>
-                      <Input
-                        {...field}
-                        readOnly
-                        tabIndex={-1}
-                        className="bg-gray-100 cursor-not-allowed"
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={orderForm.control}
-                name="destinationMunicipalities"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>市区町村：</FormLabel>
-
-                    <FormControl>
-                      <Input
-                        {...field}
-                        readOnly
-                        tabIndex={-1}
-                        className="bg-gray-100 cursor-not-allowed"
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={orderForm.control}
                 name="destinationAddress"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>番地等：</FormLabel>
+                    <FormLabel>住所：</FormLabel>
 
                     <FormControl>
-                      <Input placeholder="番地等" {...field} />
+                      <Input placeholder="住所" {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -336,11 +350,7 @@ function OrderPage() {
             <div>氏名：{getValues("destinationName")}</div>
             <div>メール：{getValues("destinationEmail")}</div>
             <div>郵便番号：{getValues("destinationZipcode")}</div>
-            <div>
-              住所：{getValues("destinationPrefecture")}
-              {getValues("destinationMunicipalities")}
-              {getValues("destinationAddress")}
-            </div>
+            <div>住所：{getValues("destinationAddress")}</div>
             <div>電話番号：{getValues("destinationTelephone")}</div>
           </div>
         )}
@@ -387,7 +397,7 @@ function OrderPage() {
       <section>
         <h2 className="text-lg font-semibold mb-4">カート内容</h2>
         <ul className="space-y-4">
-          {mockCartProducts.map((item) => (
+          {cart.map((item) => (
             <li
               key={item.name}
               className="flex items-center gap-4 border-b pb-4 last:border-b-0"
