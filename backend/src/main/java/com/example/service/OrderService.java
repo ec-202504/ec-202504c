@@ -115,4 +115,17 @@ public class OrderService {
       default -> throw new EntityNotFoundException("不正なカテゴリ: " + category);
     }
   }
+
+  /**
+   * 注文IDを指定して注文の詳細を取得するメソッド.
+   *
+   * @param orderId 注文ID
+   * @return 指定された注文IDに対応する注文の詳細
+   */
+  public OrderHistoryResponse getOrderDetailsByOrderId(Integer orderId) {
+    return orderRepository
+        .findById(orderId)
+        .map(this::mapToOrderHistoryResponse)
+        .orElseThrow(() -> new EntityNotFoundException("注文 (ID: " + orderId + ") が見つかりません"));
+  }
 }

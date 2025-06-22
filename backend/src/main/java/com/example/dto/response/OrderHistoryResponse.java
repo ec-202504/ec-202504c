@@ -15,7 +15,7 @@ import lombok.Setter;
 public class OrderHistoryResponse {
   private Integer orderId;
   private Integer totalPrice;
-  private LocalDateTime orderDate;
+  private LocalDateTime orderDateTime;
   private LocalDateTime deliveryDateTime;
   private Integer paymentMethod; // 0: 現金, 1: クレジットカード
   private List<OrderProductResponse> products;

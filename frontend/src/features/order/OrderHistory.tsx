@@ -5,49 +5,13 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../../lib/axiosInstance";
-
-export type OrderProductResponse = {
-  productId: number;
-  productCategory: 0 | 1; // 0 = PC, 1 = Book
-  quantity: number;
-  productName: string;
-  imageUrl: string;
-  price: number;
-};
-
-export type OrderHistoryResponse = {
-  orderId: number;
-  totalPrice: number;
-  orderDate: string; // ISO文字列
-  deliveryDateTime: string; // ISO文字列
-  paymentMethod: 0 | 1; // 0 = 現金, 1 = クレカ
-  products: OrderProductResponse[];
-};
+import type { OrderDetailResponse } from "./types/order";
+import { formatDeliveryTime, formatOrderDate } from "./utils/formatLocalDate";
 
 function OrderHistory() {
-  const [orders, setOrders] = useState<OrderHistoryResponse[]>([]);
-
-  // 配達予定時刻を時まで表示する関数
-  const formatDeliveryTime = (dateTimeString: string) => {
-    const date = new Date(`${dateTimeString}Z`);
-    return format(date, "M月d日 HH時", { locale: ja });
-  };
-
-  /**
-   * 注文日時をフォーマットする
-   * バックエンドではUTC(タイムゾーンなし)で返却されるため、Zを追加してUTCからJSTに変換する
-   *
-   * @param dateTimeString 注文日時
-   * @returns フォーマットされた注文日時
-   */
-  const formatOrderDate = (dateTimeString: string) => {
-    const date = new Date(`${dateTimeString}Z`);
-    return format(date, "yyyy年M月d日 HH:mm:ss", { locale: ja });
-  };
+  const [orders, setOrders] = useState<OrderDetailResponse[]>([]);
 
   /**
    * 注文履歴を取得する
@@ -55,7 +19,7 @@ function OrderHistory() {
   useEffect(() => {
     const fetchOrders = async () => {
       const response =
-        await axiosInstance.get<OrderHistoryResponse[]>("/orders/history");
+        await axiosInstance.get<OrderDetailResponse[]>("/orders/history");
       setOrders(response.data);
     };
 
@@ -69,7 +33,7 @@ function OrderHistory() {
         <Card key={order.orderId} className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <CardTitle className="text-lg">
-              注文日: {formatOrderDate(order.orderDate)}
+              注文日: {formatOrderDate(order.orderDateTime)}
             </CardTitle>
 
             <div className="flex items-center gap-2">

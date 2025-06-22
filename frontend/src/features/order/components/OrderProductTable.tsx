@@ -6,15 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-
-type OrderProduct = {
-  name: string;
-  quantity: number;
-  subtotal: number;
-};
+import type { OrderProductResponse } from "../types/order";
 
 type OrderProductTableProps = {
-  products: OrderProduct[];
+  products: OrderProductResponse[];
 };
 
 export default function OrderProductTable({
@@ -31,11 +26,11 @@ export default function OrderProductTable({
       </TableHeader>
       <TableBody>
         {products.map((item) => (
-          <TableRow key={item.name}>
-            <TableCell className="font-medium">{item.name}</TableCell>
+          <TableRow key={item.productId}>
+            <TableCell className="font-medium">{item.productName}</TableCell>
             <TableCell className="text-right">{item.quantity}</TableCell>
             <TableCell className="text-right font-medium">
-              ¥{item.subtotal.toLocaleString()}
+              ¥{item.price.toLocaleString()}
             </TableCell>
           </TableRow>
         ))}
