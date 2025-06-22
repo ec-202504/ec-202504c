@@ -22,6 +22,7 @@ import {
 import type { CartProduct } from "../../types/cartProduct";
 import { toast } from "sonner";
 import { fetchAddress } from "../../api/fetchAddress";
+import { Loader2 } from "lucide-react";
 
 type OrderProduct = {
   cartProductId: number;
@@ -60,6 +61,7 @@ function OrderPage() {
   const [cart, setCart] = useState<CartProduct[]>([]);
   const [prefecture, setPrefecture] = useState("");
   const [municipalities, setMunicipalities] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -114,31 +116,35 @@ function OrderPage() {
   }, [reset, trigger]);
 
   const onSubmit = async (data: OrderForm) => {
-    const productList: OrderProduct[] = cart.map((item) => ({
-      cartProductId: item.cartProductId,
-      productId: item.productId,
-      productCategory: item.productCategory,
-      quantity: item.quantity,
-    }));
-
-    const orderRequest: OrderRequest = {
-      totalPrice: totalPrice,
-      destinationName: data.destinationName,
-      destinationEmail: data.destinationEmail,
-      destinationZipcode: data.destinationZipcode.replace("-", ""),
-      destinationPrefecture: prefecture,
-      destinationMunicipalities: municipalities,
-      destinationAddress: data.destinationAddress,
-      destinationTelephone: data.destinationTelephone,
-      paymentMethod: Number(data.paymentMethod),
-      productList: productList,
-    };
+    setIsSubmitting(true);
 
     try {
+      const productList: OrderProduct[] = cart.map((item) => ({
+        cartProductId: item.cartProductId,
+        productId: item.productId,
+        productCategory: item.productCategory,
+        quantity: item.quantity,
+      }));
+
+      const orderRequest: OrderRequest = {
+        totalPrice: totalPrice,
+        destinationName: data.destinationName,
+        destinationEmail: data.destinationEmail,
+        destinationZipcode: data.destinationZipcode.replace("-", ""),
+        destinationPrefecture: prefecture,
+        destinationMunicipalities: municipalities,
+        destinationAddress: data.destinationAddress,
+        destinationTelephone: data.destinationTelephone,
+        paymentMethod: Number(data.paymentMethod),
+        productList: productList,
+      };
+
       await axiosInstance.post("/orders", orderRequest);
       navigate({ to: "/order/complete" });
     } catch (error) {
       toast.error("注文に失敗しました");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -198,9 +204,18 @@ function OrderPage() {
 
         <Button
           onClick={orderForm.handleSubmit(onSubmit)}
-          disabled={cart.length === 0 || !orderForm.formState.isValid}
+          disabled={
+            cart.length === 0 || !orderForm.formState.isValid || isSubmitting
+          }
         >
-          注文を確定する
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              注文処理中...
+            </>
+          ) : (
+            "注文を確定する"
+          )}
         </Button>
       </div>
 
