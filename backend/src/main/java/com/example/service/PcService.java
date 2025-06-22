@@ -56,6 +56,16 @@ public class PcService {
   }
 
   /**
+   * キーワードを含むPC名のリストを取得するメソッド（オートコンプリート用、最大20件）.
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含むPC名のリスト（最大20件）
+   */
+  public List<Pc> findPcsSuggestions(String keyword) {
+    return pcRepository.findTop20ByNameContainingIgnoreCase(keyword);
+  }
+
+  /**
    * PCの詳細情報を取得するメソッド.
    *
    * @param pcId PCのID

@@ -11,6 +11,7 @@ import {
 import { axiosInstance } from "../../../lib/axiosInstance";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
+import { useDebouncedCallback } from "use-debounce";
 
 type SearchFormProps = {
   onSubmit: (e: React.FormEvent<HTMLFormElement>, query: string) => void;
@@ -27,7 +28,7 @@ export default function SearchForm({ onSubmit, selectedTab }: SearchFormProps) {
    *
    * @param keyword 検索キーワード
    */
-  const fetchSuggestions = async (keyword: string) => {
+  const fetchSuggestions = useDebouncedCallback(async (keyword: string) => {
     if (keyword.length < 2) {
       setSuggestions([]);
       return;
@@ -48,7 +49,7 @@ export default function SearchForm({ onSubmit, selectedTab }: SearchFormProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, 300);
 
   /**
    * 入力フィールドの値が変更されたときのハンドラー

@@ -68,7 +68,8 @@ public class PcController {
    */
   @GetMapping("/suggestions")
   public ResponseEntity<?> getPcSuggestions(@RequestParam String keyword) {
-    List<String> pcSuggestions = pcService.findPcs(keyword).stream().map(Pc::getName).toList();
+    List<String> pcSuggestions =
+        pcService.findPcsSuggestions(keyword).stream().map(Pc::getName).toList();
     return ResponseEntity.ok(pcSuggestions);
   }
 

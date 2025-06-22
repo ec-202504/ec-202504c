@@ -68,7 +68,7 @@ public class BookController {
   @GetMapping("/suggestions")
   public ResponseEntity<?> getBookSuggestions(@RequestParam String keyword) {
     List<String> bookSuggestions =
-        bookService.findBooks(keyword).stream().map(Book::getName).toList();
+        bookService.findBooksSuggestions(keyword).stream().map(Book::getName).toList();
     return ResponseEntity.ok(bookSuggestions);
   }
 
