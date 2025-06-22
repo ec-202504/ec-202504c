@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "../../lib/axiosInstance";
@@ -77,9 +77,15 @@ function OrderPage() {
   });
   const { setValue, getValues, watch } = orderForm;
 
-  // 合計金額を計算する関数
-  const getTotalPrice = () =>
-    cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  /**
+   * カート内の商品の合計金額を計算する
+   *
+   * @returns 合計金額
+   */
+  const totalPrice = useMemo(
+    () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cart],
+  );
 
   const onSubmit = async (data: OrderFormData) => {
     const productList: OrderProduct[] = cart.map((item) => ({
@@ -90,7 +96,7 @@ function OrderPage() {
     }));
 
     const orderRequest: OrderRequest = {
-      totalPrice: getTotalPrice(),
+      totalPrice: totalPrice,
       destinationName: data.destinationName,
       destinationEmail: data.destinationEmail,
       destinationZipcode: data.destinationZipcode.replace("-", ""),
@@ -148,9 +154,7 @@ function OrderPage() {
       <div className="flex justify-end items-center gap-4 mb-8">
         <div className="text-lg font-semibold">
           小計：
-          <span className="text-primary">
-            ¥{getTotalPrice().toLocaleString()}
-          </span>
+          <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
         </div>
 
         <Button onClick={orderForm.handleSubmit(onSubmit)}>

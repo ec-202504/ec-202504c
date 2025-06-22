@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
@@ -17,6 +17,16 @@ function CartPage() {
   const [cart, setCart] = useState<CartProduct[]>([]);
 
   const navigate = useNavigate();
+
+  /**
+   * カート内の商品の合計金額を計算する
+   *
+   * @returns 合計金額
+   */
+  const totalPrice = useMemo(
+    () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cart],
+  );
 
   const fetchCartProducts = useCallback(async () => {
     try {
@@ -70,9 +80,6 @@ function CartPage() {
 
     fetchCartProducts();
   };
-
-  const getTotalPrice = () =>
-    cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <div className="max-w-2xl mx-auto px-2 py-8">
@@ -167,7 +174,7 @@ function CartPage() {
         <div className="text-base font-semibold">
           合計：
           <span className="text-primary font-bold text-lg">
-            ¥{getTotalPrice().toLocaleString()}
+            ¥{totalPrice.toLocaleString()}
           </span>
         </div>
 
