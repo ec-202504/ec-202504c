@@ -74,7 +74,7 @@ function OrderPage() {
       paymentMethod: "0",
     },
   });
-  const { setValue, getValues, watch, reset } = orderForm;
+  const { setValue, getValues, watch, reset, trigger } = orderForm;
 
   /**
    * カート内の商品の合計金額を計算する
@@ -104,12 +104,14 @@ function OrderPage() {
           destinationTelephone: user.telephone,
           paymentMethod: "0",
         });
+        // isValidの状態を更新
+        trigger();
       } catch (error) {
         toast.error("ユーザー情報の取得に失敗しました");
       }
     };
     fetchUser();
-  }, [reset]);
+  }, [reset, trigger]);
 
   const onSubmit = async (data: OrderForm) => {
     const productList: OrderProduct[] = cart.map((item) => ({
@@ -194,7 +196,10 @@ function OrderPage() {
           <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
         </div>
 
-        <Button onClick={orderForm.handleSubmit(onSubmit)}>
+        <Button
+          onClick={orderForm.handleSubmit(onSubmit)}
+          disabled={cart.length === 0 || !orderForm.formState.isValid}
+        >
           注文を確定する
         </Button>
       </div>
