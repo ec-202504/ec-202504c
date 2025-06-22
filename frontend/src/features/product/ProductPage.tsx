@@ -69,7 +69,6 @@ export default function ProductListPage() {
           keyword: query,
         },
       });
-      console.log(response.data);
 
       if (selectedTab === TAB_VALUES.PC) {
         setPcs(response.data?.content);
@@ -101,8 +100,6 @@ export default function ProductListPage() {
     e.preventDefault();
     setQuery(query);
     setPage(1); // 検索ボタンを押したらページを1に戻す
-
-    fetchData();
   };
 
   return (
