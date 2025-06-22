@@ -7,12 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** 注文履歴のレスポンスを表すDTOクラス. */
+/** 注文詳細のレスポンスを表すDTOクラス. */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderHistoryResponse {
+public class OrderDetailResponse {
   private Integer orderId;
   private Integer totalPrice;
   private LocalDateTime orderDateTime;

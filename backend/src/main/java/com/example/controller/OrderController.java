@@ -2,7 +2,7 @@ package com.example.controller;
 
 import com.example.dto.request.OrderProductRequest;
 import com.example.dto.request.OrderRequest;
-import com.example.dto.response.OrderHistoryResponse;
+import com.example.dto.response.OrderDetailResponse;
 import com.example.model.Order;
 import com.example.model.OrderProduct;
 import com.example.model.User;
@@ -104,7 +104,7 @@ public class OrderController {
       return ResponseEntity.badRequest().body(Map.of("message", "ユーザが見つかりません"));
     }
 
-    List<OrderHistoryResponse> orderHistory = orderService.getOrderHistoryByUserId(userId);
+    List<OrderDetailResponse> orderHistory = orderService.getOrderHistoryByUserId(userId);
     return ResponseEntity.ok(orderHistory);
   }
 
@@ -117,7 +117,7 @@ public class OrderController {
   @GetMapping("/{orderId}")
   public ResponseEntity<?> getOrderDetails(@PathVariable Integer orderId) {
     try {
-      OrderHistoryResponse orderDetails = orderService.getOrderDetailsByOrderId(orderId);
+      OrderDetailResponse orderDetails = orderService.getOrderDetailsByOrderId(orderId);
       return ResponseEntity.ok(orderDetails);
     } catch (EntityNotFoundException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
