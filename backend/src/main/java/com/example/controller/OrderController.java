@@ -52,7 +52,7 @@ public class OrderController {
     Order order = new Order();
     BeanUtils.copyProperties(request, order);
     order.setOrderDateTime(LocalDateTime.now());
-    order.setDeliveryDateTime(LocalDateTime.parse(request.getDeliveryDateTime()));
+    order.setDeliveryDateTime(LocalDateTime.now().plusDays(3)); // 配送予定日を注文日から3日後に設定
 
     User user = optionalUser.get();
     order.setUserId(user);

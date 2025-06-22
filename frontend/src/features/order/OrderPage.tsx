@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { useNavigate } from "@tanstack/react-router";
-import { formatToLocalDate } from "../../utils/formatToLocalDate";
 import { orderSchema, type OrderFormData } from "./schema/orderSchema";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
@@ -49,7 +48,6 @@ type OrderRequest = {
   destinationMunicipalities: string;
   destinationAddress: string;
   destinationTelephone: string;
-  deliveryDateTime: string;
   paymentMethod: number;
   productList: OrderProduct[];
 };
@@ -98,7 +96,6 @@ function OrderPage() {
       destinationMunicipalities: data.destinationMunicipalities,
       destinationAddress: data.destinationAddress,
       destinationTelephone: data.destinationTelephone,
-      deliveryDateTime: formatToLocalDate(new Date()),
       paymentMethod: Number(data.paymentMethod),
       productList: productList,
     };
