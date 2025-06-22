@@ -59,6 +59,16 @@ public class BookService {
   }
 
   /**
+   * キーワードを含むBook名のリストを取得するメソッド（オートコンプリート用、最大20件）.
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含むBook名のリスト（最大20件）
+   */
+  public List<Book> findBooksSuggestions(String keyword) {
+    return bookRepository.findTop20ByNameContainingIgnoreCase(keyword);
+  }
+
+  /**
    * Bookの詳細情報を取得するメソッド.
    *
    * @param bookId BookのID

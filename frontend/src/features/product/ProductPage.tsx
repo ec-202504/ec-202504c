@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Tabs,
   TabsList,
@@ -54,40 +54,52 @@ export default function ProductListPage() {
     },
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get(`/${selectedTab}`, {
-          params: {
-            page: page,
-            size: PAGE_SIZE,
-            keyword: query,
-          },
-        });
-        if (selectedTab === TAB_VALUES.PC) {
-          setPcs(response.data?.content);
-        } else {
-          setTechBooks(response.data?.content);
-        }
-        setTotalPages(response.data?.totalPages - 1 || 1);
-      } catch (error) {
-        toast.error("APIリクエストに失敗しました");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  /**
+   * 商品データを取得する関数
+   *
+   * @returns 商品データ
+   */
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(`/${selectedTab}`, {
+        params: {
+          page: page - 1, // バックエンドのページ番号は0から始まるため、1を引く
+          size: PAGE_SIZE,
+          keyword: query,
+        },
+      });
 
-    fetchData();
+      if (selectedTab === TAB_VALUES.PC) {
+        setPcs(response.data?.content);
+      } else {
+        setTechBooks(response.data?.content);
+      }
+      setTotalPages(response.data?.totalPages || 1);
+    } catch (error) {
+      toast.error("APIリクエストに失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
   }, [selectedTab, page, query]);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  /**
+   * 検索フォームの送信ハンドラー
+   *
+   * @param e イベントオブジェクト
+   * @param query 検索クエリ
+   */
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
     query: string,
   ) => {
     e.preventDefault();
     setQuery(query);
-    setPage(1);
+    setPage(1); // 検索ボタンを押したらページを1に戻す
   };
 
   return (
@@ -99,6 +111,8 @@ export default function ProductListPage() {
           value={selectedTab}
           onValueChange={(value) => {
             setSelectedTab(value);
+            setQuery("");
+            setPage(1);
           }}
           className="mb-4"
         >

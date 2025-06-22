@@ -57,6 +57,21 @@ public class BookController {
     return ResponseEntity.ok(bookService.findBooksWithPageable(keyword, pageable));
   }
 
+  /**
+   * キーワードを含む書籍名のリストを取得するエンドポイント.
+   *
+   * <p>オートコンプリート機能で使用
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含む書籍名のリスト
+   */
+  @GetMapping("/suggestions")
+  public ResponseEntity<?> getBookSuggestions(@RequestParam String keyword) {
+    List<String> bookSuggestions =
+        bookService.findBooksSuggestions(keyword).stream().map(Book::getName).toList();
+    return ResponseEntity.ok(bookSuggestions);
+  }
+
   @GetMapping("/languages")
   public ResponseEntity<?> getLanguages() {
     return ResponseEntity.ok(bookService.getAllLanguages());

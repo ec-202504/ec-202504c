@@ -50,7 +50,7 @@ export default function ProductList({
       />
 
       <div className="flex-1">
-        <SearchForm onSubmit={handleSubmit} />
+        <SearchForm onSubmit={handleSubmit} selectedTab={selectedTab} />
 
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-60 w-full bg-gray-50 rounded-md shadow mt-8 mb-8">
