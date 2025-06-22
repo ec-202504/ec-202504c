@@ -5,54 +5,37 @@ import { toast } from "sonner";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
-import type { AddCartRequest, Pc } from "../types";
+import type { AddCartRequest, Pc, Review } from "../types";
+import { fetchPcReviews } from "../api/reviewApi";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
 
-const dummyReviews = [
-  { rating: 5, count: 340 },
-  { rating: 4, count: 183 },
-  { rating: 3, count: 41 },
-  { rating: 2, count: 27 },
-  { rating: 1, count: 88 },
-];
-
-const dummyReviewContents = [
-  {
-    id: "review-1",
-    user: "山田太郎",
-    rating: 5,
-    content:
-      "とても使いやすく、性能も申し分ありません。デザインも美しく、満足しています。",
-  },
-  {
-    id: "review-2",
-    user: "佐藤花子",
-    rating: 4,
-    content:
-      "全体的に良い商品ですが、バッテリーの持ちがもう少し長ければ完璧です。",
-  },
-  {
-    id: "review-3",
-    user: "鈴木一郎",
-    rating: 5,
-    content: "期待以上の性能で、仕事効率が大幅に向上しました。おすすめです。",
-  },
-];
-
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { itemId } = useParams({ from: "/product/pc/$itemId/" });
   const navigate = useNavigate();
 
-  const totalReviews = dummyReviews.reduce((sum, r) => sum + r.count, 0);
+  // レビューの統計情報を計算
+  const totalReviews = reviews.length;
   const average =
-    dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
+    totalReviews > 0
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+      : 0;
+
+  // 評価別の件数を計算
+  const ratingCounts = reviews.reduce(
+    (acc, review) => {
+      acc[review.rating] = (acc[review.rating] || 0) + 1;
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
 
   const calcPercentage = (count: number, total: number): number => {
-    return Math.round((count / total) * 100);
+    return total > 0 ? Math.round((count / total) * 100) : 0;
   };
 
   /**
@@ -97,6 +80,25 @@ export default function PcDetail() {
     fetchData();
   }, [itemId]);
 
+  /**
+   * PCのレビューを取得する
+   */
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!itemId) return;
+
+      try {
+        const reviewsData = await fetchPcReviews(itemId);
+        setReviews(reviewsData);
+      } catch (error) {
+        console.error("レビューの取得に失敗しました:", error);
+        toast.error("レビューの取得に失敗しました");
+      }
+    };
+
+    fetchReviews();
+  }, [itemId]);
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-white px-4 py-4">
       {isLoading ? (
@@ -120,33 +122,47 @@ export default function PcDetail() {
                     </span>
                     <span>5つのうち</span>
                   </div>
+
                   <div className="mb-4">
-                    {dummyReviews.map((r) => (
-                      <div key={r.rating} className="flex items-center gap-2">
-                        <span className="w-[30px]">星{r.rating}</span>
+                    {[5, 4, 3, 2, 1].map((rating) => (
+                      <div key={rating} className="flex items-center gap-2">
+                        <span className="w-[30px]">星{rating}</span>
                         <div className="bg-gray-200 h-2 w-40 rounded">
                           <div
                             className="bg-orange-400 h-2 rounded"
                             style={{
-                              width: `${calcPercentage(r.count, totalReviews)}%`,
+                              width: `${calcPercentage(ratingCounts[rating] || 0, totalReviews)}%`,
                             }}
                           />
                         </div>
-                        <span>{calcPercentage(r.count, totalReviews)}%</span>
+                        <span>
+                          {calcPercentage(
+                            ratingCounts[rating] || 0,
+                            totalReviews,
+                          )}
+                          %
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
+
                 <div className="mb-2 w-full">
                   <div className="font-bold mb-2">レビュー内容</div>
-                  {dummyReviewContents.map((review) => (
-                    <ReviewItem
-                      key={review.id}
-                      userName={review.user}
-                      content={review.content}
-                      rating={review.rating}
-                    />
-                  ))}
+                  {reviews.length > 0 ? (
+                    reviews.map((review) => (
+                      <ReviewItem
+                        key={review.id}
+                        userName={review.userName}
+                        content={review.comment}
+                        rating={review.rating}
+                      />
+                    ))
+                  ) : (
+                    <div className="text-gray-500">
+                      まだレビューがありません
+                    </div>
+                  )}
                 </div>
               </div>
             </>
