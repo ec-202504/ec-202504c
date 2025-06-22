@@ -34,6 +34,7 @@ const mockUser = {
 };
 
 type OrderProduct = {
+  cartProductId: number;
   productId: number;
   productCategory: number;
   quantity: number;
@@ -82,6 +83,7 @@ function OrderPage() {
 
   const onSubmit = async (data: OrderFormData) => {
     const productList: OrderProduct[] = cart.map((item) => ({
+      cartProductId: item.cartProductId,
       productId: item.productId,
       productCategory: item.productCategory,
       quantity: item.quantity,
