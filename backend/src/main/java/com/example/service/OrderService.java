@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dto.response.OrderHistoryResponse;
+import com.example.dto.response.OrderDetailResponse;
 import com.example.dto.response.OrderProductResponse;
 import com.example.model.Order;
 import com.example.model.OrderProduct;
@@ -8,7 +8,6 @@ import com.example.repository.BookRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.PcRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,9 +32,7 @@ public class OrderService {
    * @param userId ユーザーID
    * @return 指定されたユーザーIDに対応する注文履歴のリスト
    */
-  public List<OrderHistoryResponse> getOrderHistoryByUserId(Integer userId) {
-    List<OrderHistoryResponse> orderHistoryResponses = new ArrayList<>();
-
+  public List<OrderDetailResponse> getOrderHistoryByUserId(Integer userId) {
     List<Order> orders = orderRepository.findByUserIdUserIdOrderByOrderDateTimeDesc(userId);
 
     if (orders.isEmpty()) {
@@ -60,11 +57,11 @@ public class OrderService {
    * @param order 注文エンティティ
    * @return 変換されたOrderHistoryResponseオブジェクト
    */
-  private OrderHistoryResponse mapToOrderHistoryResponse(Order order) {
+  private OrderDetailResponse mapToOrderHistoryResponse(Order order) {
     List<OrderProductResponse> productResponses =
         order.getOrderProductList().stream().map(this::mapToOrderProductResponse).toList();
 
-    return new OrderHistoryResponse(
+    return new OrderDetailResponse(
         order.getOrderId(),
         order.getTotalPrice(),
         order.getOrderDateTime(),
@@ -114,5 +111,18 @@ public class OrderService {
       }
       default -> throw new EntityNotFoundException("不正なカテゴリ: " + category);
     }
+  }
+
+  /**
+   * 注文IDを指定して注文の詳細を取得するメソッド.
+   *
+   * @param orderId 注文ID
+   * @return 指定された注文IDに対応する注文の詳細
+   */
+  public OrderDetailResponse getOrderDetailsByOrderId(Integer orderId) {
+    return orderRepository
+        .findById(orderId)
+        .map(this::mapToOrderHistoryResponse)
+        .orElseThrow(() -> new EntityNotFoundException("注文 (ID: " + orderId + ") が見つかりません"));
   }
 }

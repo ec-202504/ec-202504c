@@ -1,19 +1,14 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLoaderData } from "@tanstack/react-router";
 import OrderInfoCard from "./components/OrderInfoCard";
 import OrderProductSummaryCard from "./components/OrderProductSummaryCard";
 import { Button } from "../../components/ui/button";
 import { CheckCircle } from "lucide-react";
 
-// ダミーデータ
-const orderDate = "2024-06-01";
-const deliveryDate = "2024-06-05";
-const totalPrice = 156000;
-const products = [
-  { name: "ゲーミングPC", quantity: 1, subtotal: 150000 },
-  { name: "書籍『React入門』", quantity: 2, subtotal: 6000 },
-];
-
 export default function OrderComplete() {
+  const order = useLoaderData({
+    from: "/order/$orderId/complete",
+  });
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
@@ -26,11 +21,11 @@ export default function OrderComplete() {
 
       <div className="grid gap-6 md:grid-cols-2">
         <OrderInfoCard
-          orderDate={orderDate}
-          deliveryDate={deliveryDate}
-          totalPrice={totalPrice}
+          orderDate={order.orderDateTime}
+          deliveryDate={order.deliveryDateTime}
+          totalPrice={order.totalPrice}
         />
-        <OrderProductSummaryCard products={products} />
+        <OrderProductSummaryCard products={order.products} />
       </div>
 
       <div className="mt-8 text-center flex gap-6 justify-between">
@@ -38,7 +33,7 @@ export default function OrderComplete() {
           <Link to="/order/history">注文履歴を確認</Link>
         </Button>
         <Button asChild>
-          <Link to="/">ショッピングを続ける</Link>
+          <Link to="/product">ショッピングを続ける</Link>
         </Button>
       </div>
     </div>

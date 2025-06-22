@@ -53,6 +53,11 @@ type UserResponse = {
   telephone: string;
 };
 
+type OrderCompleteResponse = {
+  message: string;
+  orderId: number;
+};
+
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 function OrderPage() {
@@ -139,8 +144,14 @@ function OrderPage() {
         productList: productList,
       };
 
-      await axiosInstance.post("/orders", orderRequest);
-      navigate({ to: "/order/complete" });
+      const response = await axiosInstance.post<OrderCompleteResponse>(
+        "/orders",
+        orderRequest,
+      );
+      navigate({
+        to: "/order/$orderId/complete",
+        params: { orderId: response.data.orderId.toString() },
+      });
     } catch (error) {
       toast.error("注文に失敗しました");
     } finally {

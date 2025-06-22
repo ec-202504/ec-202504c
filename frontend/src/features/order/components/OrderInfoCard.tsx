@@ -7,6 +7,7 @@ import {
 import { Badge } from "../../../components/ui/badge";
 import { Separator } from "../../../components/ui/separator";
 import { Calendar } from "lucide-react";
+import { formatDeliveryTime, formatOrderDate } from "../utils/formatLocalDate";
 
 type OrderInfoCardProps = {
   orderDate: string;
@@ -30,13 +31,13 @@ export default function OrderInfoCard({
       <CardContent className="space-y-4">
         <div className="flex justify-between items-center">
           <span className="text-gray-600">注文日時</span>
-          <span className="font-medium">{orderDate}</span>
+          <span className="font-medium">{formatOrderDate(orderDate)}</span>
         </div>
         <Separator />
         <div className="flex justify-between items-center">
           <span className="text-gray-600">お届け予定日</span>
           <Badge variant="secondary" className="text-green-700 bg-green-100">
-            {deliveryDate}
+            {formatDeliveryTime(deliveryDate)}
           </Badge>
         </div>
         <Separator />
