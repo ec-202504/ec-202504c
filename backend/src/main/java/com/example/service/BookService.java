@@ -2,8 +2,11 @@ package com.example.service;
 
 import com.example.model.Book;
 import com.example.model.Language;
+import com.example.model.Purpose;
 import com.example.repository.BookRepository;
 import com.example.repository.LanguageRepository;
+import com.example.repository.PurposeRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookService {
   private final BookRepository bookRepository;
   private final LanguageRepository languageRepository;
+  private final PurposeRepository purposeRepository;
 
   /**
    * Book一覧を取得するメソッド.
@@ -75,16 +79,17 @@ public class BookService {
    * @return 言語IDと一致するBookのリスト
    */
   public List<Book> findByLanguageId(Integer languageId) {
-    return bookRepository.findByLanguage_Id(languageId);
+    return bookRepository.findByLanguageId(languageId);
   }
 
   /**
    * 目的IDと一致するBookのリストを取得するメソッド.
+   *
    * @param purposeId 目的ID
    * @return 目的IDと一致するBookのリスト
    */
   public List<Book> findByPurposeId(Integer purposeId) {
-    return bookRepository.findByPurpose_Id(purposeId);
+    return bookRepository.findByPurposeId(purposeId);
   }
 
   /**
@@ -113,5 +118,38 @@ public class BookService {
    */
   public List<Language> getAllLanguages() {
     return languageRepository.findAll();
+  }
+
+  /**
+   * 書籍の目的一覧を取得するメソッド.
+   *
+   * @return 書籍の目的のリスト
+   */
+  public List<Purpose> getAllPurposes() {
+    return purposeRepository.findAllByProductCategory(1);
+  }
+
+  /**
+   * 　検索結果が含まれるページネーションされたPCのリストを取得するメソッド.
+   *
+   * @param sort ソート条件（ASC or DESC）
+   * @param name　デバイス名
+   * @param price　価格
+   * @param languageId 言語のID
+   * @param purposeId 目的ID
+   * @param pageable ページネーション情報
+   * @return 検索結果が含まれるページネーションされたPCのリスト
+   */
+  public Page<Book> findByMultipleConditions(
+      String sort,
+      String name,
+      Integer price,
+      String author,
+      LocalDate publishDate,
+      Integer languageId,
+      Integer purposeId,
+      Pageable pageable) {
+    return bookRepository.findByMultipleConditions(
+        sort, name, price, author, publishDate, languageId, purposeId, pageable);
   }
 }
