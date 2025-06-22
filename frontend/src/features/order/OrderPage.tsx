@@ -51,7 +51,6 @@ type OrderRequest = {
   destinationTelephone: string;
   deliveryDateTime: string;
   paymentMethod: number;
-  userId: number;
   productList: OrderProduct[];
 };
 
@@ -77,7 +76,6 @@ function OrderPage() {
       paymentMethod: "0",
     },
   });
-
   const { setValue, getValues, watch } = orderForm;
 
   // 合計金額を計算する関数
@@ -86,10 +84,11 @@ function OrderPage() {
 
   const onSubmit = async (data: OrderFormData) => {
     const productList: OrderProduct[] = cart.map((item) => ({
-      productId: item.cartProductId,
-      productCategory: 0,
+      productId: item.productId,
+      productCategory: item.productCategory,
       quantity: item.quantity,
     }));
+
     const orderRequest: OrderRequest = {
       totalPrice: getTotalPrice(),
       destinationName: data.destinationName,
@@ -101,7 +100,6 @@ function OrderPage() {
       destinationTelephone: data.destinationTelephone,
       deliveryDateTime: formatToLocalDate(new Date()),
       paymentMethod: Number(data.paymentMethod),
-      userId: 1, // TODO: ユーザーIDを取得する
       productList: productList,
     };
 

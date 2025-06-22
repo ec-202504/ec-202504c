@@ -21,6 +21,5 @@ public class OrderRequest {
   private String destinationTelephone;
   private String deliveryDateTime;
   private Integer paymentMethod;
-  private Integer userId;
   private List<OrderProduct> productList;
 }

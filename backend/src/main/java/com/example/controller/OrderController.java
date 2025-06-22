@@ -42,10 +42,13 @@ public class OrderController {
   @PostMapping
   public ResponseEntity<?> createOrder(@RequestBody OrderRequest request)
       throws MessagingException {
-    Optional<User> optionalUser = userService.findById(request.getUserId());
+    // TODO: userIdをjwtから取得するようにする
+    Integer userId = 1;
+    Optional<User> optionalUser = userService.findById(userId);
     if (optionalUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }
+    // 　注文情報を登録
     Order order = new Order();
     BeanUtils.copyProperties(request, order);
     order.setOrderDateTime(LocalDateTime.now());
@@ -57,7 +60,6 @@ public class OrderController {
     orderService.createOrder(order);
 
     List<OrderProduct> orderProductList = new ArrayList<>();
-
     // リクエストに入っている商品リストを注文商品オブジェクトに格納後、オブジェクトをorder_productsテーブルに保存
     for (OrderProduct orderProduct : request.getProductList()) {
       OrderProduct product = new OrderProduct();
