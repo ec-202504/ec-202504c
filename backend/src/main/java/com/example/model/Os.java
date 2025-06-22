@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "oss")
+@Table(name = "oses")
 public class Os {
   /** OS ID. */
   @Id
