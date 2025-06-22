@@ -6,11 +6,11 @@ import com.example.model.Book;
 import com.example.model.Language;
 import com.example.model.Purpose;
 import com.example.service.BookService;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,29 +30,34 @@ public class BookController {
   private final BookService bookService;
 
   /**
-   * Book一覧を取得するエンドポイント.
+   * 条件に合致するPC一覧結果を取得するエンドポイント.
    *
    * @param sort ソート条件
    * @param page ページ番号
    * @param size 1ページあたりの表示件数
-   * @param keyword 検索キーワード
-   * @return Book一覧結果
+   * @param name 書籍名
+   * @param price 価格
+   * @param author 著者名
+   * @param publishDate 出版年度
+   * @param languageId GPU
+   * @param purposeId 使用目的
+   * @return 条件に合致するPC一覧結果
    */
   @GetMapping
-  public ResponseEntity<?> getBooks(
+  public ResponseEntity<?> getMultipleConditionsPcs(
       @RequestParam(defaultValue = "priceAsc") String sort,
       @RequestParam(defaultValue = "0") Integer page,
       @RequestParam(defaultValue = "20") Integer size,
-      @RequestParam(defaultValue = "") String keyword) {
-    Sort sorting =
-        switch (sort) {
-          case "priceAsc" -> Sort.by(Sort.Direction.ASC, "price");
-          case "priceDesc" -> Sort.by(Sort.Direction.DESC, "price");
-          default -> Sort.by("id");
-        };
-    Pageable pageable = PageRequest.of(page, size, sorting);
-
-    return ResponseEntity.ok(bookService.findBooksWithPageable(keyword, pageable));
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) Integer price,
+      @RequestParam(required = false) String author,
+      @RequestParam(required = false) LocalDate publishDate,
+      @RequestParam(required = false) Integer languageId,
+      @RequestParam(required = false) Integer purposeId) {
+    Pageable pageable = PageRequest.of(page, size);
+    return ResponseEntity.ok(
+        bookService.findByMultipleConditions(
+            sort, name, price, author, publishDate, languageId, purposeId, pageable));
   }
 
   /**

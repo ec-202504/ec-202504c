@@ -6,6 +6,7 @@ import com.example.model.Purpose;
 import com.example.repository.BookRepository;
 import com.example.repository.LanguageRepository;
 import com.example.repository.PurposeRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -126,5 +127,29 @@ public class BookService {
    */
   public List<Purpose> getAllPurposes() {
     return purposeRepository.findAllByProductCategory(1);
+  }
+
+  /**
+   * 　検索結果が含まれるページネーションされたPCのリストを取得するメソッド.
+   *
+   * @param sort ソート条件（ASC or DESC）
+   * @param name　デバイス名
+   * @param price　価格
+   * @param languageId 言語のID
+   * @param purposeId 目的ID
+   * @param pageable ページネーション情報
+   * @return 検索結果が含まれるページネーションされたPCのリスト
+   */
+  public Page<Book> findByMultipleConditions(
+      String sort,
+      String name,
+      Integer price,
+      String author,
+      LocalDate publishDate,
+      Integer languageId,
+      Integer purposeId,
+      Pageable pageable) {
+    return bookRepository.findByMultipleConditions(
+        sort, name, price, author, publishDate, languageId, purposeId, pageable);
   }
 }

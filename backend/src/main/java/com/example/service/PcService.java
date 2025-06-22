@@ -165,7 +165,7 @@ public class PcService {
    * @param gpuId GPUのID
    * @param purposeId 目的ID
    * @param pageable ページネーション情報
-   * @return　検索結果が含まれるページネーションされたPCのリスト
+   * @return 検索結果が含まれるページネーションされたPCのリスト
    */
   public Page<Pc> findByMultipleConditions(
       String sort,
