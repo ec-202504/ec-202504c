@@ -3,13 +3,19 @@ package com.example.controller;
 import com.example.dto.request.LoginRequest;
 import com.example.dto.request.RegisterRequest;
 import com.example.dto.response.UserResponse;
+import com.example.dto.security.CustomUserDetails;
 import com.example.model.User;
 import com.example.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
   private final UserService userService;
+  private final AuthenticationManager authenticationManager;
 
   /**
    * ユーザーを登録する.
@@ -52,15 +59,18 @@ public class UserController {
    * @return ユーザー(異常系:401)
    */
   @PostMapping("/login")
-  public ResponseEntity<User> login(@RequestBody LoginRequest request, HttpSession session) {
-    return userService
-        .findByEmailAndPassword(request.getEmail(), request.getPassword())
-        .map(
-            user -> {
-              session.setAttribute("userId", user.getUserId());
-              return ResponseEntity.ok(user);
-            })
-        .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+  public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpSession session) {
+    UsernamePasswordAuthenticationToken token =
+        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+    try {
+      Authentication authentication = authenticationManager.authenticate(token);
+      CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+      session.setAttribute("userId", userDetails.getUserId());
+      // TODO: jwtを返す
+      return ResponseEntity.ok().build();
+    } catch (AuthenticationException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", e.getMessage()));
+    }
   }
 
   /**
@@ -110,7 +120,6 @@ public class UserController {
   @GetMapping
   public ResponseEntity<UserResponse> getUser(HttpSession session) {
     Integer userId = (Integer) session.getAttribute("userId");
-    System.out.println("User ID from session: " + userId);
     if (userId == null) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

@@ -18,13 +18,14 @@ import {
 import { Link, useNavigate } from "@tanstack/react-router";
 import { axiosInstance } from "../../lib/axiosInstance";
 
-type LoginForm = {
-  email: string;
-  password: string;
-};
-
 function UserLoginPage() {
   const navigate = useNavigate();
+
+  type LoginForm = {
+    email: string;
+    password: string;
+  };
+
   const form = useForm<LoginForm>({
     defaultValues: {
       email: "",

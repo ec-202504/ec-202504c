@@ -4,6 +4,7 @@ import com.example.model.User;
 import com.example.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserService {
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
   /**
    * ユーザーをIDで検索する.
@@ -52,6 +54,7 @@ public class UserService {
    * @return ユーザー(自動採番されたユーザーIDを保持)
    */
   public User register(User user) {
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
     return userRepository.save(user);
   }
 }
