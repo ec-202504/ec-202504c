@@ -1,6 +1,5 @@
 package com.example.dto.request;
 
-import com.example.model.OrderProduct;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +18,6 @@ public class OrderRequest {
   private String destinationMunicipalities;
   private String destinationAddress;
   private String destinationTelephone;
-  private String deliveryDateTime;
   private Integer paymentMethod;
-  private Integer userId;
-  private List<OrderProduct> productList;
+  private List<OrderProductRequest> productList;
 }

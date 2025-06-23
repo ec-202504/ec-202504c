@@ -10,6 +10,8 @@ import com.example.model.Pc;
 import com.example.model.Purpose;
 import com.example.service.PcService;
 import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -79,6 +81,21 @@ public class PcController {
             gpuId,
             purposeId,
             pageable));
+  }
+
+  /**
+   * キーワードを含むPC名のリストを取得するエンドポイント.
+   *
+   * <p>オートコンプリート機能で使用
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含むPC名のリスト
+   */
+  @GetMapping("/suggestions")
+  public ResponseEntity<?> getPcSuggestions(@RequestParam String keyword) {
+    List<String> pcSuggestions =
+        pcService.findPcsSuggestions(keyword).stream().map(Pc::getName).toList();
+    return ResponseEntity.ok(pcSuggestions);
   }
 
   /**
@@ -275,6 +292,58 @@ public class PcController {
               return ResponseEntity.ok().build();
             })
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  @GetMapping("/recommend/{pcId}")
+  public ResponseEntity<?> recommendedPcs(@PathVariable Integer pcId) {
+    Optional<Pc> targetPc = pcService.findById(pcId);
+    if (targetPc.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    List<Pc> allPcs = pcService.getAllPcs();
+    List<Pc> allPcsBySameOs = pcService.findByOsId(targetPc.get().getOs().getId());
+    List<Pc> allPcsBySameCpu = pcService.findByCpuId(targetPc.get().getCpu().getId());
+    List<Pc> allPcsBySameGpu = pcService.findByGpuId(targetPc.get().getGpu().getId());
+    List<Pc> allPcsBySamePurpose = pcService.findByPurposeId(targetPc.get().getPurpose().getId());
+
+    Set<Integer> sameOsIds = allPcsBySameOs.stream().map(Pc::getId).collect(Collectors.toSet());
+    Set<Integer> sameCpuIds = allPcsBySameCpu.stream().map(Pc::getId).collect(Collectors.toSet());
+    Set<Integer> sameGpuIds = allPcsBySameGpu.stream().map(Pc::getId).collect(Collectors.toSet());
+    Set<Integer> samePurposeIds =
+        allPcsBySamePurpose.stream().map(Pc::getId).collect(Collectors.toSet());
+
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (Pc pc : allPcs) {
+      if (pc.getId().equals(targetPc.get().getId())) {
+        continue;
+      }
+
+      int similarity = 0;
+      if (sameOsIds.contains(pc.getId())) {
+        similarity++;
+      }
+      if (sameCpuIds.contains(pc.getId())) {
+        similarity++;
+      }
+      if (sameGpuIds.contains(pc.getId())) {
+        similarity++;
+      }
+      if (samePurposeIds.contains(pc.getId())) {
+        similarity++;
+      }
+
+      Map<String, Object> item = new HashMap<>();
+      item.put("pc", pc);
+      item.put("similarity", similarity);
+      result.add(item);
+    }
+
+    // 類似度スコアで降順ソート
+    result.sort((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")));
+
+    return ResponseEntity.ok(result);
   }
 
   /**

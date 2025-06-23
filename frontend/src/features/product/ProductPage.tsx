@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Tabs,
   TabsList,
@@ -9,6 +9,7 @@ import ProductList from "./components/ProductList";
 import type { FilterTerm, Product } from "./types";
 import { axiosInstance } from "../../lib/axiosInstance";
 import LoadingOverlay from "./components/LoadingOverlay";
+import { TAB_VALUES } from "./types/constants";
 
 export default function ProductListPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -16,7 +17,7 @@ export default function ProductListPage() {
   const [pcs, setPcs] = useState<Product[]>([]);
   const [techBooks, setTechBooks] = useState<Product[]>([]);
   const [filterTerms, setFilterTerms] = useState<FilterTerm[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>("pcs");
+  const [selectedTab, setSelectedTab] = useState<string>(TAB_VALUES.PC);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const PAGE_SIZE = 12;
@@ -106,92 +107,102 @@ export default function ProductListPage() {
   //         options: ["27以上", "23~26", "20~22", "17~19", "15~16", "14以下"],
   //     },
   // ];
+  /**
+   * 商品データを取得する関数
+   *
+   * @returns 商品データ
+   */
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const productListResponse = await axiosInstance.get(`/${selectedTab}`, {
+        params: {
+          page: page,
+          size: PAGE_SIZE,
+          keyword: query,
+        },
+      });
+      console.log("LOG");
+      console.log(productListResponse);
+      setTotalPages(productListResponse.data?.totalPages - 1 || 1);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const productListResponse = await axiosInstance.get(`/${selectedTab}`, {
-          params: {
-            page: page,
-            size: PAGE_SIZE,
-            keyword: query,
-          },
-        });
+      if (selectedTab === TAB_VALUES.PC) {
+        setPcs(productListResponse.data?.content);
         console.log("LOG");
-        console.log(productListResponse);
-        setTotalPages(productListResponse.data?.totalPages - 1 || 1);
+        console.log(productListResponse.data);
+        const osListResponse = await axiosInstance.get("/pcs/oses");
+        console.log("LOG");
+        console.log(osListResponse);
+        const cpuListResponse = await axiosInstance.get("/pcs/cpus");
+        const gpuListResponse = await axiosInstance.get("/pcs/gpus");
+        const purposeListResponse = await axiosInstance.get("/pcs/purposes");
 
-        if (selectedTab === "pcs") {
-          setPcs(productListResponse.data?.content);
-          console.log("LOG");
-          console.log(productListResponse.data);
-          const osListResponse = await axiosInstance.get("/pcs/oses");
-          console.log("LOG");
-          console.log(osListResponse);
-          const cpuListResponse = await axiosInstance.get("/pcs/cpus");
-          const gpuListResponse = await axiosInstance.get("/pcs/gpus");
-          const purposeListResponse = await axiosInstance.get("/pcs/purposes");
-
-          setFilterTerms([
-            {
-              id: 1,
-              label: "OS",
-              options: osListResponse.data,
-            },
-            {
-              id: 2,
-              label: "CPU",
-              options: cpuListResponse.data,
-            },
-            {
-              id: 3,
-              label: "GPU",
-              options: gpuListResponse.data,
-            },
-            {
-              id: 4,
-              label: "用途",
-              options: purposeListResponse.data,
-            },
-          ]);
-        } else {
-          setTechBooks(productListResponse.data?.content);
-          const languageListResponse =
-            await axiosInstance.get("/books/languages");
-          const purposeListResponse = await axiosInstance.get("/pcs/purposes");
-          console.log("LOG");
-          console.log(languageListResponse);
-          setFilterTerms([
-            {
-              id: 1,
-              label: "言語",
-              options: languageListResponse.data,
-            },
-            {
-              id: 2,
-              label: "用途",
-              options: purposeListResponse.data,
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error("APIリクエストに失敗しました:", error);
-      } finally {
-        setIsLoading(false);
+        setFilterTerms([
+          {
+            id: 1,
+            label: "OS",
+            options: osListResponse.data,
+          },
+          {
+            id: 2,
+            label: "CPU",
+            options: cpuListResponse.data,
+          },
+          {
+            id: 3,
+            label: "GPU",
+            options: gpuListResponse.data,
+          },
+          {
+            id: 4,
+            label: "用途",
+            options: purposeListResponse.data,
+          },
+        ]);
+      } else {
+        setTechBooks(productListResponse.data?.content);
+        const languageListResponse =
+          await axiosInstance.get("/books/languages");
+        const purposeListResponse = await axiosInstance.get("/pcs/purposes");
+        console.log("LOG");
+        console.log(languageListResponse);
+        setFilterTerms([
+          {
+            id: 1,
+            label: "言語",
+            options: languageListResponse.data,
+          },
+          {
+            id: 2,
+            label: "用途",
+            options: purposeListResponse.data,
+          },
+        ]);
       }
-    };
-
-    fetchData();
+    } catch (error) {
+      console.error("APIリクエストに失敗しました:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [selectedTab, page, query]);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  /**
+   * 検索フォームの送信ハンドラー
+   *
+   * @param e イベントオブジェクト
+   * @param query 検索クエリ
+   */
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
     query: string,
   ) => {
     e.preventDefault();
     setQuery(query);
-    setPage(1);
+    setPage(1); // 検索ボタンを押したらページを1に戻す
   };
 
   return (
@@ -204,15 +215,19 @@ export default function ProductListPage() {
           onValueChange={(value) => {
             setSelectedTab(value);
             setFilterTerms([]);
+            setQuery("");
+            setPage(1);
           }}
           className="mb-4"
         >
           <TabsList>
-            <TabsTrigger value="pcs">PC</TabsTrigger>
-            <TabsTrigger value="books">技術書</TabsTrigger>
+            <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
+            <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
           </TabsList>
-          <TabsContent value="pcs">
+
+          <TabsContent value={TAB_VALUES.PC}>
             <ProductList
+              selectedTab={selectedTab}
               products={pcs}
               filterTerms={filterTerms}
               selectedOption={selectedOption}
@@ -222,8 +237,10 @@ export default function ProductListPage() {
               totalPages={totalPages}
             />
           </TabsContent>
-          <TabsContent value="books">
+
+          <TabsContent value={TAB_VALUES.BOOK}>
             <ProductList
+              selectedTab={selectedTab}
               products={techBooks}
               filterTerms={filterTerms}
               selectedOption={selectedOption}

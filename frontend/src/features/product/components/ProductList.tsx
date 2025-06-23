@@ -13,6 +13,7 @@ import {
 } from "../../../components/ui/pagination";
 
 type Props = {
+  selectedTab: string;
   products: Product[];
   filterTerms: FilterTerm[];
   selectedOption: (value: string) => void;
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export default function ProductList({
+  selectedTab,
   products,
   filterTerms,
   selectedOption,
@@ -41,9 +43,14 @@ export default function ProductList({
 
   return (
     <div className="flex gap-4">
-      <Sidebar selectedOption={selectedOption} filterTerms={filterTerms} />
+      <Sidebar
+        selectedTab={selectedTab}
+        selectedOption={selectedOption}
+        filterTerms={filterTerms}
+      />
+
       <div className="flex-1">
-        <SearchForm onSubmit={handleSubmit} />
+        <SearchForm onSubmit={handleSubmit} selectedTab={selectedTab} />
 
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-60 w-full bg-gray-50 rounded-md shadow mt-8 mb-8">
@@ -54,7 +61,11 @@ export default function ProductList({
         ) : (
           <div className="grid grid-cols-4 gap-4 mb-4">
             {products.map((product) => (
-              <ProductCard product={product} key={product.id} />
+              <ProductCard
+                selectedTab={selectedTab}
+                product={product}
+                key={product.id}
+              />
             ))}
           </div>
         )}

@@ -46,6 +46,31 @@ public class PcService {
   }
 
   /**
+   * ページネーション、ソートされたPCのリストを取得するメソッド.
+   *
+   * @param keyword 検索キーワード
+   * @param pageable ページ情報
+   * @return ページネーションされたPCのリスト
+   */
+  public Page<Pc> findPcsWithPageable(String keyword, Pageable pageable) {
+    // キーワードがnullまたは空文字の場合、全件取得
+    if (keyword == null || keyword.isBlank()) {
+      return pcRepository.findAll(pageable);
+    }
+    return pcRepository.findByNameContainingIgnoreCase(keyword, pageable);
+  }
+
+  /**
+   * キーワードを含むPC名のリストを取得するメソッド（オートコンプリート用、最大20件）.
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含むPC名のリスト（最大20件）
+   */
+  public List<Pc> findPcsSuggestions(String keyword) {
+    return pcRepository.findTop20ByNameContainingIgnoreCase(keyword);
+  }
+
+  /**
    * PCの詳細情報を取得するメソッド.
    *
    * @param pcId PCのID

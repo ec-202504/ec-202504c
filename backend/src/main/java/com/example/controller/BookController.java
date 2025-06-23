@@ -63,6 +63,21 @@ public class BookController {
   }
 
   /**
+   * キーワードを含む書籍名のリストを取得するエンドポイント.
+   *
+   * <p>オートコンプリート機能で使用
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含む書籍名のリスト
+   */
+  @GetMapping("/suggestions")
+  public ResponseEntity<?> getBookSuggestions(@RequestParam String keyword) {
+    List<String> bookSuggestions =
+        bookService.findBooksSuggestions(keyword).stream().map(Book::getName).toList();
+    return ResponseEntity.ok(bookSuggestions);
+  }
+
+  /**
    * 言語一覧を取得するエンドポイント.
    *
    * @return 言語一覧
