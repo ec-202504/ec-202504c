@@ -47,16 +47,32 @@ public class ReviewController {
   }
 
   /**
-   * レビューを登録する.
+   * PCのレビューを登録する.
    *
+   * @param productId PCのID
    * @param request レビュー登録リクエスト
    * @param session HTTPセッション
    * @return レスポンス（成功時は201 Created）
    */
-  @PostMapping
-  public ResponseEntity<Void> addReview(
-      @RequestBody AddReviewRequest request, HttpSession session) {
-    reviewService.addReview(request, session);
+  @PostMapping("/pc/{productId}")
+  public ResponseEntity<Void> addPcReview(
+      @PathVariable Integer productId, @RequestBody AddReviewRequest request, HttpSession session) {
+    reviewService.addReview(request, session, 0, productId);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  /**
+   * Bookのレビューを登録する.
+   *
+   * @param productId BookのID
+   * @param request レビュー登録リクエスト
+   * @param session HTTPセッション
+   * @return レスポンス（成功時は201 Created）
+   */
+  @PostMapping("/book/{productId}")
+  public ResponseEntity<Void> addBookReview(
+      @PathVariable Integer productId, @RequestBody AddReviewRequest request, HttpSession session) {
+    reviewService.addReview(request, session, 1, productId);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }

@@ -50,14 +50,18 @@ public class ReviewService {
    *
    * @param request レビュー登録リクエスト
    * @param session HTTPセッション
+   * @param productCategory 商品カテゴリ
+   * @param productId 商品ID
    */
-  public void addReview(AddReviewRequest request, HttpSession session) {
-    // TODO: jwtを使用してユーザー認証を行う
+  public void addReview(
+      AddReviewRequest request, HttpSession session, Integer productCategory, Integer productId) {
+    // セッションからuserIdを取得
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
       throw new EntityNotFoundException("ログインが必要です");
     }
 
+    // ユーザー情報を取得
     User user =
         userRepository
             .findById(userId)
@@ -66,8 +70,11 @@ public class ReviewService {
     // レビューを作成
     Review review = new Review();
     BeanUtils.copyProperties(request, review);
+    review.setProductCategory(productCategory);
+    review.setProductId(productId);
     review.setUser(user);
 
+    // レビューを保存
     reviewRepository.save(review);
   }
 
