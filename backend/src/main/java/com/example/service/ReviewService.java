@@ -63,17 +63,17 @@ public class ReviewService {
       throw new EntityNotFoundException("ログインが必要です");
     }
 
-    // ユーザー情報を取得
-    User user =
-        userRepository
-            .findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません"));
-
     // レビューを作成
     Review review = new Review();
     BeanUtils.copyProperties(request, review);
     review.setProductCategory(productCategory);
     review.setProductId(productId);
+
+    // ユーザー情報を取得
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません"));
     review.setUser(user);
 
     reviewRepository.save(review);
