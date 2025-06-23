@@ -70,13 +70,6 @@ function ReviewForm({
     }
   };
 
-  /**
-   * 評価を設定する
-   */
-  const handleRatingChange = (star: number) => {
-    setValue("rating", star);
-  };
-
   return (
     <Card className="mb-4">
       <CardHeader>
@@ -95,7 +88,7 @@ function ReviewForm({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleRatingChange(starValue)}
+                    onClick={() => setValue("rating", starValue)}
                     className={`text-2xl p-0 h-auto ${
                       starValue <= rating ? "text-yellow-400" : "text-gray-300"
                     }`}

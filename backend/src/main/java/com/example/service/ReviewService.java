@@ -55,7 +55,7 @@ public class ReviewService {
    */
   public void addReview(
       AddReviewRequest request, HttpSession session, Integer productCategory, Integer productId) {
-    // セッションからuserIdを取得
+    // TODO: jwtからユーザーIDを取得するように変更
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
       throw new EntityNotFoundException("ログインが必要です");
@@ -74,7 +74,6 @@ public class ReviewService {
     review.setProductId(productId);
     review.setUser(user);
 
-    // レビューを保存
     reviewRepository.save(review);
   }
 
