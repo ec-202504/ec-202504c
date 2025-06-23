@@ -66,7 +66,7 @@ public class CartProductService {
   }
 
   /**
-   * カート内商品を追加するメソッド.
+   * カート内商品を追加、更新するメソッド.
    *
    * @param cartProduct 追加するカート内商品
    */

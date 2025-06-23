@@ -4,10 +4,15 @@ import com.example.dto.request.LoginRequest;
 import com.example.dto.request.RegisterRequest;
 import com.example.dto.response.UserResponse;
 import com.example.dto.security.CustomUserDetails;
+import com.example.model.CartProduct;
 import com.example.model.User;
+import com.example.service.CartProductService;
 import com.example.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -30,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
   private final UserService userService;
   private final AuthenticationManager authenticationManager;
+  private final CartProductService cartProductService;
 
   /**
    * ユーザーを登録する.
@@ -66,7 +72,16 @@ public class UserController {
       Authentication authentication = authenticationManager.authenticate(token);
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       session.setAttribute("userId", userDetails.getUserId());
-      // TODO: jwtを返す
+
+      // TODO: jwt導入によって変更が必要かも
+      String sessionId = session.getId();
+      // 現在のセッションIDに紐づくカート内商品を取得
+      List<CartProduct> exsitingCartProductList =
+          cartProductService.getCartProductsBySessionId(sessionId);
+      if (!exsitingCartProductList.isEmpty()) {
+        mergeCartProductsToUser(userDetails.getUserId(), exsitingCartProductList);
+      }
+
       return ResponseEntity.ok().build();
     } catch (AuthenticationException e) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", e.getMessage()));
@@ -138,5 +153,25 @@ public class UserController {
               return ResponseEntity.ok(response);
             })
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  /**
+   * ログイン前のカート内商品をログインユーザーに紐づける.
+   *
+   * <p>セッションIDに紐づくカート内商品を取得し、ユーザーIDを追加する.
+   *
+   * @param userId ユーザーID
+   * @param cartProductList カート内商品リスト
+   */
+  private void mergeCartProductsToUser(Integer userId, List<CartProduct> cartProductList) {
+    Optional<User> user = userService.findById(userId);
+    if (user.isEmpty()) {
+      throw new EntityNotFoundException("ユーザーが見つかりません");
+    }
+
+    for (CartProduct cartProduct : cartProductList) {
+      cartProduct.setUserId(user.get());
+      cartProductService.addCartProduct(cartProduct);
+    }
   }
 }
