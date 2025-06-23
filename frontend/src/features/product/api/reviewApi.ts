@@ -1,6 +1,11 @@
 import { axiosInstance } from "../../../lib/axiosInstance";
 import type { Review } from "../types/Review";
 
+type ReviewData = {
+  comment: string;
+  rating: number;
+};
+
 /**
  * PCのレビュー一覧を取得する
  *
@@ -26,15 +31,35 @@ export const fetchBookReviews = async (
 };
 
 /**
- * レビューを投稿する
+ * PCのレビューを投稿する
+ *
+ * @param productId PCのID
  * @param reviewData レビューデータ
  */
-export const postReview = async (reviewData: {
-  comment: string;
-  rating: number;
-  productCategory: number;
-  productId: number;
-}): Promise<void> => {
-  const response = await axiosInstance.post("/reviews", reviewData);
+export const postPcReview = async (
+  productId: number,
+  reviewData: ReviewData,
+): Promise<void> => {
+  const response = await axiosInstance.post(
+    `/reviews/pc/${productId}`,
+    reviewData,
+  );
+  return response.data;
+};
+
+/**
+ * Bookのレビューを投稿する
+ *
+ * @param productId BookのID
+ * @param reviewData レビューデータ
+ */
+export const postBookReview = async (
+  productId: number,
+  reviewData: ReviewData,
+): Promise<void> => {
+  const response = await axiosInstance.post(
+    `/reviews/book/${productId}`,
+    reviewData,
+  );
   return response.data;
 };

@@ -11,8 +11,9 @@ import {
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
 import { toast } from "sonner";
-import { postReview } from "../api/reviewApi";
+import { postBookReview, postPcReview } from "../api/reviewApi";
 import { reviewFormSchema, type ReviewFormData } from "../schema/reviewSchema";
+import { PRODUCT_CATEGORY } from "../../../types/constants";
 
 type ReviewFormProps = {
   productId: number;
@@ -53,11 +54,12 @@ function ReviewForm({
     setIsSubmitting(true);
 
     try {
-      await postReview({
-        ...data,
-        productCategory,
-        productId,
-      });
+      if (productCategory === PRODUCT_CATEGORY.PC) {
+        await postPcReview(productId, data);
+      } else {
+        await postBookReview(productId, data);
+      }
+
       toast.success("レビューを投稿しました");
       reset();
       onReviewPosted();

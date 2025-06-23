@@ -42,9 +42,8 @@ public class GlobalExceptionHandler {
    * @return 404エラーメッセージ
    */
   @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-        .body(Map.of("message", ex.getMessage()).toString());
+  public ResponseEntity<Map<String, String>> handleEntityNotFound(EntityNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", ex.getMessage()));
   }
 
   /**
