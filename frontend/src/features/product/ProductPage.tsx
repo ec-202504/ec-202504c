@@ -20,6 +20,8 @@ export default function ProductListPage() {
     handleTabChange,
     getSelectedValues,
     getApiParams,
+    price,
+    handlePriceChange,
   } = useProductFilters();
 
   const { isLoading, pcs, techBooks, filterTerms, totalPages } = useProductData(
@@ -54,6 +56,8 @@ export default function ProductListPage() {
             onPageChange={handlePageChange}
             totalPages={totalPages}
             selectedValues={getSelectedValues()}
+            price={price}
+            onPriceChange={handlePriceChange}
           />
         </TabsContent>
 
@@ -69,6 +73,8 @@ export default function ProductListPage() {
             onPageChange={handlePageChange}
             totalPages={totalPages}
             selectedValues={getSelectedValues()}
+            price={price}
+            onPriceChange={handlePriceChange}
           />
         </TabsContent>
       </Tabs>

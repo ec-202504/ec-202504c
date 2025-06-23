@@ -23,6 +23,9 @@ export const useProductFilters = () => {
     getInitialFilters(TAB_VALUES.BOOK, search) as BookFilters,
   );
 
+  // 予算（上限）
+  const [price, setPrice] = useState<string>(search.price || "");
+
   // 検索クエリ
   const [query, setQuery] = useState<string>(search.query || "");
 
@@ -38,11 +41,13 @@ export const useProductFilters = () => {
       newBookFilters: BookFilters,
       newQuery: string,
       newPage: number,
+      newPrice: string,
     ) => {
       const params: SearchParams = {
         tab: selectedTab,
         page: newPage.toString(),
         query: newQuery,
+        price: newPrice,
       };
 
       if (selectedTab === TAB_VALUES.PC) {
@@ -52,11 +57,13 @@ export const useProductFilters = () => {
         if (newPcFilters.purposeId) params.purposeId = newPcFilters.purposeId;
         if (newPcFilters.deviceType)
           params.deviceType = newPcFilters.deviceType;
+        if (newPcFilters.price) params.price = newPcFilters.price;
       } else {
         if (newBookFilters.languageId)
           params.languageId = newBookFilters.languageId;
         if (newBookFilters.purposeId)
           params.purposeId = newBookFilters.purposeId;
+        if (newBookFilters.price) params.price = newBookFilters.price;
       }
 
       navigate({
@@ -89,7 +96,7 @@ export const useProductFilters = () => {
         setPcFilters(newPcFilters);
         setPage(0);
         setQuery("");
-        updateUrlParams(newPcFilters, bookFilters, query, 0);
+        updateUrlParams(newPcFilters, bookFilters, query, 0, price);
       } else {
         const newBookFilters = {
           ...bookFilters,
@@ -97,10 +104,11 @@ export const useProductFilters = () => {
         };
         setBookFilters(newBookFilters);
         setPage(0);
-        updateUrlParams(pcFilters, newBookFilters, query, 0);
+        setQuery("");
+        updateUrlParams(pcFilters, newBookFilters, query, 0, price);
       }
     },
-    [selectedTab, pcFilters, bookFilters, query, updateUrlParams],
+    [selectedTab, pcFilters, bookFilters, query, updateUrlParams, price],
   );
 
   // 検索ハンドラー
@@ -110,18 +118,19 @@ export const useProductFilters = () => {
       setPcFilters(getInitialFilters(TAB_VALUES.PC, {}) as PcFilters);
       setBookFilters(getInitialFilters(TAB_VALUES.BOOK, {}) as BookFilters);
       setPage(0);
-      updateUrlParams(pcFilters, bookFilters, newQuery, 0);
+      setPrice("");
+      updateUrlParams(pcFilters, bookFilters, newQuery, 0, price);
     },
-    [pcFilters, bookFilters, updateUrlParams],
+    [pcFilters, bookFilters, updateUrlParams, price],
   );
 
   // ページ変更ハンドラー
   const handlePageChange = useCallback(
     (newPage: number) => {
       setPage(newPage);
-      updateUrlParams(pcFilters, bookFilters, query, newPage);
+      updateUrlParams(pcFilters, bookFilters, query, newPage, price);
     },
-    [pcFilters, bookFilters, query, updateUrlParams],
+    [pcFilters, bookFilters, query, updateUrlParams, price],
   );
 
   // タブ変更ハンドラー
@@ -142,14 +151,35 @@ export const useProductFilters = () => {
     [navigate, search],
   );
 
+  // 予算（上限）変更ハンドラ
+  const handlePriceChange = useCallback(
+    (newPrice: string) => {
+      setPrice(newPrice);
+      if (selectedTab === TAB_VALUES.PC) {
+        const newPcFilters = { ...pcFilters, price: newPrice };
+        setPcFilters(newPcFilters);
+        updateUrlParams(newPcFilters, bookFilters, query, 0, newPrice);
+      } else {
+        const newBookFilters = {
+          ...bookFilters,
+          price: newPrice,
+        };
+        setBookFilters(newBookFilters);
+        updateUrlParams(pcFilters, newBookFilters, query, 0, newPrice);
+      }
+    },
+    [selectedTab, pcFilters, bookFilters, query, updateUrlParams],
+  );
+
   // 現在のタブに応じた選択された値を取得
   const getSelectedValues = (): Record<string, string> =>
     getSelectedFilterValues(selectedTab, pcFilters, bookFilters);
 
   // 現在のタブに応じたパラメータを取得
   const getApiParams = useCallback(
-    () => buildApiParams(selectedTab, page, query, pcFilters, bookFilters),
-    [selectedTab, page, query, pcFilters, bookFilters],
+    () =>
+      buildApiParams(selectedTab, page, query, pcFilters, bookFilters, price),
+    [selectedTab, page, query, pcFilters, bookFilters, price],
   );
 
   return {
@@ -164,5 +194,7 @@ export const useProductFilters = () => {
     handleTabChange,
     getSelectedValues,
     getApiParams,
+    price,
+    handlePriceChange,
   };
 };

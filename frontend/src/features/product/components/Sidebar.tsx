@@ -10,12 +10,16 @@ type SidebarProps = {
   filterTerms: FilterTerm[];
   selectedOption: (filterTermId: string, termId: string) => void;
   selectedValues?: Record<string, string>;
+  price?: string;
+  onPriceChange?: (price: string) => void;
 };
 
 export default function Sidebar({
   filterTerms,
   selectedOption,
   selectedValues = {},
+  price,
+  onPriceChange,
 }: SidebarProps) {
   const handleClearSelection = (filterTermId: string) => {
     selectedOption(filterTermId, "");
@@ -60,6 +64,21 @@ export default function Sidebar({
           <Separator />
         </Fragment>
       ))}
+      <div className="mt-4">
+        <Label htmlFor="price">予算（上限）</Label>
+        <div className="flex items-center gap-1 mt-1">
+          <input
+            id="price"
+            type="text"
+            min="0"
+            className="w-full border rounded px-2 py-1"
+            placeholder="例: 30000"
+            value={price || ""}
+            onChange={(e) => onPriceChange?.(e.target.value)}
+          />
+          <span className="text-sm text-gray-500">円</span>
+        </div>
+      </div>
     </div>
   );
 }

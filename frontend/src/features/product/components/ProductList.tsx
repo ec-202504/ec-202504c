@@ -16,6 +16,8 @@ type Props = {
   onPageChange: (page: number) => void;
   totalPages: number;
   selectedValues?: Record<string, string>;
+  price?: string;
+  onPriceChange?: (price: string) => void;
 };
 
 export default function ProductList({
@@ -29,6 +31,8 @@ export default function ProductList({
   onPageChange,
   totalPages,
   selectedValues = {},
+  price,
+  onPriceChange,
 }: Props) {
   return (
     <div className="flex gap-4">
@@ -36,6 +40,8 @@ export default function ProductList({
         selectedOption={selectedOption}
         filterTerms={filterTerms}
         selectedValues={selectedValues}
+        price={price}
+        onPriceChange={onPriceChange}
       />
 
       <div className="flex-1">

@@ -12,10 +12,12 @@ export const getInitialFilters = (
         gpuId: search.gpuId || "",
         purposeId: search.purposeId || "",
         deviceType: search.deviceType || "",
+        price: search.price || "",
       }
     : {
         languageId: search.languageId || "",
         purposeId: search.purposeId || "",
+        price: search.price || "",
       };
 
 export const getSelectedFilterValues = (
@@ -30,11 +32,16 @@ export const buildApiParams = (
   query: string,
   pcFilters: PcFilters,
   bookFilters: BookFilters,
+  price?: string,
 ) => {
   const base = { page, size: 12, name: query };
   const filters = tab === TAB_VALUES.PC ? pcFilters : bookFilters;
-  return {
+  const params: Record<string, string | number> = {
     ...base,
     ...Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== "")),
   };
+  if (price) {
+    params.price = price;
+  }
+  return params;
 };
