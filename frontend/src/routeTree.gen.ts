@@ -22,8 +22,6 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as OrderOrderIdCompleteRouteImport } from './routes/order/$orderId/complete'
 import { Route as ProductPcItemIdIndexRouteImport } from './routes/product/pc/$itemId/index'
 import { Route as ProductBookItemIdIndexRouteImport } from './routes/product/book/$itemId/index'
-import { Route as ProductPcItemIdReviewRouteImport } from './routes/product/pc/$itemId/review'
-import { Route as ProductBookItemIdReviewRouteImport } from './routes/product/book/$itemId/review'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -90,16 +88,6 @@ const ProductBookItemIdIndexRoute = ProductBookItemIdIndexRouteImport.update({
   path: '/product/book/$itemId/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProductPcItemIdReviewRoute = ProductPcItemIdReviewRouteImport.update({
-  id: '/product/pc/$itemId/review',
-  path: '/product/pc/$itemId/review',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProductBookItemIdReviewRoute = ProductBookItemIdReviewRouteImport.update({
-  id: '/product/book/$itemId/review',
-  path: '/product/book/$itemId/review',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -113,8 +101,6 @@ export interface FileRoutesByFullPath {
   '/order': typeof OrderIndexRoute
   '/product': typeof ProductIndexRoute
   '/order/$orderId/complete': typeof OrderOrderIdCompleteRoute
-  '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
-  '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
   '/product/book/$itemId': typeof ProductBookItemIdIndexRoute
   '/product/pc/$itemId': typeof ProductPcItemIdIndexRoute
 }
@@ -130,8 +116,6 @@ export interface FileRoutesByTo {
   '/order': typeof OrderIndexRoute
   '/product': typeof ProductIndexRoute
   '/order/$orderId/complete': typeof OrderOrderIdCompleteRoute
-  '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
-  '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
   '/product/book/$itemId': typeof ProductBookItemIdIndexRoute
   '/product/pc/$itemId': typeof ProductPcItemIdIndexRoute
 }
@@ -148,8 +132,6 @@ export interface FileRoutesById {
   '/order/': typeof OrderIndexRoute
   '/product/': typeof ProductIndexRoute
   '/order/$orderId/complete': typeof OrderOrderIdCompleteRoute
-  '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
-  '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
   '/product/book/$itemId/': typeof ProductBookItemIdIndexRoute
   '/product/pc/$itemId/': typeof ProductPcItemIdIndexRoute
 }
@@ -167,8 +149,6 @@ export interface FileRouteTypes {
     | '/order'
     | '/product'
     | '/order/$orderId/complete'
-    | '/product/book/$itemId/review'
-    | '/product/pc/$itemId/review'
     | '/product/book/$itemId'
     | '/product/pc/$itemId'
   fileRoutesByTo: FileRoutesByTo
@@ -184,8 +164,6 @@ export interface FileRouteTypes {
     | '/order'
     | '/product'
     | '/order/$orderId/complete'
-    | '/product/book/$itemId/review'
-    | '/product/pc/$itemId/review'
     | '/product/book/$itemId'
     | '/product/pc/$itemId'
   id:
@@ -201,8 +179,6 @@ export interface FileRouteTypes {
     | '/order/'
     | '/product/'
     | '/order/$orderId/complete'
-    | '/product/book/$itemId/review'
-    | '/product/pc/$itemId/review'
     | '/product/book/$itemId/'
     | '/product/pc/$itemId/'
   fileRoutesById: FileRoutesById
@@ -219,8 +195,6 @@ export interface RootRouteChildren {
   OrderIndexRoute: typeof OrderIndexRoute
   ProductIndexRoute: typeof ProductIndexRoute
   OrderOrderIdCompleteRoute: typeof OrderOrderIdCompleteRoute
-  ProductBookItemIdReviewRoute: typeof ProductBookItemIdReviewRoute
-  ProductPcItemIdReviewRoute: typeof ProductPcItemIdReviewRoute
   ProductBookItemIdIndexRoute: typeof ProductBookItemIdIndexRoute
   ProductPcItemIdIndexRoute: typeof ProductPcItemIdIndexRoute
 }
@@ -318,20 +292,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductBookItemIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/product/pc/$itemId/review': {
-      id: '/product/pc/$itemId/review'
-      path: '/product/pc/$itemId/review'
-      fullPath: '/product/pc/$itemId/review'
-      preLoaderRoute: typeof ProductPcItemIdReviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/product/book/$itemId/review': {
-      id: '/product/book/$itemId/review'
-      path: '/product/book/$itemId/review'
-      fullPath: '/product/book/$itemId/review'
-      preLoaderRoute: typeof ProductBookItemIdReviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -347,8 +307,6 @@ const rootRouteChildren: RootRouteChildren = {
   OrderIndexRoute: OrderIndexRoute,
   ProductIndexRoute: ProductIndexRoute,
   OrderOrderIdCompleteRoute: OrderOrderIdCompleteRoute,
-  ProductBookItemIdReviewRoute: ProductBookItemIdReviewRoute,
-  ProductPcItemIdReviewRoute: ProductPcItemIdReviewRoute,
   ProductBookItemIdIndexRoute: ProductBookItemIdIndexRoute,
   ProductPcItemIdIndexRoute: ProductPcItemIdIndexRoute,
 }
