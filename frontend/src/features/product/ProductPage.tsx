@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import {
   Tabs,
   TabsList,
@@ -17,10 +18,15 @@ export default function ProductListPage() {
   const [query, setQuery] = useState<string>("");
   const [pcs, setPcs] = useState<Product[]>([]);
   const [techBooks, setTechBooks] = useState<Product[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>(TAB_VALUES.PC);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const PAGE_SIZE = 12;
+
+  const navigate = useNavigate();
+
+  // URLパラメータからタブの状態を取得
+  const search = useSearch({ from: "/product/" });
+  const selectedTab = search.tab || TAB_VALUES.PC;
 
   const selectedOption = (option: string) => {
     console.log(option);
@@ -102,6 +108,22 @@ export default function ProductListPage() {
     setPage(1); // 検索ボタンを押したらページを1に戻す
   };
 
+  /**
+   * タブ変更時のハンドラー
+   *
+   * @param value 選択されたタブの値
+   */
+  const handleTabChange = (value: string) => {
+    navigate({
+      to: "/product",
+      search: { tab: value },
+      replace: true, // tab変更を履歴に残さないようにする
+    });
+
+    setQuery("");
+    setPage(1);
+  };
+
   return (
     <div className="p-4 h-80vh">
       {isLoading ? (
@@ -109,11 +131,7 @@ export default function ProductListPage() {
       ) : (
         <Tabs
           value={selectedTab}
-          onValueChange={(value) => {
-            setSelectedTab(value);
-            setQuery("");
-            setPage(1);
-          }}
+          onValueChange={handleTabChange}
           className="mb-4"
         >
           <TabsList>
