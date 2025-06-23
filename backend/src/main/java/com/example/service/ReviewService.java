@@ -1,18 +1,13 @@
 package com.example.service;
 
-import com.example.dto.request.AddReviewRequest;
 import com.example.dto.response.ReviewResponse;
 import com.example.model.Review;
-import com.example.model.User;
 import com.example.repository.ReviewRepository;
 import com.example.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /** Reviewエンティティのサービスクラス. */
@@ -50,32 +45,9 @@ public class ReviewService {
   /**
    * レビューを登録する.
    *
-   * @param request レビュー登録リクエスト
-   * @param session HTTPセッション
-   * @param productCategory 商品カテゴリ
-   * @param productId 商品ID
+   * @param review Reviewエンティティ
    */
-  public void addReview(
-      AddReviewRequest request, HttpSession session, Integer productCategory, Integer productId) {
-    // TODO: jwtからユーザーIDを取得するように変更
-    Integer userId = (Integer) session.getAttribute("userId");
-    if (userId == null) {
-      throw new EntityNotFoundException("ログインが必要です");
-    }
-
-    // レビューを作成
-    Review review = new Review();
-    BeanUtils.copyProperties(request, review);
-    review.setProductCategory(productCategory);
-    review.setProductId(productId);
-
-    // ユーザー情報を取得
-    User user =
-        userRepository
-            .findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません"));
-    review.setUser(user);
-
+  public void addReview(Review review) {
     reviewRepository.save(review);
   }
 

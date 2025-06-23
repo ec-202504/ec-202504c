@@ -2,10 +2,15 @@ package com.example.controller;
 
 import com.example.dto.request.AddReviewRequest;
 import com.example.dto.response.ReviewResponse;
+import com.example.model.Review;
+import com.example.model.User;
 import com.example.service.ReviewService;
+import com.example.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/reviews")
 public class ReviewController {
   private final ReviewService reviewService;
+  private final UserService userService;
 
   /**
    * PCのレビューを全件取得する.
@@ -57,7 +63,7 @@ public class ReviewController {
   @PostMapping("/pc/{productId}")
   public ResponseEntity<Void> addPcReview(
       @PathVariable Integer productId, @RequestBody AddReviewRequest request, HttpSession session) {
-    reviewService.addReview(request, session, 0, productId);
+    addReview(request, session, 0, productId);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
@@ -72,7 +78,37 @@ public class ReviewController {
   @PostMapping("/book/{productId}")
   public ResponseEntity<Void> addBookReview(
       @PathVariable Integer productId, @RequestBody AddReviewRequest request, HttpSession session) {
-    reviewService.addReview(request, session, 1, productId);
+    addReview(request, session, 1, productId);
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  /**
+   * レビューを登録する共通メソッド.
+   *
+   * @param request レビュー登録リクエスト
+   * @param session HTTPセッション
+   * @param productCategory 商品カテゴリ（0:PC, 1:Book）
+   * @param productId 商品ID
+   */
+  private void addReview(
+      AddReviewRequest request, HttpSession session, Integer productCategory, Integer productId) {
+    // TODO: jwtからユーザーIDを取得するように変更
+    Integer userId = (Integer) session.getAttribute("userId");
+    if (userId == null) {
+      throw new EntityNotFoundException("ログインが必要です");
+    }
+
+    // レビューを作成
+    Review review = new Review();
+    BeanUtils.copyProperties(request, review);
+    review.setProductCategory(productCategory);
+    review.setProductId(productId);
+
+    // ユーザー情報を取得
+    User user =
+        userService.findById(userId).orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません"));
+    review.setUser(user);
+
+    reviewService.addReview(review);
   }
 }
