@@ -10,6 +10,7 @@ import PcInfo from "../components/PcInfo";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
 import ReviewInfo from "../components/ReviewInfo";
+import RecommendedProducts from "../components/RecommendedProducts";
 
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
@@ -52,7 +53,7 @@ export default function PcDetail() {
       await axiosInstance.post("/carts", addCartRequestBody);
       toast.success(`${pc?.name}を${quantity}個カートに追加しました`);
       navigate({ to: "/cart" });
-    } catch (error) {
+    } catch {
       toast.error("カートへの追加に失敗しました");
     }
   };
@@ -65,7 +66,7 @@ export default function PcDetail() {
     try {
       const response = await axiosInstance.get(`/pcs/${itemId}`);
       setPc(response.data);
-    } catch (error) {
+    } catch {
       toast.error("商品情報の取得に失敗しました");
     } finally {
       setIsLoading(false);
@@ -82,16 +83,10 @@ export default function PcDetail() {
       const reviewsData = await fetchPcReviews(itemId);
       setReviews(reviewsData);
     } catch (error) {
+      console.error("レビューの取得に失敗しました:", error);
       toast.error("レビューの取得に失敗しました");
     }
   }, [itemId]);
-
-  /**
-   * レビュー投稿後、レビュー一覧を更新する
-   */
-  const handleReviewPosted = () => {
-    fetchReviews();
-  };
 
   useEffect(() => {
     fetchData();
@@ -112,13 +107,14 @@ export default function PcDetail() {
                 average={average}
                 totalReviews={totalReviews}
               />
+              <RecommendedProducts
+                currentPcId={pc.pcId}
+                currentPurpose={pc.purpose}
+              />
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}
                 average={average}
-                productId={pc.pcId}
-                productCategory={PRODUCT_CATEGORY.PC}
-                onReviewPosted={handleReviewPosted}
               />
             </>
           ) : (
