@@ -11,6 +11,33 @@ import type { FilterTerm, Product } from "./types";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { TAB_VALUES } from "./types/constants";
 
+// URLパラメータの型定義
+type SearchParams = {
+  tab?: string;
+  page?: string;
+  query?: string;
+  osId?: string;
+  cpuId?: string;
+  gpuId?: string;
+  purposeId?: string;
+  languageId?: string;
+  deviceType?: string;
+};
+
+// フィルター条件の型定義
+type PcFilters = {
+  osId: string;
+  cpuId: string;
+  gpuId: string;
+  purposeId: string;
+  deviceType: string;
+};
+
+type BookFilters = {
+  languageId: string;
+  purposeId: string;
+};
+
 export default function ProductListPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
@@ -20,16 +47,18 @@ export default function ProductListPage() {
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const PAGE_SIZE = 12;
+
   // PC用のフィルター条件
-  const [pcFilters, setPcFilters] = useState({
+  const [pcFilters, setPcFilters] = useState<PcFilters>({
     osId: "",
     cpuId: "",
     gpuId: "",
     purposeId: "",
+    deviceType: "",
   });
 
   // 本用のフィルター条件
-  const [bookFilters, setBookFilters] = useState({
+  const [bookFilters, setBookFilters] = useState<BookFilters>({
     languageId: "",
     purposeId: "",
   });
@@ -37,23 +66,83 @@ export default function ProductListPage() {
   const navigate = useNavigate();
 
   // URLパラメータからタブの状態を取得
-  const search = useSearch({ from: "/product/" });
+  const search = useSearch({ from: "/product/" }) as SearchParams;
   const selectedTab = search.tab || TAB_VALUES.PC;
 
-  const selectedOption = (filterTermId: string, termId: string) => {
-    console.log(`FilterTerm ID: ${filterTermId}, Term ID: ${termId}`);
-
-    if (selectedTab === TAB_VALUES.PC) {
-      setPcFilters((prev) => ({
-        ...prev,
-        [filterTermId]: termId,
-      }));
+  // URLパラメータからフィルター条件を復元
+  useEffect(() => {
+    if (search.osId || search.cpuId || search.gpuId || search.purposeId) {
+      setPcFilters({
+        osId: search.osId || "",
+        cpuId: search.cpuId || "",
+        gpuId: search.gpuId || "",
+        purposeId: search.purposeId || "",
+        deviceType: search.deviceType || "",
+      });
     }
-    setBookFilters((prev) => ({
-      ...prev,
-      [filterTermId]: termId,
-    }));
+
+    if (search.languageId || search.purposeId) {
+      setBookFilters({
+        languageId: search.languageId || "",
+        purposeId: search.purposeId || "",
+      });
+    }
+
+    if (search.query) {
+      setQuery(search.query);
+    }
+
+    if (search.page) {
+      setPage(Number.parseInt(search.page, 10));
+    }
+  }, [search]);
+
+  const selectedOption = (filterTermId: string, termId: string) => {
+    if (selectedTab === TAB_VALUES.PC) {
+      const newPcFilters = {
+        ...pcFilters,
+        [filterTermId]: termId,
+      };
+      setPcFilters(newPcFilters);
+      updateUrlParams(newPcFilters, bookFilters);
+    } else {
+      const newBookFilters = {
+        ...bookFilters,
+        [filterTermId]: termId,
+      };
+      setBookFilters(newBookFilters);
+      updateUrlParams(pcFilters, newBookFilters);
+    }
   };
+
+  // URLパラメータを更新する関数
+  const updateUrlParams = useCallback(
+    (pcFilters: PcFilters, bookFilters: BookFilters) => {
+      const params: SearchParams = {
+        tab: selectedTab,
+        page: page.toString(),
+        query,
+      };
+
+      if (selectedTab === TAB_VALUES.PC) {
+        if (pcFilters.osId) params.osId = pcFilters.osId;
+        if (pcFilters.cpuId) params.cpuId = pcFilters.cpuId;
+        if (pcFilters.gpuId) params.gpuId = pcFilters.gpuId;
+        if (pcFilters.purposeId) params.purposeId = pcFilters.purposeId;
+        if (pcFilters.deviceType) params.deviceType = pcFilters.deviceType;
+      } else {
+        if (bookFilters.languageId) params.languageId = bookFilters.languageId;
+        if (bookFilters.purposeId) params.purposeId = bookFilters.purposeId;
+      }
+
+      navigate({
+        to: "/product",
+        search: params,
+        replace: true,
+      });
+    },
+    [selectedTab, page, query, navigate],
+  );
 
   /**
    * 現在のタブに応じたパラメータを取得
@@ -84,11 +173,11 @@ export default function ProductListPage() {
   /**
    * 現在のタブに応じた選択された値を取得
    */
-  const getSelectedValues = () => {
+  const getSelectedValues = (): Record<string, string> => {
     if (selectedTab === TAB_VALUES.PC) {
-      return pcFilters;
+      return pcFilters as unknown as Record<string, string>;
     }
-    return bookFilters;
+    return bookFilters as unknown as Record<string, string>;
   };
 
   /**
@@ -186,6 +275,61 @@ export default function ProductListPage() {
     e.preventDefault();
     setQuery(query);
     setPage(0);
+
+    // URLパラメータを更新
+    const params: SearchParams = {
+      tab: selectedTab,
+      page: "0",
+      query,
+    };
+
+    if (selectedTab === TAB_VALUES.PC) {
+      if (pcFilters.osId) params.osId = pcFilters.osId;
+      if (pcFilters.cpuId) params.cpuId = pcFilters.cpuId;
+      if (pcFilters.gpuId) params.gpuId = pcFilters.gpuId;
+      if (pcFilters.purposeId) params.purposeId = pcFilters.purposeId;
+      if (pcFilters.deviceType) params.deviceType = pcFilters.deviceType;
+    } else {
+      if (bookFilters.languageId) params.languageId = bookFilters.languageId;
+      if (bookFilters.purposeId) params.purposeId = bookFilters.purposeId;
+    }
+
+    navigate({
+      to: "/product",
+      search: params,
+      replace: true,
+    });
+  };
+
+  /**
+   * ページ変更ハンドラー
+   */
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+
+    // URLパラメータを更新
+    const params: SearchParams = {
+      tab: selectedTab,
+      page: newPage.toString(),
+      query,
+    };
+
+    if (selectedTab === TAB_VALUES.PC) {
+      if (pcFilters.osId) params.osId = pcFilters.osId;
+      if (pcFilters.cpuId) params.cpuId = pcFilters.cpuId;
+      if (pcFilters.gpuId) params.gpuId = pcFilters.gpuId;
+      if (pcFilters.purposeId) params.purposeId = pcFilters.purposeId;
+      if (pcFilters.deviceType) params.deviceType = pcFilters.deviceType;
+    } else {
+      if (bookFilters.languageId) params.languageId = bookFilters.languageId;
+      if (bookFilters.purposeId) params.purposeId = bookFilters.purposeId;
+    }
+
+    navigate({
+      to: "/product",
+      search: params,
+      replace: true,
+    });
   };
 
   /**
@@ -209,6 +353,7 @@ export default function ProductListPage() {
       cpuId: "",
       gpuId: "",
       purposeId: "",
+      deviceType: "",
     });
     setBookFilters({
       languageId: "",
@@ -236,7 +381,7 @@ export default function ProductListPage() {
             selectedOption={selectedOption}
             handleSubmit={handleSubmit}
             currentPage={page}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
             totalPages={totalPages}
             selectedValues={getSelectedValues()}
           />
@@ -251,7 +396,7 @@ export default function ProductListPage() {
             selectedOption={selectedOption}
             handleSubmit={handleSubmit}
             currentPage={page}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
             totalPages={totalPages}
             selectedValues={getSelectedValues()}
           />
