@@ -14,5 +14,6 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
    * @param productId 商品ID
    * @return レビュー一覧
    */
-  List<Review> findByProductCategoryAndProductId(Integer productCategory, Integer productId);
+  List<Review> findByProductCategoryAndProductIdOrderByReviewDateTimeDesc(
+      Integer productCategory, Integer productId);
 }

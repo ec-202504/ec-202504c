@@ -6,6 +6,8 @@ export type Review = {
   comment: string;
   /** 評価（1～5） */
   rating: 1 | 2 | 3 | 4 | 5;
+  /** レビュー投稿日時 */
+  reviewDateTime: string;
   /** ユーザーID */
   userId: number;
   /** ユーザー名 */

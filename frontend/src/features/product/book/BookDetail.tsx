@@ -86,6 +86,13 @@ function BookDetail() {
     }
   }, [itemId]);
 
+  /**
+   * レビュー投稿後、レビュー一覧を更新する
+   */
+  const handleReviewPosted = () => {
+    fetchReviews();
+  };
+
   useEffect(() => {
     fetchData();
     fetchReviews();
@@ -109,6 +116,9 @@ function BookDetail() {
                 reviews={reviews}
                 totalReviews={totalReviews}
                 average={average}
+                productId={book.bookId}
+                productCategory={PRODUCT_CATEGORY.BOOK}
+                onReviewPosted={handleReviewPosted}
               />
             </>
           ) : (
