@@ -19,6 +19,23 @@ public interface PcRepository extends JpaRepository<Pc, Integer>, PcRepositoryCu
   List<Pc> findByNameContainingIgnoreCase(String keyword);
 
   /**
+   * PC名にキーワードを含むPCのページネーションされたリストを取得する.
+   *
+   * @param keyword 検索キーワード
+   * @param pageable ページネーション情報
+   * @return ページネーションされたPCのリスト
+   */
+  Page<Pc> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
+
+  /**
+   * PC名にキーワードを含むPCのリストを取得する（オートコンプリート用、最大20件）.
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含むPC名のリスト（最大20件）
+   */
+  List<Pc> findTop20ByNameContainingIgnoreCase(String keyword);
+
+  /**
    * CPUのIDと一致するPCのリストを取得する.
    *
    * @param cpuId CPUのID

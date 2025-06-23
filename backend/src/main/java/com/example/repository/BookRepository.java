@@ -28,6 +28,14 @@ public interface BookRepository extends JpaRepository<Book, Integer>, BookReposi
   Page<Book> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
 
   /**
+   * Book名にキーワードを含むBookのリストを取得する（オートコンプリート用、最大20件）.
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含むBook名のリスト（最大20件）
+   */
+  List<Book> findTop20ByNameContainingIgnoreCase(String keyword);
+
+  /**
    * 言語IDと一致する書籍のリストを取得する.
    *
    * @param languageId 言語ID

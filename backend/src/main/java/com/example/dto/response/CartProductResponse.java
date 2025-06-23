@@ -10,8 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CartProductResponse {
   private Integer cartProductId;
+  private Integer quantity;
+  private Integer productId;
+  private Integer productCategory;
+  // pcs, booksからそれぞれ取得
   private String name;
   private Integer price;
-  private Integer quantity;
   private String imageUrl;
 }

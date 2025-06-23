@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Tabs,
   TabsList,
@@ -9,13 +9,15 @@ import ProductList from "./components/ProductList";
 import type { FilterTerm, Product } from "./types";
 import { axiosInstance } from "../../lib/axiosInstance";
 import LoadingOverlay from "./components/LoadingOverlay";
+import { toast } from "sonner";
+import { TAB_VALUES } from "./types/constants";
 
 export default function ProductListPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [pcs, setPcs] = useState<Product[]>([]);
   const [techBooks, setTechBooks] = useState<Product[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>("pcs");
+  const [selectedTab, setSelectedTab] = useState<string>(TAB_VALUES.PC);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const PAGE_SIZE = 12;
@@ -52,40 +54,52 @@ export default function ProductListPage() {
     },
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get(`/${selectedTab}`, {
-          params: {
-            page: page,
-            size: PAGE_SIZE,
-            keyword: query,
-          },
-        });
-        if (selectedTab === "pcs") {
-          setPcs(response.data?.content);
-        } else {
-          setTechBooks(response.data?.content);
-        }
-        setTotalPages(response.data?.totalPages - 1 || 1);
-      } catch (error) {
-        console.error("APIリクエストに失敗しました:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  /**
+   * 商品データを取得する関数
+   *
+   * @returns 商品データ
+   */
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(`/${selectedTab}`, {
+        params: {
+          page: page - 1, // バックエンドのページ番号は0から始まるため、1を引く
+          size: PAGE_SIZE,
+          keyword: query,
+        },
+      });
 
-    fetchData();
+      if (selectedTab === TAB_VALUES.PC) {
+        setPcs(response.data?.content);
+      } else {
+        setTechBooks(response.data?.content);
+      }
+      setTotalPages(response.data?.totalPages || 1);
+    } catch (error) {
+      toast.error("APIリクエストに失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
   }, [selectedTab, page, query]);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  /**
+   * 検索フォームの送信ハンドラー
+   *
+   * @param e イベントオブジェクト
+   * @param query 検索クエリ
+   */
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
     query: string,
   ) => {
     e.preventDefault();
     setQuery(query);
-    setPage(1);
+    setPage(1); // 検索ボタンを押したらページを1に戻す
   };
 
   return (
@@ -97,15 +111,19 @@ export default function ProductListPage() {
           value={selectedTab}
           onValueChange={(value) => {
             setSelectedTab(value);
+            setQuery("");
+            setPage(1);
           }}
           className="mb-4"
         >
           <TabsList>
-            <TabsTrigger value="pcs">PC</TabsTrigger>
-            <TabsTrigger value="books">技術書</TabsTrigger>
+            <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
+            <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
           </TabsList>
-          <TabsContent value="pcs">
+
+          <TabsContent value={TAB_VALUES.PC}>
             <ProductList
+              selectedTab={selectedTab}
               products={pcs}
               filterTerms={filterTerms}
               selectedOption={selectedOption}
@@ -115,8 +133,10 @@ export default function ProductListPage() {
               totalPages={totalPages}
             />
           </TabsContent>
-          <TabsContent value="books">
+
+          <TabsContent value={TAB_VALUES.BOOK}>
             <ProductList
+              selectedTab={selectedTab}
               products={techBooks}
               filterTerms={filterTerms}
               selectedOption={selectedOption}

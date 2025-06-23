@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.dto.request.LoginRequest;
 import com.example.dto.request.RegisterRequest;
+import com.example.dto.response.UserResponse;
 import com.example.model.User;
 import com.example.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -94,5 +95,39 @@ public class UserController {
     } else {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+  }
+
+  /**
+   * ユーザー情報を取得する.
+   *
+   * <p>セッションにユーザーIDが存在すれば、200 OK とユーザー情報を返す。
+   *
+   * <p>存在しない場合は、404 NOT FOUND を返す。
+   *
+   * @param session セッション
+   * @return ユーザー情報
+   */
+  @GetMapping
+  public ResponseEntity<UserResponse> getUser(HttpSession session) {
+    Integer userId = (Integer) session.getAttribute("userId");
+    System.out.println("User ID from session: " + userId);
+    if (userId == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    return userService
+        .findById(userId)
+        .map(
+            user -> {
+              UserResponse response = new UserResponse();
+              response.setUserId(user.getUserId());
+              response.setName(user.getName());
+              response.setEmail(user.getEmail());
+              response.setZipcode(user.getZipcode());
+              response.setAddress(user.getAddress());
+              response.setTelephone(user.getTelephone());
+              return ResponseEntity.ok(response);
+            })
+        .orElse(ResponseEntity.notFound().build());
   }
 }

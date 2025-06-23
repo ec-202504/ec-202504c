@@ -1,13 +1,27 @@
 import axios from "axios";
 
-export const fetchAddress = async (zipcode: string): Promise<string | null> => {
+type Address = {
+  prefecture: string;
+  municipalities: string;
+  rest: string;
+};
+
+export const fetchAddress = async (
+  zipcode: string,
+): Promise<Address | null> => {
   try {
     const response = await axios.get("https://zipcoda.net/api", {
       params: { zipcode },
     });
     const items = response.data?.items;
     if (items?.length) {
-      return items[0].components;
+      const components = items[0].components;
+
+      const prefecture = components[0];
+      const municipalities = components[1];
+      const rest = components[2];
+
+      return { prefecture, municipalities, rest };
     }
     return null;
   } catch (error) {

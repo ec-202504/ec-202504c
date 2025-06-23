@@ -17,9 +17,9 @@ import { Route as UserRegisterRouteImport } from './routes/user/register'
 import { Route as UserLoginRouteImport } from './routes/user/login'
 import { Route as ProductRecommendRouteImport } from './routes/product/recommend'
 import { Route as OrderHistoryRouteImport } from './routes/order/history'
-import { Route as OrderCompleteRouteImport } from './routes/order/complete'
 import { Route as AdminRegisterRouteImport } from './routes/admin/register'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as OrderOrderIdCompleteRouteImport } from './routes/order/$orderId/complete'
 import { Route as ProductPcItemIdIndexRouteImport } from './routes/product/pc/$itemId/index'
 import { Route as ProductBookItemIdIndexRouteImport } from './routes/product/book/$itemId/index'
 import { Route as ProductPcItemIdReviewRouteImport } from './routes/product/pc/$itemId/review'
@@ -65,11 +65,6 @@ const OrderHistoryRoute = OrderHistoryRouteImport.update({
   path: '/order/history',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrderCompleteRoute = OrderCompleteRouteImport.update({
-  id: '/order/complete',
-  path: '/order/complete',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminRegisterRoute = AdminRegisterRouteImport.update({
   id: '/admin/register',
   path: '/admin/register',
@@ -78,6 +73,11 @@ const AdminRegisterRoute = AdminRegisterRouteImport.update({
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderOrderIdCompleteRoute = OrderOrderIdCompleteRouteImport.update({
+  id: '/order/$orderId/complete',
+  path: '/order/$orderId/complete',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductPcItemIdIndexRoute = ProductPcItemIdIndexRouteImport.update({
@@ -105,7 +105,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/register': typeof AdminRegisterRoute
-  '/order/complete': typeof OrderCompleteRoute
   '/order/history': typeof OrderHistoryRoute
   '/product/recommend': typeof ProductRecommendRoute
   '/user/login': typeof UserLoginRoute
@@ -113,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartIndexRoute
   '/order': typeof OrderIndexRoute
   '/product': typeof ProductIndexRoute
+  '/order/$orderId/complete': typeof OrderOrderIdCompleteRoute
   '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
   '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
   '/product/book/$itemId': typeof ProductBookItemIdIndexRoute
@@ -122,7 +122,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/register': typeof AdminRegisterRoute
-  '/order/complete': typeof OrderCompleteRoute
   '/order/history': typeof OrderHistoryRoute
   '/product/recommend': typeof ProductRecommendRoute
   '/user/login': typeof UserLoginRoute
@@ -130,6 +129,7 @@ export interface FileRoutesByTo {
   '/cart': typeof CartIndexRoute
   '/order': typeof OrderIndexRoute
   '/product': typeof ProductIndexRoute
+  '/order/$orderId/complete': typeof OrderOrderIdCompleteRoute
   '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
   '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
   '/product/book/$itemId': typeof ProductBookItemIdIndexRoute
@@ -140,7 +140,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/register': typeof AdminRegisterRoute
-  '/order/complete': typeof OrderCompleteRoute
   '/order/history': typeof OrderHistoryRoute
   '/product/recommend': typeof ProductRecommendRoute
   '/user/login': typeof UserLoginRoute
@@ -148,6 +147,7 @@ export interface FileRoutesById {
   '/cart/': typeof CartIndexRoute
   '/order/': typeof OrderIndexRoute
   '/product/': typeof ProductIndexRoute
+  '/order/$orderId/complete': typeof OrderOrderIdCompleteRoute
   '/product/book/$itemId/review': typeof ProductBookItemIdReviewRoute
   '/product/pc/$itemId/review': typeof ProductPcItemIdReviewRoute
   '/product/book/$itemId/': typeof ProductBookItemIdIndexRoute
@@ -159,7 +159,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/login'
     | '/admin/register'
-    | '/order/complete'
     | '/order/history'
     | '/product/recommend'
     | '/user/login'
@@ -167,6 +166,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/order'
     | '/product'
+    | '/order/$orderId/complete'
     | '/product/book/$itemId/review'
     | '/product/pc/$itemId/review'
     | '/product/book/$itemId'
@@ -176,7 +176,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/login'
     | '/admin/register'
-    | '/order/complete'
     | '/order/history'
     | '/product/recommend'
     | '/user/login'
@@ -184,6 +183,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/order'
     | '/product'
+    | '/order/$orderId/complete'
     | '/product/book/$itemId/review'
     | '/product/pc/$itemId/review'
     | '/product/book/$itemId'
@@ -193,7 +193,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/login'
     | '/admin/register'
-    | '/order/complete'
     | '/order/history'
     | '/product/recommend'
     | '/user/login'
@@ -201,6 +200,7 @@ export interface FileRouteTypes {
     | '/cart/'
     | '/order/'
     | '/product/'
+    | '/order/$orderId/complete'
     | '/product/book/$itemId/review'
     | '/product/pc/$itemId/review'
     | '/product/book/$itemId/'
@@ -211,7 +211,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminRegisterRoute: typeof AdminRegisterRoute
-  OrderCompleteRoute: typeof OrderCompleteRoute
   OrderHistoryRoute: typeof OrderHistoryRoute
   ProductRecommendRoute: typeof ProductRecommendRoute
   UserLoginRoute: typeof UserLoginRoute
@@ -219,6 +218,7 @@ export interface RootRouteChildren {
   CartIndexRoute: typeof CartIndexRoute
   OrderIndexRoute: typeof OrderIndexRoute
   ProductIndexRoute: typeof ProductIndexRoute
+  OrderOrderIdCompleteRoute: typeof OrderOrderIdCompleteRoute
   ProductBookItemIdReviewRoute: typeof ProductBookItemIdReviewRoute
   ProductPcItemIdReviewRoute: typeof ProductPcItemIdReviewRoute
   ProductBookItemIdIndexRoute: typeof ProductBookItemIdIndexRoute
@@ -283,13 +283,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/order/complete': {
-      id: '/order/complete'
-      path: '/order/complete'
-      fullPath: '/order/complete'
-      preLoaderRoute: typeof OrderCompleteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/register': {
       id: '/admin/register'
       path: '/admin/register'
@@ -302,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/$orderId/complete': {
+      id: '/order/$orderId/complete'
+      path: '/order/$orderId/complete'
+      fullPath: '/order/$orderId/complete'
+      preLoaderRoute: typeof OrderOrderIdCompleteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/product/pc/$itemId/': {
@@ -339,7 +339,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminRegisterRoute: AdminRegisterRoute,
-  OrderCompleteRoute: OrderCompleteRoute,
   OrderHistoryRoute: OrderHistoryRoute,
   ProductRecommendRoute: ProductRecommendRoute,
   UserLoginRoute: UserLoginRoute,
@@ -347,6 +346,7 @@ const rootRouteChildren: RootRouteChildren = {
   CartIndexRoute: CartIndexRoute,
   OrderIndexRoute: OrderIndexRoute,
   ProductIndexRoute: ProductIndexRoute,
+  OrderOrderIdCompleteRoute: OrderOrderIdCompleteRoute,
   ProductBookItemIdReviewRoute: ProductBookItemIdReviewRoute,
   ProductPcItemIdReviewRoute: ProductPcItemIdReviewRoute,
   ProductBookItemIdIndexRoute: ProductBookItemIdIndexRoute,

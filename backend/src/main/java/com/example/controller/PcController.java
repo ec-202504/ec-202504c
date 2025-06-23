@@ -82,6 +82,21 @@ public class PcController {
   }
 
   /**
+   * キーワードを含むPC名のリストを取得するエンドポイント.
+   *
+   * <p>オートコンプリート機能で使用
+   *
+   * @param keyword 検索キーワード
+   * @return キーワードを含むPC名のリスト
+   */
+  @GetMapping("/suggestions")
+  public ResponseEntity<?> getPcSuggestions(@RequestParam String keyword) {
+    List<String> pcSuggestions =
+        pcService.findPcsSuggestions(keyword).stream().map(Pc::getName).toList();
+    return ResponseEntity.ok(pcSuggestions);
+  }
+
+  /**
    * PCのOS一覧を取得するエンドポイント.
    *
    * @return PCのOS一覧

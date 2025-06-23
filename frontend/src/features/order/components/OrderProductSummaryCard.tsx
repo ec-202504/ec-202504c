@@ -6,15 +6,10 @@ import {
 } from "../../../components/ui/card";
 import { Package } from "lucide-react";
 import OrderProductTable from "./OrderProductTable";
-
-type OrderProduct = {
-  name: string;
-  quantity: number;
-  subtotal: number;
-};
+import type { OrderProductResponse } from "../types/order";
 
 type OrderProductSummaryCardProps = {
-  products: OrderProduct[];
+  products: OrderProductResponse[];
 };
 
 export default function OrderProductSummaryCard({

@@ -1,11 +1,13 @@
-import type { Book } from "../types";
+import type { AddCartRequest, Book } from "../types";
 import { axiosInstance } from "../../../lib/axiosInstance";
-import { useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ReviewItem from "../components/ReviewItem";
 import BookInfo from "../components/BookInfo";
 import ProductNotFound from "../components/ProductNotFound";
+import { toast } from "sonner";
+import { PRODUCT_CATEGORY } from "../../../types/constants";
 
 const dummyReviews = [
   { rating: 5, count: 340 },
@@ -41,7 +43,10 @@ const dummyReviewContents = [
 function BookDetail() {
   const [book, setBook] = useState<Book>();
   const [isLoading, setIsLoading] = useState(false);
+
   const { itemId } = useParams({ from: "/product/book/$itemId/" });
+  const navigate = useNavigate();
+
   const totalReviews = dummyReviews.reduce((sum, r) => sum + r.count, 0);
   const average =
     dummyReviews.reduce((sum, r) => sum + r.rating * r.count, 0) / totalReviews;
@@ -50,8 +55,29 @@ function BookDetail() {
     return Math.round((count / total) * 100);
   };
 
+  /**
+   * カートに本を追加する
+   *
+   * @param quantity カートに追加する数量
+   */
   const handleClick = async (quantity: number) => {
-    console.log(quantity);
+    if (!book?.bookId) {
+      return;
+    }
+
+    const addCartRequestBody: AddCartRequest = {
+      productId: book?.bookId,
+      productCategory: PRODUCT_CATEGORY.BOOK,
+      quantity: quantity,
+    };
+
+    try {
+      await axiosInstance.post("/carts", addCartRequestBody);
+      toast.success(`${book?.name}を${quantity}個カートに追加しました`);
+      navigate({ to: "/cart" });
+    } catch (error) {
+      console.error("APIリクエストに失敗しました:", error);
+    }
   };
 
   useEffect(() => {
@@ -84,15 +110,18 @@ function BookDetail() {
                 average={average}
                 totalReviews={totalReviews}
               />
+
               <div className="flex gap-8 w-full max-w-5xl mb-8">
                 <div>
                   <h2 className="text-lg font-bold mb-2">カスタマーレビュー</h2>
+
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-2xl font-bold">
                       {average.toFixed(1)}
                     </span>
                     <span>5つのうち</span>
                   </div>
+
                   <div className="mb-4">
                     {dummyReviews.map((r) => (
                       <div key={r.rating} className="flex items-center gap-2">
@@ -110,6 +139,7 @@ function BookDetail() {
                     ))}
                   </div>
                 </div>
+
                 <div className="mb-2 w-full">
                   <div className="font-bold mb-2">レビュー内容</div>
                   {dummyReviewContents.map((review) => (
