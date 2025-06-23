@@ -49,7 +49,6 @@ public class CartProductController {
     Integer userId = (Integer) session.getAttribute("userId");
 
     List<CartProduct> cartProducts;
-
     if (userId != null) {
       // ユーザIDがセッションに存在する場合は、ログイン済みとみなす
       Optional<User> user = userService.findById(userId);
@@ -81,16 +80,30 @@ public class CartProductController {
   @PostMapping
   public ResponseEntity<?> addCartProduct(
       @RequestBody AddCartProductRequest request, HttpSession session) {
-    Integer userId = 1;
-    // ユーザが存在するか確認
-    Optional<User> existingUser = userService.findById(userId);
-    if (existingUser.isEmpty()) {
-      return ResponseEntity.badRequest().build();
+    // TODO:  userIdをjwtから取得するようにする
+    Integer userId = (Integer) session.getAttribute("userId");
+
+    Optional<CartProduct> existingCartProduct;
+    User user = null;
+    if (userId != null) {
+      // ユーザIDがセッションに存在する場合は、ログイン済みとみなす
+      Optional<User> existingUser = userService.findById(userId);
+      // ユーザが存在するか確認
+      if (existingUser.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "ユーザが見つかりません"));
+      }
+      user = existingUser.get();
+
+      existingCartProduct =
+          cartProductService.getExistingProduct(
+              existingUser.get().getUserId(), request.getProductId(), request.getProductCategory());
+    } else {
+      // ユーザIDがセッションに存在しない場合は、未ログインとみなす
+      String sessionId = session.getId();
+      existingCartProduct =
+          cartProductService.getExistingProductBySessionId(
+              sessionId, request.getProductId(), request.getProductCategory());
     }
-    // 商品がすでにカートに存在するか確認し、存在すれば数量を更新する
-    Optional<CartProduct> existingCartProduct =
-        cartProductService.getExistingProduct(
-            existingUser.get().getUserId(), request.getProductId(), request.getProductCategory());
 
     // 既に商品がカートあれば数量を更新
     if (existingCartProduct.isPresent()) {
@@ -104,7 +117,6 @@ public class CartProductController {
       cartProduct.setProductCategory(request.getProductCategory());
       cartProduct.setProductId(request.getProductId());
 
-      User user = existingUser.get();
       cartProduct.setUserId(user);
 
       cartProductService.addCartProduct(cartProduct);

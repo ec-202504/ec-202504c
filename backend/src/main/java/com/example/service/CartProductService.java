@@ -52,6 +52,20 @@ public class CartProductService {
   }
 
   /**
+   * セッションID、商品ID、商品カテゴリに紐づくカート内商品を取得するメソッド.
+   *
+   * @param sessionId セッションID
+   * @param cartProductId 商品ID
+   * @param productCategory 商品カテゴリ
+   * @return カート内商品
+   */
+  public Optional<CartProduct> getExistingProductBySessionId(
+      String sessionId, Integer cartProductId, Integer productCategory) {
+    return cartProductRepository.findBySessionIdAndProductIdAndProductCategory(
+        sessionId, cartProductId, productCategory);
+  }
+
+  /**
    * カート内商品を追加するメソッド.
    *
    * @param cartProduct 追加するカート内商品
