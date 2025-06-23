@@ -66,7 +66,7 @@ function CartPage() {
 
       fetchCartProducts();
     },
-    300, // 300ms
+    200, // 200ms
   );
 
   const handleDelete = async (cartProductId: number) => {

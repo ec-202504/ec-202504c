@@ -36,7 +36,7 @@ public class Review {
   @ColumnDefault("1")
   private Integer rating;
 
-  /** レビュー投稿日 */
+  /** レビュー投稿日. */
   @Column(name = "review_date_time", nullable = false, updatable = false)
   private LocalDateTime reviewDateTime = LocalDateTime.now();
 
