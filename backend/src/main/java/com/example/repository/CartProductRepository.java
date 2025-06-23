@@ -28,4 +28,12 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Intege
    */
   Optional<CartProduct> findByUserIdUserIdAndProductIdAndProductCategory(
       Integer userId, Integer productId, Integer productCategory);
+
+  /**
+   * セッションIDに紐づくカート内商品を取得するメソッド.
+   *
+   * @param sessionId セッションID
+   * @return カート内商品リスト
+   */
+  List<CartProduct> findBySessionIdOrderByCartProductIdDesc(String sessionId);
 }

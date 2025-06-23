@@ -40,17 +40,28 @@ public class CartProductController {
   /**
    * カート内商品を取得するエンドポイント.
    *
+   * @param session HTTPセッション
    * @return カート内商品リスト
    */
   @GetMapping
-  public ResponseEntity<?> getCartProducts() {
+  public ResponseEntity<?> getCartProducts(HttpSession session) {
     // TODO: userIdをjwtから取得するようにする
-    Integer userId = 1;
-    Optional<User> user = userService.findById(userId);
-    if (user.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "ユーザが見つかりません"));
+    Integer userId = (Integer) session.getAttribute("userId");
+
+    List<CartProduct> cartProducts;
+
+    if (userId != null) {
+      // ユーザIDがセッションに存在する場合は、ログイン済みとみなす
+      Optional<User> user = userService.findById(userId);
+      if (user.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "ユーザが見つかりません"));
+      }
+      cartProducts = cartProductService.getCartProductsByUserId(user.get());
+    } else {
+      // ユーザIDがセッションに存在しない場合は、未ログインとみなす
+      String sessionId = session.getId();
+      cartProducts = cartProductService.getCartProductsBySessionId(sessionId);
     }
-    List<CartProduct> cartProducts = cartProductService.getCartProducts(user.get());
 
     try {
       List<CartProductResponse> responses = cartProducts.stream().map(this::mapToResponse).toList();

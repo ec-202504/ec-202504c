@@ -18,12 +18,23 @@ public class CartProductService {
   private final CartProductRepository cartProductRepository;
 
   /**
-   * カート内商品を取得するメソッド.
+   * ユーザIDに紐づくカート内商品を取得するメソッド.
    *
+   * @param user ユーザ
    * @return カート内商品リスト
    */
-  public List<CartProduct> getCartProducts(User user) {
+  public List<CartProduct> getCartProductsByUserId(User user) {
     return cartProductRepository.findByUserIdOrderByCartProductIdDesc(user);
+  }
+
+  /**
+   * セッションIDに紐づくカート内商品を取得するメソッド.
+   *
+   * @param sessionId セッションID
+   * @return カート内商品リスト
+   */
+  public List<CartProduct> getCartProductsBySessionId(String sessionId) {
+    return cartProductRepository.findBySessionIdOrderByCartProductIdDesc(sessionId);
   }
 
   /**
