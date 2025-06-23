@@ -111,12 +111,7 @@ function ReviewInfo({
 
         {reviews.length > 0 ? (
           reviews.map((review) => (
-            <ReviewItem
-              key={review.id}
-              userName={review.userName}
-              content={review.comment}
-              rating={review.rating}
-            />
+            <ReviewItem key={review.id} review={review} />
           ))
         ) : (
           <div className="text-gray-500">まだレビューがありません</div>

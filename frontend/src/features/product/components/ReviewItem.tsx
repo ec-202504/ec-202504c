@@ -1,23 +1,26 @@
+import type { Review } from "../types";
 import RatingStars from "./RatingStars";
+import { formatOrderDate } from "../../../features/order/utils/formatLocalDate";
 
 type ReviewItemProps = {
-  userName: string;
-  content: string;
-  rating: number;
+  review: Review;
 };
 
-export default function ReviewItem({
-  userName,
-  content,
-  rating,
-}: ReviewItemProps) {
+export default function ReviewItem({ review }: ReviewItemProps) {
   return (
-    <div className="border-gray-200 border-2 p-2 rounded mb-2">
-      <div className="mb-1">
-        <div className="font-semibold">{userName}</div>
-        <RatingStars average={rating} />
+    <div className="border-b border-gray-200 py-4 px-2 last:border-b-0">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <span className="font-medium text-gray-900">{review.userName}</span>
+          <span className="text-xs text-gray-500">
+            {formatOrderDate(review.reviewDateTime)}
+          </span>
+        </div>
+
+        <RatingStars average={review.rating} />
       </div>
-      <div>{content}</div>
+
+      <p className="text-gray-700 leading-relaxed">{review.comment}</p>
     </div>
   );
 }
