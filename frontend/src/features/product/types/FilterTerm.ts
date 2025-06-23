@@ -1,5 +1,5 @@
 export type FilterTerm = {
-  id: number;
+  id: string;
   label: string;
   options: {
     id: number;

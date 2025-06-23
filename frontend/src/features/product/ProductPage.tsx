@@ -8,7 +8,6 @@ import {
 import ProductList from "./components/ProductList";
 import type { FilterTerm, Product } from "./types";
 import { axiosInstance } from "../../lib/axiosInstance";
-import LoadingOverlay from "./components/LoadingOverlay";
 import { TAB_VALUES } from "./types/constants";
 
 export default function ProductListPage() {
@@ -22,91 +21,71 @@ export default function ProductListPage() {
   const [totalPages, setTotalPages] = useState<number>(1);
   const PAGE_SIZE = 12;
 
-  const selectedOption = (option: string) => {
-    console.log(option);
+  // PC用のフィルター条件
+  const [pcFilters, setPcFilters] = useState({
+    osId: "",
+    cpuId: "",
+    gpuId: "",
+    purposeId: "",
+  });
+
+  // 本用のフィルター条件
+  const [bookFilters, setBookFilters] = useState({
+    languageId: "",
+    purposeId: "",
+  });
+
+  const selectedOption = (filterTermId: string, termId: string) => {
+    console.log(`FilterTerm ID: ${filterTermId}, Term ID: ${termId}`);
+
+    if (selectedTab === TAB_VALUES.PC) {
+      setPcFilters((prev) => ({
+        ...prev,
+        [filterTermId]: termId,
+      }));
+    }
+    setBookFilters((prev) => ({
+      ...prev,
+      [filterTermId]: termId,
+    }));
   };
 
-  //   const filterTerms: FilterTerm[] = [
-  //     {
-  //       id: 1,
-  //       label: "OS",
-  //       options: ["Mac", "Windows"],
-  //     },
-  //     {
-  //       id: 2,
-  //       label: "種類",
-  //       options: ["ノートPC", "デスクトップPC"],
-  //     },
-  //     {
-  //       id: 3,
-  //       label: "用途",
-  //       options: ["個人開発", "大規模開発"],
-  //     },
-  //     {
-  //       id: 4,
-  //       label: "予算",
-  //       options: ["0", "100"],
-  //     },
-  //     {
-  //       id: 5,
-  //       label: "ディスプレイサイズ(インチ)",
-  //       options: ["27以上", "23~26", "20~22", "17~19", "15~16", "14以下"],
-  //     },
-  //   ];
+  /**
+   * 現在のタブに応じたパラメータを取得
+   */
+  const getParams = useCallback(() => {
+    const baseParams = {
+      page: page,
+      size: PAGE_SIZE,
+      name: query,
+    };
 
-  //   useEffect(() => {
-  //     const fetchData = async () => {
-  //       setIsLoading(true);
-  //       try {
-  //         const response = await axiosInstance.get(`/${selectedTab}`, {
-  //           params: {
-  //             limit: page,
-  //             offset: PAGE_SIZE,
-  //             keyword: query,
-  //           },
-  //         });
-  //         if (selectedTab === "pcs") {
-  //           setPcs(response.data?.content);
-  //         } else {
-  //           setTechBooks(response.data?.content);
-  //         }
-  //         setTotalPages(response.data?.totalPages - 1 || 1);
-  //       } catch (error) {
-  //         console.error("APIリクエストに失敗しました:", error);
-  //       } finally {
-  //         setIsLoading(false);
-  //       }
-  //     const selectedOption = (option: string) => {
-  //         console.log(option);
-  //     };
+    if (selectedTab === TAB_VALUES.PC) {
+      return {
+        ...baseParams,
+        ...Object.fromEntries(
+          Object.entries(pcFilters).filter(([, value]) => value !== ""),
+        ),
+      };
+    }
+    return {
+      ...baseParams,
+      ...Object.fromEntries(
+        Object.entries(bookFilters).filter(([, value]) => value !== ""),
+      ),
+    };
+  }, [selectedTab, page, query, pcFilters, bookFilters]);
 
-  // const filterTerms: FilterTerm[] = [
-  //     {
-  //         id: 1,
-  //         label: "OS",
-  //         options: ["Mac", "Windows"],
-  //     },
-  //     {
-  //         id: 2,
-  //         label: "種類",
-  //         options: ["ノートPC", "デスクトップPC"],
-  //     },
-  //     {
-  //         id: 3,
-  //         label: "用途",
-  //         options: ["個人開発", "大規模開発"],
-  //     },
-  //     {
-  //         id: 4,
-  //         label: "予算",
-  //         options: ["0", "100"],
-  //     },
-  //     {
-  //         id: 5,
-  //         label: "ディスプレイサイズ(インチ)",
-  //         options: ["27以上", "23~26", "20~22", "17~19", "15~16", "14以下"],
-  //     },
-  // ];
+  /**
+   * 現在のタブに応じた選択された値を取得
+   */
+  const getSelectedValues = () => {
+    if (selectedTab === TAB_VALUES.PC) {
+      return pcFilters;
+    }
+    return bookFilters;
+  };
+
   /**
    * 商品データを取得する関数
    *
@@ -115,46 +94,38 @@ export default function ProductListPage() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
+      const params = getParams();
+
       const productListResponse = await axiosInstance.get(`/${selectedTab}`, {
-        params: {
-          page: page,
-          size: PAGE_SIZE,
-          keyword: query,
-        },
+        params,
       });
-      console.log("LOG");
-      console.log(productListResponse);
       setTotalPages(productListResponse.data?.totalPages - 1 || 1);
 
       if (selectedTab === TAB_VALUES.PC) {
         setPcs(productListResponse.data?.content);
-        console.log("LOG");
-        console.log(productListResponse.data);
         const osListResponse = await axiosInstance.get("/pcs/oses");
-        console.log("LOG");
-        console.log(osListResponse);
         const cpuListResponse = await axiosInstance.get("/pcs/cpus");
         const gpuListResponse = await axiosInstance.get("/pcs/gpus");
         const purposeListResponse = await axiosInstance.get("/pcs/purposes");
 
         setFilterTerms([
           {
-            id: 1,
+            id: "osId",
             label: "OS",
             options: osListResponse.data,
           },
           {
-            id: 2,
+            id: "cpuId",
             label: "CPU",
             options: cpuListResponse.data,
           },
           {
-            id: 3,
+            id: "gpuId",
             label: "GPU",
             options: gpuListResponse.data,
           },
           {
-            id: 4,
+            id: "purposeId",
             label: "用途",
             options: purposeListResponse.data,
           },
@@ -163,17 +134,15 @@ export default function ProductListPage() {
         setTechBooks(productListResponse.data?.content);
         const languageListResponse =
           await axiosInstance.get("/books/languages");
-        const purposeListResponse = await axiosInstance.get("/pcs/purposes");
-        console.log("LOG");
-        console.log(languageListResponse);
+        const purposeListResponse = await axiosInstance.get("/books/purposes");
         setFilterTerms([
           {
-            id: 1,
+            id: "languageId",
             label: "言語",
             options: languageListResponse.data,
           },
           {
-            id: 2,
+            id: "purposeId",
             label: "用途",
             options: purposeListResponse.data,
           },
@@ -184,7 +153,7 @@ export default function ProductListPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedTab, page, query]);
+  }, [selectedTab, getParams]);
 
   useEffect(() => {
     fetchData();
@@ -202,56 +171,73 @@ export default function ProductListPage() {
   ) => {
     e.preventDefault();
     setQuery(query);
-    setPage(1); // 検索ボタンを押したらページを1に戻す
+    setPage(1);
+  };
+
+  /**
+   * タブ変更時のハンドラー
+   * フィルター条件、検索クエリ、ページ番号をリセットする
+   *
+   * @param value 選択されたタブの値
+   */
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+    setFilterTerms([]);
+    setQuery("");
+    setPage(1);
+    setPcFilters({
+      osId: "",
+      cpuId: "",
+      gpuId: "",
+      purposeId: "",
+    });
+    setBookFilters({
+      languageId: "",
+      purposeId: "",
+    });
   };
 
   return (
     <div className="p-4 h-80vh">
-      {isLoading ? (
-        <LoadingOverlay />
-      ) : (
-        <Tabs
-          value={selectedTab}
-          onValueChange={(value) => {
-            setSelectedTab(value);
-            setFilterTerms([]);
-            setQuery("");
-            setPage(1);
-          }}
-          className="mb-4"
-        >
-          <TabsList>
-            <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
-            <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
-          </TabsList>
+      <Tabs
+        value={selectedTab}
+        onValueChange={handleTabChange}
+        className="mb-4"
+      >
+        <TabsList>
+          <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
+          <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
+        </TabsList>
+        <TabsContent value={TAB_VALUES.PC}>
+          <ProductList
+            isLoading={isLoading}
+            selectedTab={selectedTab}
+            products={pcs}
+            filterTerms={filterTerms}
+            selectedOption={selectedOption}
+            handleSubmit={handleSubmit}
+            currentPage={page}
+            onPageChange={setPage}
+            totalPages={totalPages}
+            selectedValues={getSelectedValues()}
+          />
+        </TabsContent>
 
-          <TabsContent value={TAB_VALUES.PC}>
-            <ProductList
-              selectedTab={selectedTab}
-              products={pcs}
-              filterTerms={filterTerms}
-              selectedOption={selectedOption}
-              handleSubmit={handleSubmit}
-              currentPage={page}
-              onPageChange={setPage}
-              totalPages={totalPages}
-            />
-          </TabsContent>
-
-          <TabsContent value={TAB_VALUES.BOOK}>
-            <ProductList
-              selectedTab={selectedTab}
-              products={techBooks}
-              filterTerms={filterTerms}
-              selectedOption={selectedOption}
-              handleSubmit={handleSubmit}
-              currentPage={page}
-              onPageChange={setPage}
-              totalPages={totalPages}
-            />
-          </TabsContent>
-        </Tabs>
-      )}
+        <TabsContent value={TAB_VALUES.BOOK}>
+          <ProductList
+            isLoading={isLoading}
+            selectedTab={selectedTab}
+            products={techBooks}
+            filterTerms={filterTerms}
+            selectedOption={selectedOption}
+            handleSubmit={handleSubmit}
+            currentPage={page}
+            onPageChange={setPage}
+            totalPages={totalPages}
+            selectedValues={getSelectedValues()}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

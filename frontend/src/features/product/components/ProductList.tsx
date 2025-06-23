@@ -11,19 +11,23 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../../components/ui/pagination";
+import LoadingOverlay from "./LoadingOverlay";
 
 type Props = {
+  isLoading: boolean;
   selectedTab: string;
   products: Product[];
   filterTerms: FilterTerm[];
-  selectedOption: (value: string) => void;
+  selectedOption: (filterTermId: string, termId: string) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>, query: string) => void;
   currentPage: number;
   onPageChange: (page: number) => void;
   totalPages: number;
+  selectedValues?: Record<string, string>;
 };
 
 export default function ProductList({
+  isLoading,
   selectedTab,
   products,
   filterTerms,
@@ -32,6 +36,7 @@ export default function ProductList({
   currentPage,
   onPageChange,
   totalPages,
+  selectedValues = {},
 }: Props) {
   const getPageNumbers = () => {
     const pages = [];
@@ -44,77 +49,84 @@ export default function ProductList({
   return (
     <div className="flex gap-4">
       <Sidebar
-        selectedTab={selectedTab}
         selectedOption={selectedOption}
         filterTerms={filterTerms}
+        selectedValues={selectedValues}
       />
 
       <div className="flex-1">
         <SearchForm onSubmit={handleSubmit} selectedTab={selectedTab} />
 
-        {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-60 w-full bg-gray-50 rounded-md shadow mt-8 mb-8">
-            <div className="text-lg text-gray-600 font-semibold">
-              該当する商品が見つかりません
-            </div>
-          </div>
+        {isLoading ? (
+          <LoadingOverlay />
         ) : (
-          <div className="grid grid-cols-4 gap-4 mb-4">
-            {products.map((product) => (
-              <ProductCard
-                selectedTab={selectedTab}
-                product={product}
-                key={product.id}
-              />
-            ))}
-          </div>
-        )}
+          <>
+            {products.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-60 w-full bg-gray-50 rounded-md shadow mt-8 mb-8">
+                <div className="text-lg text-gray-600 font-semibold">
+                  該当する商品が見つかりません
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-4 mb-4">
+                {products.map((product) => (
+                  <ProductCard
+                    selectedTab={selectedTab}
+                    product={product}
+                    key={product.id}
+                  />
+                ))}
+              </div>
+            )}
 
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                size="sm"
-                href="/product"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage > 1) onPageChange(currentPage - 1);
-                }}
-                aria-disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </PaginationPrevious>
-            </PaginationItem>
-            {getPageNumbers().map((page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  href="/product"
-                  size="sm"
-                  isActive={page === currentPage}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (page !== currentPage) onPageChange(page);
-                  }}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext
-                size="sm"
-                href="/product"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage < totalPages) onPageChange(currentPage + 1);
-                }}
-                aria-disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </PaginationNext>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    size="sm"
+                    href="/product"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) onPageChange(currentPage - 1);
+                    }}
+                    aria-disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </PaginationPrevious>
+                </PaginationItem>
+                {getPageNumbers().map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="/product"
+                      size="sm"
+                      isActive={page === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (page !== currentPage) onPageChange(page);
+                      }}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    size="sm"
+                    href="/product"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages)
+                        onPageChange(currentPage + 1);
+                    }}
+                    aria-disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </PaginationNext>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </>
+        )}
       </div>
     </div>
   );
