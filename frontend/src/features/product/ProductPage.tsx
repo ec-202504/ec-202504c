@@ -53,7 +53,7 @@ export default function ProductListPage() {
   /**
    * 現在のタブに応じたパラメータを取得
    */
-  const getParams = useCallback(() => {
+  const getParams = useCallback(async () => {
     const baseParams = {
       page: page,
       size: PAGE_SIZE,
