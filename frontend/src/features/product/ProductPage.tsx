@@ -70,32 +70,49 @@ export default function ProductListPage() {
   const selectedTab = search.tab || TAB_VALUES.PC;
 
   // URLパラメータからフィルター条件を復元
-  useEffect(() => {
-    if (search.osId || search.cpuId || search.gpuId || search.purposeId) {
-      setPcFilters({
-        osId: search.osId || "",
-        cpuId: search.cpuId || "",
-        gpuId: search.gpuId || "",
-        purposeId: search.purposeId || "",
-        deviceType: search.deviceType || "",
+  const restoreFromUrlParams = useCallback(() => {
+    if (
+      search.osId ||
+      search.cpuId ||
+      search.gpuId ||
+      search.purposeId ||
+      search.deviceType
+    ) {
+      setPcFilters((prev) => {
+        const next = {
+          osId: search.osId || "",
+          cpuId: search.cpuId || "",
+          gpuId: search.gpuId || "",
+          purposeId: search.purposeId || "",
+          deviceType: search.deviceType || "",
+        };
+        return JSON.stringify(prev) !== JSON.stringify(next) ? next : prev;
       });
     }
 
     if (search.languageId || search.purposeId) {
-      setBookFilters({
-        languageId: search.languageId || "",
-        purposeId: search.purposeId || "",
+      setBookFilters((prev) => {
+        const next = {
+          languageId: search.languageId || "",
+          purposeId: search.purposeId || "",
+        };
+        return JSON.stringify(prev) !== JSON.stringify(next) ? next : prev;
       });
     }
 
-    if (search.query) {
-      setQuery(search.query);
+    if (search.query !== undefined) {
+      setQuery((prev) => (prev !== search.query ? search.query || "" : prev));
     }
 
-    if (search.page) {
-      setPage(Number.parseInt(search.page, 10));
+    if (search.page !== undefined) {
+      const nextPage = Number.parseInt(search.page, 10);
+      setPage((prev) => (prev !== nextPage ? nextPage : prev));
     }
   }, [search]);
+
+  // useEffect(() => {
+  //     restoreFromUrlParams();
+  // }, [restoreFromUrlParams]);
 
   const selectedOption = (filterTermId: string, termId: string) => {
     if (selectedTab === TAB_VALUES.PC) {
@@ -153,7 +170,7 @@ export default function ProductListPage() {
       size: PAGE_SIZE,
       name: query,
     };
-
+    restoreFromUrlParams();
     if (selectedTab === TAB_VALUES.PC) {
       return {
         ...baseParams,
@@ -168,7 +185,7 @@ export default function ProductListPage() {
         Object.entries(bookFilters).filter(([, value]) => value !== ""),
       ),
     };
-  }, [selectedTab, page, query, pcFilters, bookFilters]);
+  }, [selectedTab, page, query, pcFilters, bookFilters, restoreFromUrlParams]);
 
   /**
    * 現在のタブに応じた選択された値を取得
