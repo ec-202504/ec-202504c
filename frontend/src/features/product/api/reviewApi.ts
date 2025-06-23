@@ -24,3 +24,17 @@ export const fetchBookReviews = async (
   const response = await axiosInstance.get(`/reviews/book/${productId}`);
   return response.data;
 };
+
+/**
+ * レビューを投稿する
+ * @param reviewData レビューデータ
+ */
+export const postReview = async (reviewData: {
+  comment: string;
+  rating: number;
+  productCategory: number;
+  productId: number;
+}): Promise<void> => {
+  const response = await axiosInstance.post("/reviews", reviewData);
+  return response.data;
+};

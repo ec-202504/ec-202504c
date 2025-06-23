@@ -1,13 +1,28 @@
+import { useState } from "react";
 import type { Review, ReviewCounts } from "../types/Review";
 import ReviewItem from "./ReviewItem";
+import ReviewForm from "./ReviewForm";
+import { Button } from "../../../components/ui/button";
 
 type ReviewInfoProps = {
   reviews: Review[];
   totalReviews: number;
   average: number;
+  productId: number;
+  productCategory: number;
+  onReviewPosted: () => void;
 };
 
-function ReviewInfo({ reviews, totalReviews, average }: ReviewInfoProps) {
+function ReviewInfo({
+  reviews,
+  totalReviews,
+  average,
+  productId,
+  productCategory,
+  onReviewPosted,
+}: ReviewInfoProps) {
+  const [showReviewForm, setShowReviewForm] = useState(false);
+
   /**
    * 評価別のパーセンテージを計算する
    *
@@ -75,7 +90,25 @@ function ReviewInfo({ reviews, totalReviews, average }: ReviewInfoProps) {
       </div>
 
       <div className="mb-2 w-full">
-        <div className="font-bold mb-2">レビュー内容</div>
+        <div className="flex justify-between items-center mb-2">
+          <div className="font-bold">レビュー内容</div>
+          <Button onClick={() => setShowReviewForm(true)} size="sm">
+            レビューを書く
+          </Button>
+        </div>
+
+        {showReviewForm && (
+          <ReviewForm
+            productId={productId}
+            productCategory={productCategory}
+            onReviewPosted={() => {
+              setShowReviewForm(false);
+              onReviewPosted();
+            }}
+            onCancel={() => setShowReviewForm(false)}
+          />
+        )}
+
         {reviews.length > 0 ? (
           reviews.map((review) => (
             <ReviewItem
