@@ -85,17 +85,16 @@ export const useProductFilters = () => {
    * - 全ての絞り込み条件をクリアしたい場合は両方空文字で呼び出す。
    * - 状態変更後、URLパラメータも更新する。
    */
-  // フィルター選択ハンドラー
   const handleFilterChange = useCallback(
     (filterTermId: string, termId: string) => {
+      setPage(0);
+      setQuery("");
       if (selectedTab === TAB_VALUES.PC) {
         const newPcFilters = {
           ...pcFilters,
           [filterTermId]: termId,
         };
         setPcFilters(newPcFilters);
-        setPage(0);
-        setQuery("");
         updateUrlParams(newPcFilters, bookFilters, query, 0, price);
       } else {
         const newBookFilters = {
@@ -103,15 +102,20 @@ export const useProductFilters = () => {
           [filterTermId]: termId,
         };
         setBookFilters(newBookFilters);
-        setPage(0);
-        setQuery("");
         updateUrlParams(pcFilters, newBookFilters, query, 0, price);
       }
     },
     [selectedTab, pcFilters, bookFilters, query, updateUrlParams, price],
   );
 
-  // 検索ハンドラー
+  /**
+   * 検索クエリが送信されたときのハンドラー
+   *
+   * @param newQuery - 新しい検索クエリ
+   *
+   * 検索クエリが変更された際に、フィルター・ページ番号・予算をリセットし、
+   * URLパラメータも更新する。
+   */
   const handleSearch = useCallback(
     (newQuery: string) => {
       setQuery(newQuery);
@@ -124,7 +128,14 @@ export const useProductFilters = () => {
     [pcFilters, bookFilters, updateUrlParams, price],
   );
 
-  // ページ変更ハンドラー
+  /**
+   * ページ番号が変更されたときのハンドラー
+   *
+   * @param newPage - 新しいページ番号
+   *
+   * ページ番号が変更された際に、状態を更新し、URLパラメータも更新する。
+   * ページネーション操作時に呼び出される。
+   */
   const handlePageChange = useCallback(
     (newPage: number) => {
       setPage(newPage);
