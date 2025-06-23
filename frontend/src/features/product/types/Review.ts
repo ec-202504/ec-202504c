@@ -5,7 +5,7 @@ export type Review = {
   /** コメント */
   comment: string;
   /** 評価（1～5） */
-  rating: number;
+  rating: 1 | 2 | 3 | 4 | 5;
   /** 商品カテゴリ（0:PC, 1:Book） */
   productCategory: number;
   /** 商品ID */
@@ -15,3 +15,5 @@ export type Review = {
   /** ユーザー名 */
   userName: string;
 };
+
+export type ReviewCounts = Record<Review["rating"], number>;

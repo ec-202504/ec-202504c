@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
 import PcInfo from "../components/PcInfo";
 import ReviewItem from "../components/ReviewItem";
-import type { AddCartRequest, Pc, Review } from "../types";
+import type { AddCartRequest, Pc, Review, ReviewCounts } from "../types";
 import { fetchPcReviews } from "../api/reviewApi";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
@@ -18,22 +18,46 @@ export default function PcDetail() {
   const { itemId } = useParams({ from: "/product/pc/$itemId/" });
   const navigate = useNavigate();
 
-  // レビューの統計情報を計算
+  /**
+   * この商品全体のレビューの総数
+   */
   const totalReviews = reviews.length;
+
+  /**
+   * この商品全体のレビューの平均評価
+   */
   const average =
     totalReviews > 0
       ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
       : 0;
 
-  // 評価別の件数を計算
-  const ratingCounts = reviews.reduce(
-    (acc, review) => {
-      acc[review.rating] = (acc[review.rating] || 0) + 1;
-      return acc;
-    },
-    {} as Record<number, number>,
-  );
+  const initialCounts: ReviewCounts = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+  };
 
+  /**
+   * 評価別の件数を計算
+   *
+   * @param acc 評価別の件数
+   * @param review レビュー情報
+   * @returns 評価（5段階）別のレビュー数
+   */
+  const ratingCounts: ReviewCounts = reviews.reduce((acc, review) => {
+    acc[review.rating] += 1;
+    return acc;
+  }, initialCounts);
+
+  /**
+   * 評価別のパーセンテージを計算する
+   *
+   * @param count レビュー数
+   * @param total 総レビュー数
+   * @returns パーセンテージ
+   */
   const calcPercentage = (count: number, total: number): number => {
     return total > 0 ? Math.round((count / total) * 100) : 0;
   };
@@ -54,13 +78,12 @@ export default function PcDetail() {
       quantity: quantity,
     };
 
-    // TODO: ログインしているユーザーのIDを取得する
     try {
       await axiosInstance.post("/carts", addCartRequestBody);
       toast.success(`${pc?.name}を${quantity}個カートに追加しました`);
       navigate({ to: "/cart" });
     } catch (error) {
-      console.error("APIリクエストに失敗しました:", error);
+      toast.error("カートへの追加に失敗しました");
     }
   };
 
@@ -71,7 +94,7 @@ export default function PcDetail() {
         const response = await axiosInstance.get(`/pcs/${itemId}`);
         setPc(response.data);
       } catch (error) {
-        console.error("APIリクエストに失敗しました:", error);
+        toast.error("商品情報の取得に失敗しました");
       } finally {
         setIsLoading(false);
       }
@@ -127,17 +150,19 @@ export default function PcDetail() {
                     {[5, 4, 3, 2, 1].map((rating) => (
                       <div key={rating} className="flex items-center gap-2">
                         <span className="w-[30px]">星{rating}</span>
+                        {/* 評価のパーセンテージをバーで表示 */}
                         <div className="bg-gray-200 h-2 w-40 rounded">
                           <div
                             className="bg-orange-400 h-2 rounded"
                             style={{
-                              width: `${calcPercentage(ratingCounts[rating] || 0, totalReviews)}%`,
+                              width: `${calcPercentage(ratingCounts[rating as keyof ReviewCounts], totalReviews)}%`,
                             }}
                           />
                         </div>
+                        {/* 評価のパーセンテージを数値で表示 */}
                         <span>
                           {calcPercentage(
-                            ratingCounts[rating] || 0,
+                            ratingCounts[rating as keyof ReviewCounts],
                             totalReviews,
                           )}
                           %
