@@ -1,5 +1,4 @@
 -- PC用
--- PC用
 INSERT INTO reviews (comment, rating, product_category, product_id, user_id) VALUES
 ('とても良いPCです！', 5, 0, 1, 1),
 ('性能に満足しています', 4, 0, 2, 2),
@@ -52,8 +51,6 @@ INSERT INTO reviews (comment, rating, product_category, product_id, user_id) VAL
 ('ファンの音が気になります', 2, 0, 49, 1),
 ('配送が早くて助かりました', 5, 0, 50, 2);
 
-
--- 技術書用
 -- 技術書用
 INSERT INTO reviews (comment, rating, product_category, product_id, user_id) VALUES
 ('とても面白い本でした！', 5, 1, 1, 1),
