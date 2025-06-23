@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import {
   Tabs,
   TabsList,
@@ -16,11 +17,9 @@ export default function ProductListPage() {
   const [pcs, setPcs] = useState<Product[]>([]);
   const [techBooks, setTechBooks] = useState<Product[]>([]);
   const [filterTerms, setFilterTerms] = useState<FilterTerm[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>(TAB_VALUES.PC);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const PAGE_SIZE = 12;
-
   // PC用のフィルター条件
   const [pcFilters, setPcFilters] = useState({
     osId: "",
@@ -34,6 +33,12 @@ export default function ProductListPage() {
     languageId: "",
     purposeId: "",
   });
+
+  const navigate = useNavigate();
+
+  // URLパラメータからタブの状態を取得
+  const search = useSearch({ from: "/product/" });
+  const selectedTab = search.tab || TAB_VALUES.PC;
 
   const selectedOption = (filterTermId: string, termId: string) => {
     console.log(`FilterTerm ID: ${filterTermId}, Term ID: ${termId}`);
@@ -181,7 +186,12 @@ export default function ProductListPage() {
    * @param value 選択されたタブの値
    */
   const handleTabChange = (value: string) => {
-    setSelectedTab(value);
+    navigate({
+      to: "/product",
+      search: { tab: value },
+      replace: true, // tab変更を履歴に残さないようにする
+    });
+
     setFilterTerms([]);
     setQuery("");
     setPage(1);

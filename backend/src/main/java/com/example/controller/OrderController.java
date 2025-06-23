@@ -84,7 +84,7 @@ public class OrderController {
     order.setOrderProductList(orderProductList);
 
     // 注文完了メールを送信、エラーが発生した場合はMessagingExceptionをスロー
-    mailService.sendOrderConfirmationEmail(user.getEmail(), order);
+    mailService.sendOrderConfirmationEmail(order.getDestinationEmail(), order);
 
     return ResponseEntity.ok(Map.of("message", "注文が完了しました", "orderId", order.getOrderId()));
   }

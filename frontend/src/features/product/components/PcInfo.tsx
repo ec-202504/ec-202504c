@@ -33,11 +33,13 @@ export default function PcInfo({
         alt={pc.name}
         className="w-96 h-96 object-contain border"
       />
+
       <div className="flex-1">
         <h1 className="text-2xl font-bold mb-2">{pc.name}</h1>
         <div className="text-xl mb-4">{pc.price.toLocaleString()}円</div>
         <div className="flex items-center gap-2 mb-4">
           <span>数量</span>
+
           <Select
             value={selectedQuantity.toString()}
             defaultValue="1"
@@ -56,6 +58,7 @@ export default function PcInfo({
               </SelectGroup>
             </SelectContent>
           </Select>
+
           <Button
             type="button"
             onClick={() => {
@@ -66,13 +69,13 @@ export default function PcInfo({
             カートへ追加
           </Button>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-2 mb-4">
           <RatingStars average={average} />
-          <span className="underline cursor-pointer">
-            {totalReviews}件の評価
-          </span>
+          <span className="underline">{totalReviews}件の評価</span>
         </div>
-        <div className="font-bold mb-2">仕様</div>
+
+        <div className="font-bold mb-1">仕様</div>
         <PcSpecList pc={pc} />
       </div>
     </div>
