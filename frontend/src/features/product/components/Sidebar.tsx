@@ -22,9 +22,12 @@ export default function Sidebar({ filterTerms, selectedOption }: SidebarProps) {
               className="m-2 flex flex-col gap-2"
             >
               {filterTerm.options.map((term) => (
-                <Label key={term} className="flex items-center">
-                  <RadioGroupItem value={term} id={term} />
-                  {term}
+                <Label key={term.id} className="flex items-center">
+                  <RadioGroupItem
+                    value={term.id.toString()}
+                    id={term.id.toString()}
+                  />
+                  {term.name}
                 </Label>
               ))}
             </RadioGroup>
