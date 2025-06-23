@@ -30,7 +30,8 @@ public class ReviewService {
    * @return レビュー一覧
    */
   public List<ReviewResponse> getPcReviews(Integer productId) {
-    List<Review> reviews = reviewRepository.findByProductCategoryAndProductId(0, productId);
+    List<Review> reviews =
+        reviewRepository.findByProductCategoryAndProductIdOrderByReviewDateTimeDesc(0, productId);
     return reviews.stream().map(this::convertToResponse).collect(Collectors.toList());
   }
 
@@ -41,7 +42,8 @@ public class ReviewService {
    * @return レビュー一覧
    */
   public List<ReviewResponse> getBookReviews(Integer productId) {
-    List<Review> reviews = reviewRepository.findByProductCategoryAndProductId(1, productId);
+    List<Review> reviews =
+        reviewRepository.findByProductCategoryAndProductIdOrderByReviewDateTimeDesc(1, productId);
     return reviews.stream().map(this::convertToResponse).collect(Collectors.toList());
   }
 
