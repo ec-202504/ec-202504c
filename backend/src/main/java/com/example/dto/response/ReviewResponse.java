@@ -1,5 +1,6 @@
 package com.example.dto.response;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +22,9 @@ public class ReviewResponse {
 
   /** 評価（1～5）. */
   private Integer rating;
+
+  /** レビュー投稿日時. */
+  private LocalDateTime reviewDateTime;
 
   /** ユーザーID. */
   private Integer userId;

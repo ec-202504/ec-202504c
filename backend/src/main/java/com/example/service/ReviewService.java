@@ -89,6 +89,7 @@ public class ReviewService {
         .id(review.getId())
         .comment(review.getComment())
         .rating(review.getRating())
+        .reviewDateTime(review.getReviewDateTime())
         .userId(review.getUser().getUserId())
         .userName(review.getUser().getName())
         .build();

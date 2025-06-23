@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,6 +35,10 @@ public class Review {
   @Column(name = "rating", nullable = false)
   @ColumnDefault("1")
   private Integer rating;
+
+  /** レビュー投稿日 */
+  @Column(name = "review_date_time", nullable = false, updatable = false)
+  private LocalDateTime reviewDateTime = LocalDateTime.now();
 
   /** 商品カテゴリ（0:PC, 1:Book）. */
   @Column(name = "product_category", nullable = false)
