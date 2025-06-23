@@ -385,7 +385,8 @@ public class PcController {
             .map(
                 e -> {
                   Map<String, Object> map = new HashMap<>();
-                  map.put("productKey", e.getKey());
+                  map.put("productId", e.getKey().productId());
+                  map.put("productCategory", e.getKey().productCategory());
                   map.put("productName", recommendNameMap.get(e.getKey()));
                   map.put("similarity", e.getValue());
                   return map;

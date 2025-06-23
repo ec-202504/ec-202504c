@@ -36,6 +36,22 @@ public interface BookRepository extends JpaRepository<Book, Integer>, BookReposi
   List<Book> findTop20ByNameContainingIgnoreCase(String keyword);
 
   /**
+   * 著者名と一致する書籍のリストを取得する.
+   *
+   * @param author 著者名
+   * @return 著者名と一致する書籍のリスト
+   */
+  List<Book> findByAuthor(String author);
+
+  /**
+   * 出版年度と一致する書籍のリストを取得する.
+   *
+   * @param publishDate 出版年度
+   * @return 出版年度と一致する書籍のリスト
+   */
+  List<Book> findByPublishDate(LocalDate publishDate);
+
+  /**
    * 言語IDと一致する書籍のリストを取得する.
    *
    * @param languageId 言語ID
@@ -44,7 +60,7 @@ public interface BookRepository extends JpaRepository<Book, Integer>, BookReposi
   List<Book> findByLanguageId(Integer languageId);
 
   /**
-   * 目的IDと一致する書籍のリストを取得する. findByPurposeIDでは正しい個数を取得できないためfindByPurpose_IDにする必要ある
+   * 目的IDと一致する書籍のリストを取得する.
    *
    * @param purposeId 目的ID
    * @return 目的IDと一致する書籍のリスト

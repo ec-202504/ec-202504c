@@ -3,13 +3,15 @@ package com.example.controller;
 import com.example.dto.request.AddBookRequest;
 import com.example.dto.request.UpdateBookRequest;
 import com.example.dto.response.BookDetailResponse;
-import com.example.model.Book;
-import com.example.model.Language;
-import com.example.model.Purpose;
+import com.example.dto.response.OrderProductResponse;
+import com.example.model.*;
 import com.example.service.BookService;
+import com.example.service.OrderService;
+import com.example.service.UserService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/books")
 public class BookController {
   private final BookService bookService;
+  private final UserService userService;
+  private final OrderService orderService;
 
   /**
    * 条件に合致するPC一覧結果を取得するエンドポイント.
@@ -95,30 +99,6 @@ public class BookController {
   @GetMapping("/purposes")
   public ResponseEntity<?> getPurposes() {
     return ResponseEntity.ok(bookService.getAllPurposes());
-  }
-
-  /**
-   * 言語IDと一致する書籍一覧を取得するエンドポイント.
-   *
-   * @param languageId 言語ID
-   * @return 言語IDと一致する書籍一覧
-   */
-  @GetMapping("/languages/{languageId}")
-  public ResponseEntity<?> getBooksByLanguage(@PathVariable Integer languageId) {
-    List<Book> bookListByLanguageId = bookService.findByLanguageId(languageId);
-    return ResponseEntity.ok(bookListByLanguageId);
-  }
-
-  /**
-   * 目的IDと一致する書籍一覧を取得するエンドポイント.
-   *
-   * @param purposeId 目的ID
-   * @return 目的IDと一致する書籍一覧
-   */
-  @GetMapping("/purposes/{purposeId}")
-  public ResponseEntity<?> getBooksByPurpose(@PathVariable Integer purposeId) {
-    List<Book> bookListByPurposeId = bookService.findByPurposeId(purposeId);
-    return ResponseEntity.ok(bookListByPurposeId);
   }
 
   /**
@@ -228,5 +208,149 @@ public class BookController {
   public ResponseEntity<?> removeBook(@PathVariable Integer bookId) {
     bookService.removeBook(bookId);
     return ResponseEntity.noContent().build();
+  }
+
+  /**
+   * コンテンツベースフィルタリングの結果を取得するエンドポイント.
+   *
+   * @param bookId BookのID
+   * @return コンテンツベースフィルタリングによる商品の推薦結果のリスト
+   */
+  @GetMapping("/recommend/contentBase/{bookId}")
+  public ResponseEntity<?> recommendByContentBaseBooks(@PathVariable Integer bookId) {
+    // コンテンツベースフィルタリング
+    Optional<Book> targetBook = bookService.findById(bookId);
+    if (targetBook.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    List<Book> allBooks = bookService.getAllBooks();
+    List<Book> allBooksBySameAuthor = bookService.findByAuthor(targetBook.get().getAuthor());
+    List<Book> allBooksBySamePublishDate =
+        bookService.findByPublishDate(targetBook.get().getPublishDate());
+    List<Book> allBooksBySameLanguage =
+        bookService.findByLanguageId(targetBook.get().getLanguage().getId());
+    List<Book> allBooksBySamePurpose =
+        bookService.findByPurposeId(targetBook.get().getPurpose().getId());
+
+    Set<Integer> sameAuthors =
+        allBooksBySameAuthor.stream().map(Book::getId).collect(Collectors.toSet());
+    Set<Integer> samePublishDates =
+        allBooksBySamePublishDate.stream().map(Book::getId).collect(Collectors.toSet());
+    Set<Integer> sameLanguageIds =
+        allBooksBySameLanguage.stream().map(Book::getId).collect(Collectors.toSet());
+    Set<Integer> samePurposeIds =
+        allBooksBySamePurpose.stream().map(Book::getId).collect(Collectors.toSet());
+
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (Book book : allBooks) {
+      if (book.getId().equals(targetBook.get().getId())) {
+        continue;
+      }
+
+      int similarity = 0;
+      if (sameAuthors.contains(book.getId())) {
+        similarity++;
+      }
+      if (samePublishDates.contains(book.getId())) {
+        similarity++;
+      }
+      if (sameLanguageIds.contains(book.getId())) {
+        similarity++;
+      }
+      if (samePurposeIds.contains(book.getId())) {
+        similarity++;
+      }
+
+      Map<String, Object> item = new HashMap<>();
+      item.put("book", book);
+      item.put("similarity", similarity);
+      result.add(item);
+    }
+
+    // 類似度スコアで降順ソート
+    result.sort((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")));
+
+    // 上位何件出すかをlimitで調整
+    return ResponseEntity.ok(result.stream().limit(5));
+  }
+
+  /**
+   * 協調フィルタリングの結果を取得するエンドポイント.
+   *
+   * @param userId ユーザID
+   * @return 協調フィルタリングによる商品の推薦結果のリスト
+   */
+  @GetMapping("/recommend/userBase/{userId}")
+  public ResponseEntity<?> recommendByUserBaseBooks(@PathVariable Integer userId) {
+    Optional<User> targetUser = userService.findById(userId);
+    if (targetUser.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    // ターゲットユーザの購入商品をキーとしてセット化（比較用）
+    Set<ProductKey> targetProducts = new HashSet<>();
+    for (Order order : targetUser.get().getOrderList()) {
+      for (OrderProductResponse product :
+          orderService.getOrderDetailsByOrderId(order.getOrderId()).getProducts()) {
+        ProductKey key = new ProductKey(product.getProductId(), product.getProductCategory());
+        targetProducts.add(key);
+      }
+    }
+
+    // 推薦商品のスコア（類似度）を管理するMap<ProductKey, Integer>
+    Map<ProductKey, Integer> recommendScoreMap = new HashMap<>();
+    // 商品の名前を保持しておくMap（重複除去用）
+    Map<ProductKey, String> recommendNameMap = new HashMap<>();
+
+    // 全ユーザの購入履歴をチェック
+    List<Order> orderList = orderService.getAllOrders();
+    for (Order order : orderList) {
+      Integer orderUserId = order.getUserId().getUserId();
+      if (targetUser.get().getUserId().equals(orderUserId)) {
+        continue; // ターゲットユーザはスキップ
+      }
+
+      List<OrderProductResponse> productResponses =
+          orderService.getOrderDetailsByOrderId(order.getOrderId()).getProducts();
+      Set<ProductKey> currentUserKeys =
+          productResponses.stream()
+              .map(p -> new ProductKey(p.getProductId(), p.getProductCategory()))
+              .collect(Collectors.toSet());
+
+      // ターゲットユーザとの共通商品数をカウント
+      long commonCount = currentUserKeys.stream().filter(targetProducts::contains).count();
+
+      if (commonCount > 0) { // 1個以上共通商品あればsimilar userとみなす
+        for (OrderProductResponse product : productResponses) {
+          ProductKey key = new ProductKey(product.getProductId(), product.getProductCategory());
+          // ターゲットユーザが未購入の商品だけを推薦候補にする
+          if (!targetProducts.contains(key)) {
+            // スコアを加算（共通商品数だけ）
+            recommendScoreMap.merge(key, (int) commonCount, Integer::sum);
+            recommendNameMap.putIfAbsent(key, product.getProductName());
+          }
+        }
+      }
+    }
+
+    // MapからList<Map<String,Object>>に変換し、similarityで降順ソート
+    List<Map<String, Object>> recommendedProducts =
+        recommendScoreMap.entrySet().stream()
+            .map(
+                e -> {
+                  Map<String, Object> map = new HashMap<>();
+                  map.put("productId", e.getKey().productId());
+                  map.put("productCategory", e.getKey().productCategory());
+                  map.put("productName", recommendNameMap.get(e.getKey()));
+                  map.put("similarity", e.getValue());
+                  return map;
+                })
+            .sorted((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")))
+            .limit(5)
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok(recommendedProducts);
   }
 }
