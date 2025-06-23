@@ -17,7 +17,7 @@ export default function ProductListPage() {
   const [pcs, setPcs] = useState<Product[]>([]);
   const [techBooks, setTechBooks] = useState<Product[]>([]);
   const [filterTerms, setFilterTerms] = useState<FilterTerm[]>([]);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const PAGE_SIZE = 12;
   // PC用のフィルター条件
@@ -99,7 +99,8 @@ export default function ProductListPage() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const params = getParams();
+      const params = await getParams();
+      console.log(params);
 
       const productListResponse = await axiosInstance.get(`/${selectedTab}`, {
         params,
@@ -118,6 +119,14 @@ export default function ProductListPage() {
             id: "osId",
             label: "OS",
             options: osListResponse.data,
+          },
+          {
+            id: "deviceType",
+            label: "種類",
+            options: [
+              { id: 0, name: "デスクトップPC" },
+              { id: 1, name: "ノートPC" },
+            ],
           },
           {
             id: "cpuId",
@@ -176,7 +185,7 @@ export default function ProductListPage() {
   ) => {
     e.preventDefault();
     setQuery(query);
-    setPage(1);
+    setPage(0);
   };
 
   /**
@@ -194,7 +203,7 @@ export default function ProductListPage() {
 
     setFilterTerms([]);
     setQuery("");
-    setPage(1);
+    setPage(0);
     setPcFilters({
       osId: "",
       cpuId: "",
