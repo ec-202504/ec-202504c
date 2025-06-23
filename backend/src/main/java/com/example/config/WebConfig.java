@@ -4,11 +4,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/** Webアプリケーションの設定クラス. CORSの設定を行う。 */
+/** Webアプリケーションの設定クラス. CORSの設定を行う. */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
   /**
-   * CORSの設定を追加するメソッド.
+   * CORSの設定を追加するメソッド. ※Securityでは使われない
    *
    * @param registry CORSレジストリ
    */
