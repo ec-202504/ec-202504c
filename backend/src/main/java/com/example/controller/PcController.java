@@ -2,15 +2,27 @@ package com.example.controller;
 
 import com.example.dto.request.AddPcRequest;
 import com.example.dto.request.UpdatePcRequest;
+import com.example.dto.response.OrderProductResponse;
 import com.example.dto.response.PcDetailResponse;
 import com.example.model.Cpu;
 import com.example.model.Gpu;
+import com.example.model.Order;
 import com.example.model.Os;
 import com.example.model.Pc;
+import com.example.model.ProductKey;
 import com.example.model.Purpose;
+import com.example.model.User;
+import com.example.service.OrderService;
 import com.example.service.PcService;
+import com.example.service.UserService;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +44,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/pcs")
 public class PcController {
   private final PcService pcService;
+  private final UserService userService;
+  private final OrderService orderService;
 
   /**
    * 条件に合致するPC一覧結果を取得するエンドポイント.
@@ -137,54 +151,6 @@ public class PcController {
   public ResponseEntity<?> getPurposes() {
     return ResponseEntity.ok(pcService.getAllPurposes());
   }
-
-  //  /**
-  //   * OSのIDと一致するPC一覧を取得するエンドポイント.
-  //   *
-  //   * @param osId OSのID
-  //   * @return OSのIDと一致するPC一覧
-  //   */
-  //  @GetMapping("/oses/{osId}")
-  //  public ResponseEntity<?> getPcsByOs(@PathVariable Integer osId) {
-  //    List<Pc> pcListByOsId = pcService.findByOsId(osId);
-  //    return ResponseEntity.ok(pcListByOsId);
-  //  }
-  //
-  //  /**
-  //   * CPUのIDと一致するPC一覧を取得するエンドポイント.
-  //   *
-  //   * @param cpuId 言語ID
-  //   * @return 言語IDと一致する書籍一覧
-  //   */
-  //  @GetMapping("/cpus/{cpuId}")
-  //  public ResponseEntity<?> getPcsByCpu(@PathVariable Integer cpuId) {
-  //    List<Pc> pcListByCpuId = pcService.findByCpuId(cpuId);
-  //    return ResponseEntity.ok(pcListByCpuId);
-  //  }
-  //
-  //  /**
-  //   * GPUのIDと一致するPC一覧を取得するエンドポイント.
-  //   *
-  //   * @param gpuId GPUのID
-  //   * @return GPUのIDと一致するPC一覧
-  //   */
-  //  @GetMapping("/gpus/{gpuId}")
-  //  public ResponseEntity<?> getPcsByGpu(@PathVariable Integer gpuId) {
-  //    List<Pc> pcListByGpuId = pcService.findByGpuId(gpuId);
-  //    return ResponseEntity.ok(pcListByGpuId);
-  //  }
-  //
-  //  /**
-  //   * 目的IDと一致するPC一覧を取得するエンドポイント.
-  //   *
-  //   * @param purposeId 目的ID
-  //   * @return 目的IDと一致するPC一覧
-  //   */
-  //  @GetMapping("/purposes/{purposeId}")
-  //  public ResponseEntity<?> getPcsByLanguage(@PathVariable Integer purposeId) {
-  //    List<Pc> pcListByPurposeId = pcService.findByPurposeId(purposeId);
-  //    return ResponseEntity.ok(pcListByPurposeId);
-  //  }
 
   /**
    * PCの詳細情報を取得するエンドポイント.
@@ -294,8 +260,15 @@ public class PcController {
         .orElse(ResponseEntity.notFound().build());
   }
 
-  @GetMapping("/recommend/{pcId}")
-  public ResponseEntity<?> recommendedPcs(@PathVariable Integer pcId) {
+  /**
+   * コンテンツベースフィルタリングの結果を取得するエンドポイント.
+   *
+   * @param pcId PCのID
+   * @return コンテンツベースフィルタリングによる商品の推薦結果のリスト
+   */
+  @GetMapping("/recommend/contentBase/{pcId}")
+  public ResponseEntity<?> recommendByContentBasePcs(@PathVariable Integer pcId) {
+    // コンテンツベースフィルタリング
     Optional<Pc> targetPc = pcService.findById(pcId);
     if (targetPc.isEmpty()) {
       return ResponseEntity.badRequest().build();
@@ -343,7 +316,86 @@ public class PcController {
     // 類似度スコアで降順ソート
     result.sort((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")));
 
-    return ResponseEntity.ok(result);
+    // 上位何件出すかをlimitで調整
+    return ResponseEntity.ok(result.stream().limit(5));
+  }
+
+  /**
+   * 協調フィルタリングの結果を取得するエンドポイント.
+   *
+   * @param userId ユーザID
+   * @return 協調フィルタリングによる商品の推薦結果のリスト
+   */
+  @GetMapping("/recommend/userBase/{userId}")
+  public ResponseEntity<?> recommendByUserBasePcs(@PathVariable Integer userId) {
+    Optional<User> targetUser = userService.findById(userId);
+    if (targetUser.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    // ターゲットユーザの購入商品をキーとしてセット化（比較用）
+    Set<ProductKey> targetProducts = new HashSet<>();
+    for (Order order : targetUser.get().getOrderList()) {
+      for (OrderProductResponse product :
+          orderService.getOrderDetailsByOrderId(order.getOrderId()).getProducts()) {
+        ProductKey key = new ProductKey(product.getProductId(), product.getProductCategory());
+        targetProducts.add(key);
+      }
+    }
+
+    // 推薦商品のスコア（類似度）を管理するMap<ProductKey, Integer>
+    Map<ProductKey, Integer> recommendScoreMap = new HashMap<>();
+    // 商品の名前を保持しておくMap（重複除去用）
+    Map<ProductKey, String> recommendNameMap = new HashMap<>();
+
+    // 全ユーザの購入履歴をチェック
+    List<Order> orderList = orderService.getAllOrders();
+    for (Order order : orderList) {
+      Integer orderUserId = order.getUserId().getUserId();
+      if (targetUser.get().getUserId().equals(orderUserId)) {
+        continue; // ターゲットユーザはスキップ
+      }
+
+      List<OrderProductResponse> productResponses =
+          orderService.getOrderDetailsByOrderId(order.getOrderId()).getProducts();
+      Set<ProductKey> currentUserKeys =
+          productResponses.stream()
+              .map(p -> new ProductKey(p.getProductId(), p.getProductCategory()))
+              .collect(Collectors.toSet());
+
+      // ターゲットユーザとの共通商品数をカウント
+      long commonCount = currentUserKeys.stream().filter(targetProducts::contains).count();
+
+      if (commonCount > 0) { // 1個以上共通商品あればsimilar userとみなす
+        for (OrderProductResponse product : productResponses) {
+          ProductKey key = new ProductKey(product.getProductId(), product.getProductCategory());
+          // ターゲットユーザが未購入の商品だけを推薦候補にする
+          if (!targetProducts.contains(key)) {
+            // スコアを加算（共通商品数だけ）
+            recommendScoreMap.merge(key, (int) commonCount, Integer::sum);
+            recommendNameMap.putIfAbsent(key, product.getProductName());
+          }
+        }
+      }
+    }
+
+    // MapからList<Map<String,Object>>に変換し、similarityで降順ソート
+    List<Map<String, Object>> recommendedProducts =
+        recommendScoreMap.entrySet().stream()
+            .map(
+                e -> {
+                  Map<String, Object> map = new HashMap<>();
+                  map.put("productId", e.getKey().productId());
+                  map.put("productCategory", e.getKey().productCategory());
+                  map.put("productName", recommendNameMap.get(e.getKey()));
+                  map.put("similarity", e.getValue());
+                  return map;
+                })
+            .sorted((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")))
+            .limit(5)
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok(recommendedProducts);
   }
 
   /**
