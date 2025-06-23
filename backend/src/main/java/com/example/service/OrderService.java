@@ -27,6 +27,15 @@ public class OrderService {
   private static final String PLACEHOLDER_IMAGE_URL = "https://placehold.jp/150x100.png";
 
   /**
+   * 全ユーザの注文リストを取得するメソッド.
+   *
+   * @return 全ユーザの注文リスト
+   */
+  public List<Order> getAllOrders() {
+    return orderRepository.findAll();
+  }
+
+  /**
    * ユーザーIDを指定して注文履歴を取得するメソッド.
    *
    * @param userId ユーザーID

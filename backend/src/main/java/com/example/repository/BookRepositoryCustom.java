@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+/** Bookエンティティに対するカスタムクエリ操作を定義するインタフェース. */
 public interface BookRepositoryCustom {
   Page<Book> findByMultipleConditions(
       String sort,

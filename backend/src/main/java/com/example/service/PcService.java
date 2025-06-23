@@ -1,7 +1,15 @@
 package com.example.service;
 
-import com.example.model.*;
-import com.example.repository.*;
+import com.example.model.Cpu;
+import com.example.model.Gpu;
+import com.example.model.Os;
+import com.example.model.Pc;
+import com.example.model.Purpose;
+import com.example.repository.CpuRepository;
+import com.example.repository.GpuRepository;
+import com.example.repository.OsRepository;
+import com.example.repository.PcRepository;
+import com.example.repository.PurposeRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
