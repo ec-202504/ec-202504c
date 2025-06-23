@@ -1,6 +1,6 @@
 import type { Review } from "../types";
 import RatingStars from "./RatingStars";
-import { formatOrderDate } from "../../../features/order/utils/formatLocalDate";
+import { formatToTimezoneDate } from "../../../utils/formatToFrontDate";
 
 type ReviewItemProps = {
   review: Review;
@@ -13,7 +13,7 @@ export default function ReviewItem({ review }: ReviewItemProps) {
         <div className="flex items-center gap-3">
           <span className="font-medium text-gray-900">{review.userName}</span>
           <span className="text-xs text-gray-500">
-            {formatOrderDate(review.reviewDateTime)}
+            {formatToTimezoneDate(review.reviewDateTime)}
           </span>
         </div>
 
