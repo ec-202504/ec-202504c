@@ -68,6 +68,16 @@ export const useProductFilters = () => {
     [selectedTab, navigate],
   );
 
+  /**
+   * フィルター選択時のハンドラー
+   *
+   * @param filterTermId - 変更対象のフィルター項目ID。全クリア時は空文字。
+   * @param termId - 選択されたフィルター値のID。全クリア時は空文字。
+   *
+   * - 通常のフィルター選択時は該当フィルターのみ変更し、ページ・クエリをリセット。
+   * - 全ての絞り込み条件をクリアしたい場合は両方空文字で呼び出す。
+   * - 状態変更後、URLパラメータも更新する。
+   */
   // フィルター選択ハンドラー
   const handleFilterChange = useCallback(
     (filterTermId: string, termId: string) => {
@@ -77,23 +87,28 @@ export const useProductFilters = () => {
           [filterTermId]: termId,
         };
         setPcFilters(newPcFilters);
-        updateUrlParams(newPcFilters, bookFilters, query, page);
+        setPage(0);
+        setQuery("");
+        updateUrlParams(newPcFilters, bookFilters, query, 0);
       } else {
         const newBookFilters = {
           ...bookFilters,
           [filterTermId]: termId,
         };
         setBookFilters(newBookFilters);
-        updateUrlParams(pcFilters, newBookFilters, query, page);
+        setPage(0);
+        updateUrlParams(pcFilters, newBookFilters, query, 0);
       }
     },
-    [selectedTab, pcFilters, bookFilters, query, page, updateUrlParams],
+    [selectedTab, pcFilters, bookFilters, query, updateUrlParams],
   );
 
   // 検索ハンドラー
   const handleSearch = useCallback(
     (newQuery: string) => {
       setQuery(newQuery);
+      setPcFilters(getInitialFilters(TAB_VALUES.PC, {}) as PcFilters);
+      setBookFilters(getInitialFilters(TAB_VALUES.BOOK, {}) as BookFilters);
       setPage(0);
       updateUrlParams(pcFilters, bookFilters, newQuery, 0);
     },

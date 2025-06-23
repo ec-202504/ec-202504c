@@ -3,6 +3,13 @@ import { axiosInstance } from "../../../lib/axiosInstance";
 import type { Product, FilterTerm } from "../types";
 import { TAB_VALUES } from "../types/constants";
 
+/**
+ * 商品データとフィルター条件を取得・管理するカスタムフック
+ *
+ * @param selectedTab - 現在選択されているタブ（PC/BOOK）
+ * @param getApiParams - APIリクエスト用のパラメータ取得関数
+ * @returns 商品リスト・フィルター条件・ローディング状態・ページ数・再取得関数
+ */
 export const useProductData = (
   selectedTab: string,
   getApiParams: () => Record<string, string | number>,
@@ -14,7 +21,12 @@ export const useProductData = (
   const [totalPages, setTotalPages] = useState<number>(1);
 
   /**
-   * 商品データを取得する関数
+   * 商品データをAPIから取得し、状態を更新する
+   *
+   * @async
+   * @returns {Promise<void>}
+   * - 選択中タブに応じて商品リスト・フィルター条件を取得
+   * - ローディング状態も管理
    */
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -41,7 +53,10 @@ export const useProductData = (
   }, [selectedTab, getApiParams]);
 
   /**
-   * PC用のフィルター条件を取得
+   * PC用のフィルター条件をAPIから取得し、状態を更新する
+   *
+   * @async
+   * @returns {Promise<void>}
    */
   const fetchPcFilterTerms = async () => {
     try {
@@ -93,7 +108,10 @@ export const useProductData = (
   };
 
   /**
-   * 本用のフィルター条件を取得
+   * 本用のフィルター条件をAPIから取得し、状態を更新する
+   *
+   * @async
+   * @returns {Promise<void>}
    */
   const fetchBookFilterTerms = async () => {
     try {
