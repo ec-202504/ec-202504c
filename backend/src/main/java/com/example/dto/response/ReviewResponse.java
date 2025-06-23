@@ -1,10 +1,16 @@
 package com.example.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /** レビューのレスポンスDTO. */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ReviewResponse {
   /** レビューID. */
@@ -15,12 +21,6 @@ public class ReviewResponse {
 
   /** 評価（1～5）. */
   private Integer rating;
-
-  /** 商品カテゴリ（0:PC, 1:Book）. */
-  private Integer productCategory;
-
-  /** 商品ID. */
-  private Integer productId;
 
   /** ユーザーID. */
   private Integer userId;

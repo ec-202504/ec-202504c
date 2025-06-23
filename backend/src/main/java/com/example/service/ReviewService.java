@@ -49,8 +49,6 @@ public class ReviewService {
         .id(review.getId())
         .comment(review.getComment())
         .rating(review.getRating())
-        .productCategory(review.getProductCategory())
-        .productId(review.getProductId())
         .userId(review.getUser().getUserId())
         .userName(review.getUser().getName())
         .build();
