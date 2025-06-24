@@ -40,14 +40,20 @@ function Header() {
       <Separator orientation="vertical" className="h-6 mx-4" />
 
       <nav className="flex items-center gap-3 ml-auto">
-        <Link to="/product/recommend" className="hover:underline">
-          レコメンド
+        <Link to="/product" className="hover:underline">
+          商品一覧
         </Link>
-        <Link to="/order/history" className="hover:underline">
-          注文履歴
+
+        <Link to="/product/compare" className="hover:underline">
+          商品比較
         </Link>
+
         <Link to="/cart" className="hover:underline">
           カート
+        </Link>
+
+        <Link to="/order/history" className="hover:underline">
+          注文履歴
         </Link>
 
         <div className="h-5 mx-2">
