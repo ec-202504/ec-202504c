@@ -37,7 +37,8 @@ function UserLoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      await axiosInstance.post("/user/login", data);
+      const response = await axiosInstance.post("/user/login", data);
+      localStorage.setItem("jwt_token", response.data.token);
       navigate({ to: "/product", replace: true });
     } catch {
       setError("email", { message: "ログインに失敗しました" });

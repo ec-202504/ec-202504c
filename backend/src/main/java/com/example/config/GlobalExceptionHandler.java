@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.naming.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
   /**
-   * バリデーションエラーが起きた際に、エラーメッセージを返すハンドラメソッド.
+   * バリデーションエラーが起きた際に、エラーメッセージを返す.
    *
    * @param ex フィールドエラー
    * @return エラーメッセージ
@@ -36,7 +37,19 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * エンティティが見つからない場合に、404エラーを返すハンドラメソッド.
+   * Spring Security の認証例外を処理し、401エラーを返す.
+   *
+   * @param ex 認証時の例外
+   * @return 401エラーメッセージ
+   */
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<Map<String, String>> handleAuthenticationException(
+      AuthenticationException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", ex.getMessage()));
+  }
+
+  /**
+   * エンティティが見つからない場合に、404エラーを返す.
    *
    * @param ex エンティティが見つからない例外
    * @return 404エラーメッセージ
@@ -47,9 +60,9 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * その他の例外が発生した場合に、500エラーを返すハンドラメソッド.
+   * メール送信時に例外が発生した場合に、500エラーを返す.
    *
-   * @param ex その他の例外
+   * @param ex メール送信時の例外
    * @return 500エラーメッセージ
    */
   @ExceptionHandler(MessagingException.class)

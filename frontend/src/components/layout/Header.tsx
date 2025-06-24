@@ -11,7 +11,11 @@ function Header() {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        await axiosInstance.get("/user/me");
+        await axiosInstance.get("/user/me", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        });
         setIsLogin(true);
       } catch (error) {
         console.error("ログイン状態の確認に失敗しました", error);
