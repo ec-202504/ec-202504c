@@ -14,8 +14,6 @@ type SpecTableProps = {
 };
 
 function SpecTable({ products, productCategory }: SpecTableProps) {
-  if (products.length === 0) return null;
-
   /**
    * 商品の仕様テーブルのキーを取得
    *
@@ -28,52 +26,57 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
   };
 
   return (
-    <div className="overflow-x-auto">
-      <Table className="w-full border-collapse">
-        <TableHeader>
-          <TableRow className="border-b">
-            <TableHead className="text-left p-4 font-medium bg-muted/50">
-              仕様
-            </TableHead>
+    <>
+      {products.length > 0 && (
+        <div className="overflow-x-auto">
+          <Table className="w-full border-collapse">
+            <TableHeader>
+              <TableRow className="border-b">
+                <TableHead className="text-left p-4 font-medium bg-muted/50">
+                  仕様
+                </TableHead>
 
-            {products.map((product) => (
-              <TableHead
-                key={
-                  productCategory === "pc"
-                    ? (product as ComparePc).pcId
-                    : (product as CompareBook).bookId
-                }
-                className="text-left p-4 font-medium bg-muted/50"
-              >
-                {product.name}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
+                {products.map((product) => (
+                  <TableHead
+                    key={
+                      productCategory === "pc"
+                        ? (product as ComparePc).pcId
+                        : (product as CompareBook).bookId
+                    }
+                    className="text-left p-4 font-medium bg-muted/50"
+                  >
+                    {product.name}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
 
-        <TableBody>
-          {getSpecKeys(products).map((specKey) => (
-            <TableRow key={specKey} className="border-b">
-              <TableCell className="p-4 font-medium bg-muted/30">
-                {specKey}
-              </TableCell>
-              {products.map((product) => (
-                <TableCell
-                  key={
-                    productCategory === "pc"
-                      ? (product as ComparePc).pcId
-                      : (product as CompareBook).bookId
-                  }
-                  className="p-4"
-                >
-                  {product.specs[specKey as keyof typeof product.specs] || "-"}
-                </TableCell>
+            <TableBody>
+              {getSpecKeys(products).map((specKey) => (
+                <TableRow key={specKey} className="border-b">
+                  <TableCell className="p-4 font-medium bg-muted/30">
+                    {specKey}
+                  </TableCell>
+                  {products.map((product) => (
+                    <TableCell
+                      key={
+                        productCategory === "pc"
+                          ? (product as ComparePc).pcId
+                          : (product as CompareBook).bookId
+                      }
+                      className="p-4"
+                    >
+                      {product.specs[specKey as keyof typeof product.specs] ||
+                        "-"}
+                    </TableCell>
+                  ))}
+                </TableRow>
               ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </>
   );
 }
 

@@ -14,10 +14,20 @@ function ComparePage() {
   const [selectedPcIds, setSelectedPcIds] = useState<number[]>([]);
   const [selectedBookIds, setSelectedBookIds] = useState<number[]>([]);
 
+  /**
+   * 現在選択されているカテゴリの商品を取得
+   *
+   * @returns 現在選択されているカテゴリの商品
+   */
   const getCurrentProducts = () => {
     return selectedCategory === "pc" ? pcProducts : bookProducts;
   };
 
+  /**
+   * 現在選択されている商品を取得
+   *
+   * @returns 現在選択されている商品
+   */
   const getSelectedProducts = () => {
     if (selectedCategory === "pc") {
       return pcProducts.filter((pc) => selectedPcIds.includes(pc.pcId));
@@ -25,10 +35,20 @@ function ComparePage() {
     return bookProducts.filter((book) => selectedBookIds.includes(book.bookId));
   };
 
+  /**
+   * 現在選択されている商品IDを取得
+   *
+   * @returns 現在選択されている商品ID
+   */
   const getCurrentSelectedIds = () => {
     return selectedCategory === "pc" ? selectedPcIds : selectedBookIds;
   };
 
+  /**
+   * 現在選択されている商品IDを設定
+   *
+   * @param ids 設定する商品のID
+   */
   const setCurrentSelectedIds = (ids: number[]) => {
     if (selectedCategory === "pc") {
       setSelectedPcIds(ids);
@@ -37,6 +57,29 @@ function ComparePage() {
     }
   };
 
+  /**
+   * 選択されている商品を除いた商品を取得
+   *
+   * @returns 選択されている商品を除いた商品
+   */
+  const getAvailableProducts = () => {
+    const currentProducts = getCurrentProducts();
+    const selectedIds = getCurrentSelectedIds();
+
+    return currentProducts.filter((product) => {
+      const productId =
+        selectedCategory === "pc"
+          ? (product as ComparePc).pcId
+          : (product as CompareBook).bookId;
+      return !selectedIds.includes(productId);
+    });
+  };
+
+  /**
+   * 商品を選択した際のイベントハンドラー
+   *
+   * @param productId 選択する商品のID
+   */
   const handleProductSelect = (productId: number) => {
     const currentIds = getCurrentSelectedIds();
     if (currentIds.includes(productId)) {
@@ -46,20 +89,6 @@ function ComparePage() {
       // 3つ未満の場合は追加
       setCurrentSelectedIds([...currentIds, productId]);
     }
-  };
-
-  const getAvailableProducts = () => {
-    const currentProducts = getCurrentProducts();
-    const selectedIds = getCurrentSelectedIds();
-
-    // 選択されていない商品のみを返す
-    return currentProducts.filter((product) => {
-      const productId =
-        selectedCategory === "pc"
-          ? (product as ComparePc).pcId
-          : (product as CompareBook).bookId;
-      return !selectedIds.includes(productId);
-    });
   };
 
   const selectedProducts = getSelectedProducts();
@@ -88,7 +117,7 @@ function ComparePage() {
           <CompareProductSelector
             selectedIds={selectedPcIds}
             availableProducts={getAvailableProducts()}
-            category="pc"
+            productCategory="pc"
             onProductSelect={handleProductSelect}
           />
 
@@ -116,7 +145,7 @@ function ComparePage() {
           <CompareProductSelector
             selectedIds={selectedBookIds}
             availableProducts={getAvailableProducts()}
-            category="book"
+            productCategory="book"
             onProductSelect={handleProductSelect}
           />
 
