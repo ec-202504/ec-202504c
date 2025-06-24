@@ -17,8 +17,10 @@ import {
   bookComparisonAtom,
   addPcToComparisonAtom,
   addBookToComparisonAtom,
+  clearPcComparisonAtom,
+  clearBookComparisonAtom,
 } from "../../stores/productComparisonAtom";
-import { Scale, ArrowRight } from "lucide-react";
+import { Scale, ArrowRight, Trash2 } from "lucide-react";
 
 export default function ProductListPage() {
   const {
@@ -44,12 +46,14 @@ export default function ProductListPage() {
   const [bookComparisonIds] = useAtom(bookComparisonAtom);
   const addPcToComparison = useSetAtom(addPcToComparisonAtom);
   const addBookToComparison = useSetAtom(addBookToComparisonAtom);
+  const clearPcComparison = useSetAtom(clearPcComparisonAtom);
+  const clearBookComparison = useSetAtom(clearBookComparisonAtom);
 
   // 検索フォームの送信ハンドラー
   const handleSubmit = createSearchSubmitHandler(handleSearch);
 
   /**
-   * 商品比較に一括追加するハンドラー
+   * 商品比較に追加するハンドラー
    *
    * @param productIds 追加する商品IDの配列
    */
@@ -76,6 +80,17 @@ export default function ProductListPage() {
       : bookComparisonIds.length;
   };
 
+  /**
+   * 比較リストをクリアするハンドラー
+   */
+  const handleClearComparison = () => {
+    if (selectedTab === TAB_VALUES.PC) {
+      clearPcComparison();
+    } else {
+      clearBookComparison();
+    }
+  };
+
   return (
     <div className="p-4 h-80vh">
       {/* 比較ページへのリンク */}
@@ -89,12 +104,19 @@ export default function ProductListPage() {
               </span>
             </div>
 
-            <Link to="/product/comparison">
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-800">
-                比較ページへ
-                <ArrowRight className="w-4 h-4 ml-1" />
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={handleClearComparison}>
+                <Trash2 className="w-4 h-4 mr-1" />
+                クリア
               </Button>
-            </Link>
+
+              <Link to="/product/comparison">
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-800">
+                  比較ページへ
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       )}
