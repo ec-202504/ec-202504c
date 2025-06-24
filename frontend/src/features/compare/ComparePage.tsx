@@ -76,18 +76,26 @@ function ComparePage() {
   };
 
   /**
-   * 商品を選択した際のイベントハンドラー
+   * 商品を追加する際のイベントハンドラー
    *
-   * @param productId 選択する商品のID
+   * @param productId 追加する商品のID
    */
-  const handleProductSelect = (productId: number) => {
+  const handleProductAdd = (productId: number) => {
+    const currentIds = getCurrentSelectedIds();
+    if (currentIds.length < 3 && !currentIds.includes(productId)) {
+      setCurrentSelectedIds([...currentIds, productId]);
+    }
+  };
+
+  /**
+   * 商品を削除する際のイベントハンドラー
+   *
+   * @param productId 削除する商品のID
+   */
+  const handleProductRemove = (productId: number) => {
     const currentIds = getCurrentSelectedIds();
     if (currentIds.includes(productId)) {
-      // 既に選択されている場合は削除
       setCurrentSelectedIds(currentIds.filter((id) => id !== productId));
-    } else if (currentIds.length < 3) {
-      // 3つ未満の場合は追加
-      setCurrentSelectedIds([...currentIds, productId]);
     }
   };
 
@@ -118,7 +126,7 @@ function ComparePage() {
             selectedIds={selectedPcIds}
             availableProducts={getAvailableProducts()}
             productCategory="pc"
-            onProductSelect={handleProductSelect}
+            onProductSelect={handleProductAdd}
           />
 
           <div>
@@ -126,7 +134,7 @@ function ComparePage() {
             <CompareProductList
               products={selectedProducts}
               productCategory="pc"
-              onRemoveProduct={handleProductSelect}
+              onRemoveProduct={handleProductRemove}
             />
           </div>
 
@@ -146,7 +154,7 @@ function ComparePage() {
             selectedIds={selectedBookIds}
             availableProducts={getAvailableProducts()}
             productCategory="book"
-            onProductSelect={handleProductSelect}
+            onProductSelect={handleProductAdd}
           />
 
           <div>
@@ -154,7 +162,7 @@ function ComparePage() {
             <CompareProductList
               products={selectedProducts}
               productCategory="book"
-              onRemoveProduct={handleProductSelect}
+              onRemoveProduct={handleProductRemove}
             />
           </div>
 

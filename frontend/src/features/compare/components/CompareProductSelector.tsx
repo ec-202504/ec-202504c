@@ -36,8 +36,6 @@ function CompareProductSelector({
       {selectedIds.length < MAX_SELECTIONS && availableProducts.length > 0 && (
         <Select
           onValueChange={(value: string) => {
-            console.log("value", value);
-
             const productId = Number(value);
             if (!Number.isNaN(productId)) {
               onProductSelect(productId);
