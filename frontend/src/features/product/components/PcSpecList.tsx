@@ -32,7 +32,9 @@ export default function PcSpecList({ pc }: PcSpecListProps) {
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">ストレージ：</div>
-        {pc.storage}GB
+        {pc.storage >= 1024
+          ? `${(pc.storage / 1024).toFixed(1)}TB`
+          : `${pc.storage}GB`}
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">サイズ：</div>
