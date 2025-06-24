@@ -1,5 +1,8 @@
 export type FilterTerm = {
-  id: number;
+  id: string;
   label: string;
-  options: string[];
+  options: {
+    id: number;
+    name: string;
+  }[];
 };
