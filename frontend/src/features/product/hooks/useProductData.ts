@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import type { Product, FilterTerm } from "../types";
 import { TAB_VALUES } from "../types/constants";
+import { fetchPcReviews, fetchBookReviews } from "../api/reviewApi";
 
 /**
  * 商品データとフィルター条件を取得・管理するカスタムフック
@@ -39,10 +40,20 @@ export const useProductData = (
       setTotalPages(productListResponse.data?.totalPages - 1 || 1);
 
       if (selectedTab === TAB_VALUES.PC) {
-        setPcs(productListResponse.data?.content);
+        const pcs = productListResponse.data?.content ?? [];
+        const pcsWithReviews = await attachReviewsToProducts(
+          pcs,
+          fetchPcReviews,
+        );
+        setPcs(pcsWithReviews);
         await fetchPcFilterTerms();
       } else {
-        setTechBooks(productListResponse.data?.content);
+        const techBooks = productListResponse.data?.content ?? [];
+        const booksWithReviews = await attachReviewsToProducts(
+          techBooks,
+          fetchBookReviews,
+        );
+        setTechBooks(booksWithReviews);
         await fetchBookFilterTerms();
       }
     } catch (error) {
@@ -150,3 +161,26 @@ export const useProductData = (
     refetch: fetchData,
   };
 };
+
+// 商品配列にレビュー情報を付与する共通メソッド
+async function attachReviewsToProducts(
+  products: Product[],
+  fetchReviews: (id: string) => Promise<{ rating: number }[]>,
+): Promise<Product[]> {
+  return Promise.all(
+    products.map(async (product) => {
+      const reviews = await fetchReviews(product.id);
+      const totalReviews = reviews.length;
+      const average =
+        totalReviews > 0
+          ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+            totalReviews
+          : 0;
+      return {
+        ...product,
+        reviewCount: totalReviews,
+        averageRating: average,
+      };
+    }),
+  );
+}
