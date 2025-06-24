@@ -83,6 +83,26 @@ public class BookService {
   }
 
   /**
+   * 著者名と一致するBookのリストを取得するメソッド.
+   *
+   * @param author 著者名
+   * @return 著者名と一致するBookのリスト
+   */
+  public List<Book> findByAuthor(String author) {
+    return bookRepository.findByAuthor(author);
+  }
+
+  /**
+   * 出版年度と一致するBookのリストを取得するメソッド.
+   *
+   * @param publishDate 出版年度
+   * @return 出版年度と一致するBookのリスト
+   */
+  public List<Book> findByPublishDate(LocalDate publishDate) {
+    return bookRepository.findByPublishDate(publishDate);
+  }
+
+  /**
    * 言語IDと一致するBookのリストを取得するメソッド.
    *
    * @param languageId 言語ID
