@@ -1,9 +1,23 @@
 import { useState } from "react";
 import type { ComparisonPc, ComparisonBook, ProductCategory } from "./types";
 import { pcProducts, bookProducts } from "./data/products";
+import { useAtom, useSetAtom } from "jotai";
+import {
+  pcComparisonAtom,
+  bookComparisonAtom,
+  addPcToComparisonAtom,
+  addBookToComparisonAtom,
+  removePcFromComparisonAtom,
+  removeBookFromComparisonAtom,
+} from "../../stores/productComparisonAtom";
 
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "../../components/ui/separator";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
 import ComparisonProductSelector from "./components/ComparisonProductSelector";
 import ComparisonProductList from "./components/ComparisonProductList";
 import SpecTable from "./components/SpecTable";
@@ -11,8 +25,14 @@ import SpecTable from "./components/SpecTable";
 function ComparisonPage() {
   const [selectedCategory, setSelectedCategory] =
     useState<ProductCategory>("pc");
-  const [selectedPcIds, setSelectedPcIds] = useState<number[]>([]);
-  const [selectedBookIds, setSelectedBookIds] = useState<number[]>([]);
+
+  // 商品比較用のatom
+  const [pcComparisonIds] = useAtom(pcComparisonAtom);
+  const [bookComparisonIds] = useAtom(bookComparisonAtom);
+  const addPcToComparison = useSetAtom(addPcToComparisonAtom);
+  const addBookToComparison = useSetAtom(addBookToComparisonAtom);
+  const removePcFromComparison = useSetAtom(removePcFromComparisonAtom);
+  const removeBookFromComparison = useSetAtom(removeBookFromComparisonAtom);
 
   /**
    * 現在選択されているカテゴリの商品を取得
@@ -30,9 +50,11 @@ function ComparisonPage() {
    */
   const getSelectedProducts = () => {
     if (selectedCategory === "pc") {
-      return pcProducts.filter((pc) => selectedPcIds.includes(pc.pcId));
+      return pcProducts.filter((pc) => pcComparisonIds.includes(pc.pcId));
     }
-    return bookProducts.filter((book) => selectedBookIds.includes(book.bookId));
+    return bookProducts.filter((book) =>
+      bookComparisonIds.includes(book.bookId),
+    );
   };
 
   /**
@@ -41,20 +63,7 @@ function ComparisonPage() {
    * @returns 現在選択されている商品ID
    */
   const getCurrentSelectedIds = () => {
-    return selectedCategory === "pc" ? selectedPcIds : selectedBookIds;
-  };
-
-  /**
-   * 現在選択されている商品IDを設定
-   *
-   * @param ids 設定する商品のID
-   */
-  const setCurrentSelectedIds = (ids: number[]) => {
-    if (selectedCategory === "pc") {
-      setSelectedPcIds(ids);
-    } else {
-      setSelectedBookIds(ids);
-    }
+    return selectedCategory === "pc" ? pcComparisonIds : bookComparisonIds;
   };
 
   /**
@@ -81,9 +90,11 @@ function ComparisonPage() {
    * @param productId 追加する商品のID
    */
   const handleProductAdd = (productId: number) => {
-    const currentIds = getCurrentSelectedIds();
-    if (currentIds.length < 3 && !currentIds.includes(productId)) {
-      setCurrentSelectedIds([...currentIds, productId]);
+    const category = selectedCategory === "pc" ? "pc" : "book";
+    if (category === "pc") {
+      addPcToComparison(productId);
+    } else {
+      addBookToComparison(productId);
     }
   };
 
@@ -93,9 +104,11 @@ function ComparisonPage() {
    * @param productId 削除する商品のID
    */
   const handleProductRemove = (productId: number) => {
-    const currentIds = getCurrentSelectedIds();
-    if (currentIds.includes(productId)) {
-      setCurrentSelectedIds(currentIds.filter((id) => id !== productId));
+    const category = selectedCategory === "pc" ? "pc" : "book";
+    if (category === "pc") {
+      removePcFromComparison(productId);
+    } else {
+      removeBookFromComparison(productId);
     }
   };
 
@@ -123,7 +136,7 @@ function ComparisonPage() {
 
         <TabsContent value="pc" className="space-y-8">
           <ComparisonProductSelector
-            selectedIds={selectedPcIds}
+            selectedIds={pcComparisonIds}
             availableProducts={getAvailableProducts()}
             productCategory="pc"
             onProductSelect={handleProductAdd}
@@ -151,7 +164,7 @@ function ComparisonPage() {
 
         <TabsContent value="book" className="space-y-8">
           <ComparisonProductSelector
-            selectedIds={selectedBookIds}
+            selectedIds={bookComparisonIds}
             availableProducts={getAvailableProducts()}
             productCategory="book"
             onProductSelect={handleProductAdd}
