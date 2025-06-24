@@ -43,7 +43,6 @@ export default function ProductListPage() {
           <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
           <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
         </TabsList>
-
         <TabsContent value={TAB_VALUES.PC}>
           <ProductList
             isLoading={isLoading}
