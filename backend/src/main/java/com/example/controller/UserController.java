@@ -59,6 +59,7 @@ public class UserController {
    */
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    // 初回認証
     UsernamePasswordAuthenticationToken token =
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
     Authentication authentication = authenticationManager.authenticate(token);
@@ -66,20 +67,6 @@ public class UserController {
     String jwt = jwtTokenProvider.generateToken(authentication);
     return ResponseEntity.ok(Map.of("token", jwt));
   }
-
-  //  /**
-  //   * ログアウトする.
-  //   *
-  //   * <p>セッションを破棄し、204 NO CONTENT を返す.
-  //   *
-  //   * @param session セッション
-  //   * @return ステータスコード204
-  //   */
-  //  @PostMapping("/logout")
-  //  public ResponseEntity<Void> logout(HttpSession session) {
-  //    session.invalidate();
-  //    return ResponseEntity.noContent().build();
-  //  }
 
   /**
    * 現在のログイン状態を確認する.

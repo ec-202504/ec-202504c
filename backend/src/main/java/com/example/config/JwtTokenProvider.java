@@ -2,7 +2,6 @@ package com.example.config;
 
 import com.example.dto.security.CustomUserDetails;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -39,13 +38,15 @@ public class JwtTokenProvider {
         principal.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.toList());
+    // JwtClaimSetで渡す型がInstantのため、現在時刻をInstant型で取得
+    Instant now = Instant.now();
     // JWTクレームセット(ペイロード)の構築
     JwtClaimsSet claimsSet =
         JwtClaimsSet.builder()
             .subject(principal.getEmail()) // メールアドレスを"sub"クレームにセット
             .issuer(jwtIssuer) // 発行者
-            .issuedAt(Date.from(Instant.now()).toInstant()) // 発行時刻
-            .expiresAt(Date.from(Instant.now().plusMillis(jwtExpiration)).toInstant()) // 有効期限
+            .issuedAt(now) // 発行時刻
+            .expiresAt(now.plusMillis(jwtExpiration)) // 有効期限
             .claim("roles", roles) // カスタムクレームとしてロールを追加
             .build();
     // JWTを生成し、文字列に変換して返す

@@ -7,6 +7,8 @@ import { axiosInstance } from "../../lib/axiosInstance";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "sonner";
 import type { CartProduct } from "../../types/cartProduct";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../stores/compareAtom";
 
 type UpdateCartQuantityRequest = {
   cartProductId: number;
@@ -15,6 +17,7 @@ type UpdateCartQuantityRequest = {
 
 function CartPage() {
   const [cart, setCart] = useState<CartProduct[]>([]);
+  const user = useAtomValue(userAtom);
 
   const navigate = useNavigate();
 
@@ -79,6 +82,14 @@ function CartPage() {
     }
 
     fetchCartProducts();
+  };
+
+  const handleOrder = async () => {
+    if (!user) {
+      navigate({ to: "/user/login" });
+    } else {
+      navigate({ to: "/order" });
+    }
   };
 
   return (
@@ -182,7 +193,7 @@ function CartPage() {
           type="button"
           disabled={cart.length === 0}
           className="px-6 h-10 rounded-lg shadow-sm"
-          onClick={() => navigate({ to: "/order" })}
+          onClick={handleOrder}
         >
           注文に進む
         </Button>

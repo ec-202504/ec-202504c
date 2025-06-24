@@ -15,11 +15,15 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
+import { ErrorAlert } from "../../components/ui/error-alert";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { axiosInstance } from "../../lib/axiosInstance";
+import { useState } from "react";
+import { jwtDecoder } from "../../utils/jwtDecoder";
 
 function UserLoginPage() {
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   type LoginForm = {
     email: string;
@@ -33,16 +37,25 @@ function UserLoginPage() {
     },
   });
 
-  const { control, handleSubmit, setError } = form;
+  const { control, handleSubmit } = form;
 
   const onSubmit = async (data: LoginForm) => {
     try {
       const response = await axiosInstance.post("/user/login", data);
+      const claims = jwtDecoder(response.data.token); // トークンのペイロードを取得
+      const expiresAt: number = claims.exp;
+      const remaining: number = Date.now() - expiresAt; // トークンの残り時間 (ms)
       localStorage.setItem("jwt_token", response.data.token);
+      // トークンの残り時間が0になったらトークンを削除
+      setTimeout(() => {
+        localStorage.removeItem("jwt_token");
+      }, remaining);
       navigate({ to: "/product", replace: true });
     } catch {
-      setError("email", { message: "ログインに失敗しました" });
-      setError("password", { message: "ログインに失敗しました" });
+      // ログインエラーを全体に表示
+      setLoginError(
+        "ログインに失敗しました。メールアドレスとパスワードを確認してください。",
+      );
     }
   };
 
@@ -53,6 +66,7 @@ function UserLoginPage() {
           <CardTitle>ログイン</CardTitle>
         </CardHeader>
         <CardContent>
+          {loginError && <ErrorAlert message={loginError} className="mb-4" />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <FormField
