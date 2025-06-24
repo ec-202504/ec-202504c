@@ -36,7 +36,7 @@ export default function PcInfo({
 
       <div className="flex-1">
         <h1 className="text-2xl font-bold mb-2">{pc.name}</h1>
-        <div className="text-xl mb-4">{pc.price.toLocaleString()}円</div>
+        <div className="text-xl mb-4">¥{pc.price.toLocaleString()}</div>
         <div className="flex items-center gap-2 mb-4">
           <span>数量</span>
 

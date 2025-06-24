@@ -30,7 +30,7 @@ export default function ProductCard({ product, selectedTab }: Props) {
       >
         <div className="w-24 h-24 bg-gray-200 mb-2" />
         <div>商品名：{product.name}</div>
-        <div>価格：{formatPrice(product.price)}</div>
+        <div>価格：¥{formatPrice(product.price)}</div>
       </Card>
     </Link>
   );

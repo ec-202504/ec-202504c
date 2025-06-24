@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import { toast } from "sonner";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
-import type { AddCartRequest, Pc, Review } from "../types";
+import type { AddCartRequest, Pc, RawPc, Review } from "../types";
 import { fetchPcReviews } from "../api/reviewApi";
 
 import PcInfo from "../components/PcInfo";
@@ -12,9 +12,12 @@ import ProductNotFound from "../components/ProductNotFound";
 import ReviewInfo from "../components/ReviewInfo";
 import RecommendedProducts from "../components/RecommendedProducts";
 import SimilarUserProducts from "../components/SimilarUserProducts";
+import { convertToPc } from "../utils/pcConverter";
 
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
+  const [contentBasedPcs, setContentBasedPcs] = useState<Pc[]>([]);
+  const [similarPcs, setSimilarPcs] = useState<Pc[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -65,8 +68,18 @@ export default function PcDetail() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(`/pcs/${itemId}`);
-      setPc(response.data);
+      const pcDetailResponse = await axiosInstance.get(`/pcs/${itemId}`);
+      setPc(pcDetailResponse.data);
+      const contentBasePcsResponse = await axiosInstance.get(
+        `/pcs/recommend/contentBase/${itemId}`,
+      );
+      console.log("contentBasePcsResponse", contentBasePcsResponse);
+      const rawPcs = contentBasePcsResponse.data;
+      setContentBasedPcs(rawPcs.map((rawPc: RawPc) => convertToPc(rawPc)));
+      // const similarPcsResponse = await axiosInstance.get(
+      //     `/pcs/recommend/similar/${itemId}`
+      // );
+      // setSimilarPcs(similarPcsResponse.data);
     } catch {
       toast.error("商品情報の取得に失敗しました");
     } finally {
@@ -117,7 +130,7 @@ export default function PcDetail() {
                   </div>
                 </div>
               </div>
-              <RecommendedProducts />
+              <RecommendedProducts pcs={contentBasedPcs} />
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}
