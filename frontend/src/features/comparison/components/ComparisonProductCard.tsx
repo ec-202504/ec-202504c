@@ -1,5 +1,5 @@
 import { ShoppingCart } from "lucide-react";
-import type { ComparePc, CompareBook } from "../types";
+import type { ComparisonPc, ComparisonBook } from "../types";
 import { toast } from "sonner";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,21 +7,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import RatingStars from "@/components/RatingStars";
 
-type CompareProductCardProps = {
-  product: ComparePc | CompareBook;
+type ComparisonProductCardProps = {
+  product: ComparisonPc | ComparisonBook;
   productCategory: "pc" | "book";
   onRemove: (productId: number) => void;
 };
 
-function CompareProductCard({
+function ComparisonProductCard({
   product,
   productCategory,
   onRemove,
-}: CompareProductCardProps) {
+}: ComparisonProductCardProps) {
   const productId =
     productCategory === "pc"
-      ? (product as ComparePc).pcId
-      : (product as CompareBook).bookId;
+      ? (product as ComparisonPc).pcId
+      : (product as ComparisonBook).bookId;
 
   const handleAddToCart = () => {
     toast.success("カートに追加しました");
@@ -75,4 +75,4 @@ function CompareProductCard({
   );
 }
 
-export default CompareProductCard;
+export default ComparisonProductCard;

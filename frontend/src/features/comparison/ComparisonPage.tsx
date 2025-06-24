@@ -1,14 +1,14 @@
 import { useState } from "react";
-import type { ComparePc, CompareBook, ProductCategory } from "./types";
+import type { ComparisonPc, ComparisonBook, ProductCategory } from "./types";
 import { pcProducts, bookProducts } from "./data/products";
 
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CompareProductSelector from "./components/CompareProductSelector";
-import CompareProductList from "./components/CompareProductList";
+import ComparisonProductSelector from "./components/ComparisonProductSelector";
+import ComparisonProductList from "./components/ComparisonProductList";
 import SpecTable from "./components/SpecTable";
 
-function ComparePage() {
+function ComparisonPage() {
   const [selectedCategory, setSelectedCategory] =
     useState<ProductCategory>("pc");
   const [selectedPcIds, setSelectedPcIds] = useState<number[]>([]);
@@ -69,8 +69,8 @@ function ComparePage() {
     return currentProducts.filter((product) => {
       const productId =
         selectedCategory === "pc"
-          ? (product as ComparePc).pcId
-          : (product as CompareBook).bookId;
+          ? (product as ComparisonPc).pcId
+          : (product as ComparisonBook).bookId;
       return !selectedIds.includes(productId);
     });
   };
@@ -122,7 +122,7 @@ function ComparePage() {
         </TabsList>
 
         <TabsContent value="pc" className="space-y-8">
-          <CompareProductSelector
+          <ComparisonProductSelector
             selectedIds={selectedPcIds}
             availableProducts={getAvailableProducts()}
             productCategory="pc"
@@ -131,7 +131,7 @@ function ComparePage() {
 
           <div>
             <h2 className="text-xl font-semibold mb-4">PC比較</h2>
-            <CompareProductList
+            <ComparisonProductList
               products={selectedProducts}
               productCategory="pc"
               onRemoveProduct={handleProductRemove}
@@ -150,7 +150,7 @@ function ComparePage() {
         </TabsContent>
 
         <TabsContent value="book" className="space-y-8">
-          <CompareProductSelector
+          <ComparisonProductSelector
             selectedIds={selectedBookIds}
             availableProducts={getAvailableProducts()}
             productCategory="book"
@@ -159,7 +159,7 @@ function ComparePage() {
 
           <div>
             <h2 className="text-xl font-semibold mb-4">書籍比較</h2>
-            <CompareProductList
+            <ComparisonProductList
               products={selectedProducts}
               productCategory="book"
               onRemoveProduct={handleProductRemove}
@@ -181,4 +181,4 @@ function ComparePage() {
   );
 }
 
-export default ComparePage;
+export default ComparisonPage;

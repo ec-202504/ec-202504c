@@ -5,7 +5,7 @@ import type { Pc } from "../../product/types/Pc";
 export type ProductCategory = "pc" | "book";
 
 // 比較用の商品型定義（既存の型を拡張）
-export type ComparePc = Pc & {
+export type ComparisonPc = Pc & {
   rating: number;
   specs: {
     プロセッサ: string;
@@ -18,7 +18,7 @@ export type ComparePc = Pc & {
   };
 };
 
-export type CompareBook = Book & {
+export type ComparisonBook = Book & {
   rating: number;
   specs: {
     著者: string;

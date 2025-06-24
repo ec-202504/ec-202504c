@@ -44,7 +44,7 @@ function Header() {
           商品一覧
         </Link>
 
-        <Link to="/product/compare" className="hover:underline">
+        <Link to="/product/comparison" className="hover:underline">
           商品比較
         </Link>
 

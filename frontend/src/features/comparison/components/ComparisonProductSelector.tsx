@@ -1,4 +1,4 @@
-import type { ComparePc, CompareBook } from "../types";
+import type { ComparisonPc, ComparisonBook } from "../types";
 
 import {
   Select,
@@ -9,21 +9,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type CompareProductSelectorProps = {
+type ComparisonProductSelectorProps = {
   selectedIds: number[];
-  availableProducts: (ComparePc | CompareBook)[];
+  availableProducts: (ComparisonPc | ComparisonBook)[];
   productCategory: "pc" | "book";
   onProductSelect: (productId: number) => void;
 };
 
 const MAX_SELECTIONS = 3;
 
-function CompareProductSelector({
+function ComparisonProductSelector({
   selectedIds,
   availableProducts,
   productCategory,
   onProductSelect,
-}: CompareProductSelectorProps) {
+}: ComparisonProductSelectorProps) {
   return (
     <div className="space-y-4 mb-8">
       <div className="flex items-center justify-between">
@@ -52,13 +52,13 @@ function CompareProductSelector({
                 <SelectItem
                   key={
                     productCategory === "pc"
-                      ? (product as ComparePc).pcId
-                      : (product as CompareBook).bookId
+                      ? (product as ComparisonPc).pcId
+                      : (product as ComparisonBook).bookId
                   }
                   value={
                     productCategory === "pc"
-                      ? (product as ComparePc).pcId
-                      : (product as CompareBook).bookId
+                      ? (product as ComparisonPc).pcId
+                      : (product as ComparisonBook).bookId
                   }
                 >
                   {product.name}
@@ -84,4 +84,4 @@ function CompareProductSelector({
   );
 }
 
-export default CompareProductSelector;
+export default ComparisonProductSelector;

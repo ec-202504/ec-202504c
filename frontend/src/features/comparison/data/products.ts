@@ -1,7 +1,7 @@
-import type { ComparePc, CompareBook } from "../types";
+import type { ComparisonPc, ComparisonBook } from "../types";
 
 // PC商品のダミーデータ（5つに増加）
-export const pcProducts: ComparePc[] = [
+export const pcProducts: ComparisonPc[] = [
   {
     pcId: 1,
     name: "MacBook Pro 14-inch",
@@ -130,7 +130,7 @@ export const pcProducts: ComparePc[] = [
 ];
 
 // 書籍商品のダミーデータ（5つに増加）
-export const bookProducts: CompareBook[] = [
+export const bookProducts: ComparisonBook[] = [
   {
     bookId: 101,
     name: "React実践入門",

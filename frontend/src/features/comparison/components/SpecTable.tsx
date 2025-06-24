@@ -1,4 +1,4 @@
-import type { ComparePc, CompareBook } from "../types";
+import type { ComparisonPc, ComparisonBook } from "../types";
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 
 type SpecTableProps = {
-  products: (ComparePc | CompareBook)[];
+  products: (ComparisonPc | ComparisonBook)[];
   productCategory: "pc" | "book";
 };
 
@@ -20,7 +20,7 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
    * @param products 商品
    * @returns 仕様キー
    */
-  const getSpecKeys = (products: (ComparePc | CompareBook)[]) => {
+  const getSpecKeys = (products: (ComparisonPc | ComparisonBook)[]) => {
     if (products.length === 0) return [];
     return Object.keys(products[0].specs);
   };
@@ -40,8 +40,8 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
                   <TableHead
                     key={
                       productCategory === "pc"
-                        ? (product as ComparePc).pcId
-                        : (product as CompareBook).bookId
+                        ? (product as ComparisonPc).pcId
+                        : (product as ComparisonBook).bookId
                     }
                     className="text-left p-4 font-medium bg-muted/50"
                   >
@@ -61,8 +61,8 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
                     <TableCell
                       key={
                         productCategory === "pc"
-                          ? (product as ComparePc).pcId
-                          : (product as CompareBook).bookId
+                          ? (product as ComparisonPc).pcId
+                          : (product as ComparisonBook).bookId
                       }
                       className="p-4"
                     >

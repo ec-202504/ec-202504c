@@ -1,17 +1,17 @@
-import type { ComparePc, CompareBook } from "../types";
-import CompareProductCard from "./CompareProductCard";
+import type { ComparisonPc, ComparisonBook } from "../types";
+import ComparisonProductCard from "./ComparisonProductCard";
 
-type CompareProductListProps = {
-  products: (ComparePc | CompareBook)[];
+type ComparisonProductListProps = {
+  products: (ComparisonPc | ComparisonBook)[];
   productCategory: "pc" | "book";
   onRemoveProduct: (productId: number) => void;
 };
 
-function CompareProductList({
+function ComparisonProductList({
   products,
   productCategory,
   onRemoveProduct,
-}: CompareProductListProps) {
+}: ComparisonProductListProps) {
   return (
     <>
       {products.length === 0 ? (
@@ -21,11 +21,11 @@ function CompareProductList({
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <CompareProductCard
+            <ComparisonProductCard
               key={
                 productCategory === "pc"
-                  ? (product as ComparePc).pcId
-                  : (product as CompareBook).bookId
+                  ? (product as ComparisonPc).pcId
+                  : (product as ComparisonBook).bookId
               }
               product={product}
               productCategory={productCategory}
@@ -38,4 +38,4 @@ function CompareProductList({
   );
 }
 
-export default CompareProductList;
+export default ComparisonProductList;
