@@ -1,5 +1,6 @@
 import { ShoppingCart } from "lucide-react";
-import type { ComparisonPc, ComparisonBook } from "../types";
+import type { Pc } from "../../product/types/Pc";
+import type { Book } from "../../product/types/Book";
 import { toast } from "sonner";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import RatingStars from "@/components/RatingStars";
 
 type ComparisonProductCardProps = {
-  product: ComparisonPc | ComparisonBook;
+  product: Pc | Book;
   productCategory: "pc" | "book";
   onRemove: (productId: number) => void;
 };
@@ -19,9 +20,7 @@ function ComparisonProductCard({
   onRemove,
 }: ComparisonProductCardProps) {
   const productId =
-    productCategory === "pc"
-      ? (product as ComparisonPc).pcId
-      : (product as ComparisonBook).bookId;
+    productCategory === "pc" ? (product as Pc).pcId : (product as Book).bookId;
 
   const handleAddToCart = () => {
     toast.success("カートに追加しました");
@@ -55,10 +54,10 @@ function ComparisonProductCard({
               {productCategory === "pc" ? "PC" : "技術書"}
             </Badge>
 
-            <div className="flex items-center gap-1">
+            {/* <div className="flex items-center gap-1">
               <RatingStars average={product.rating} />
               {product.rating}
-            </div>
+            </div> */}
           </div>
 
           <div className="text-2xl font-bold text-primary">

@@ -1,8 +1,9 @@
-import type { ComparisonPc, ComparisonBook } from "../types";
+import type { Pc } from "../../product/types/Pc";
+import type { Book } from "../../product/types/Book";
 import ComparisonProductCard from "./ComparisonProductCard";
 
 type ComparisonProductListProps = {
-  products: (ComparisonPc | ComparisonBook)[];
+  products: (Pc | Book)[];
   productCategory: "pc" | "book";
   onRemoveProduct: (productId: number) => void;
 };
@@ -24,8 +25,8 @@ function ComparisonProductList({
             <ComparisonProductCard
               key={
                 productCategory === "pc"
-                  ? (product as ComparisonPc).pcId
-                  : (product as ComparisonBook).bookId
+                  ? (product as Pc).pcId
+                  : (product as Book).bookId
               }
               product={product}
               productCategory={productCategory}

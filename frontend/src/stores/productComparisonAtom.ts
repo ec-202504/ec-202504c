@@ -53,11 +53,11 @@ export const removeBookFromComparisonAtom = atom(
 );
 
 // PC比較リストをクリアするatom
-export const clearPcComparisonAtom = atom(null, (get, set) => {
+export const clearPcComparisonAtom = atom(null, (_, set) => {
   set(pcComparisonAtom, []);
 });
 
 // 技術書比較リストをクリアするatom
-export const clearBookComparisonAtom = atom(null, (get, set) => {
+export const clearBookComparisonAtom = atom(null, (_, set) => {
   set(bookComparisonAtom, []);
 });
