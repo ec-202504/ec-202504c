@@ -45,7 +45,8 @@ public class BookController {
    * @param price 価格
    * @param author 著者名
    * @param publishDate 出版年度
-   * @param languageId GPU
+   * @param languageId プログラミング言語
+   * @param difficultyId 難易度
    * @param purposeId 使用目的
    * @return 条件に合致するPC一覧結果
    */
@@ -59,11 +60,12 @@ public class BookController {
       @RequestParam(required = false) String author,
       @RequestParam(required = false) LocalDate publishDate,
       @RequestParam(required = false) Integer languageId,
-      @RequestParam(required = false) Integer purposeId) {
+      @RequestParam(required = false) Integer purposeId,
+      @RequestParam(required = false) Integer difficultyId) {
     Pageable pageable = PageRequest.of(page, size);
     return ResponseEntity.ok(
         bookService.findByMultipleConditions(
-            sort, name, price, author, publishDate, languageId, purposeId, pageable));
+            sort, name, price, author, publishDate, languageId, purposeId, difficultyId, pageable));
   }
 
   /**
@@ -134,6 +136,7 @@ public class BookController {
     response.setPrice(book.getPrice());
     response.setLanguage(book.getLanguage().getName());
     response.setPurpose(book.getPurpose().getName());
+    response.setDifficulty(book.getDifficulty().getTarget());
     return response;
   }
 
@@ -158,6 +161,10 @@ public class BookController {
     Purpose purpose = new Purpose();
     purpose.setId(request.getPurposeId());
     book.setPurpose(purpose);
+
+    Difficulty difficulty = new Difficulty();
+    difficulty.setId(request.getDifficultyId());
+    book.setDifficulty(difficulty);
 
     bookService.registerBook(book);
 
@@ -190,6 +197,10 @@ public class BookController {
               Purpose purpose = new Purpose();
               purpose.setId(request.getPurposeId());
               existBook.setPurpose(purpose);
+
+              Difficulty difficulty = new Difficulty();
+              difficulty.setId(request.getDifficultyId());
+              existBook.setDifficulty(difficulty);
 
               bookService.registerBook(existBook);
 
@@ -233,6 +244,9 @@ public class BookController {
     List<Book> allBooksBySamePurpose =
         bookService.findByPurposeId(targetBook.get().getPurpose().getId());
 
+    List<Book> allBooksSameDifficulty =
+        bookService.findByDifficultyId(targetBook.get().getDifficulty().getId());
+
     Set<Integer> sameAuthors =
         allBooksBySameAuthor.stream().map(Book::getId).collect(Collectors.toSet());
     Set<Integer> samePublishDates =
@@ -241,6 +255,8 @@ public class BookController {
         allBooksBySameLanguage.stream().map(Book::getId).collect(Collectors.toSet());
     Set<Integer> samePurposeIds =
         allBooksBySamePurpose.stream().map(Book::getId).collect(Collectors.toSet());
+    Set<Integer> sameDifficultyIds =
+        allBooksSameDifficulty.stream().map(Book::getId).collect(Collectors.toSet());
 
     List<Map<String, Object>> result = new ArrayList<>();
 
@@ -260,6 +276,9 @@ public class BookController {
         similarity++;
       }
       if (samePurposeIds.contains(book.getId())) {
+        similarity++;
+      }
+      if (sameDifficultyIds.contains(book.getId())) {
         similarity++;
       }
 

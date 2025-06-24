@@ -1,5 +1,6 @@
 package com.example.dto.response;
 
+import com.example.model.Difficulty;
 import com.example.model.Language;
 import com.example.model.Purpose;
 import java.time.LocalDate;
@@ -16,4 +17,5 @@ public class BookOverviewResponse {
   private LocalDate publishDate;
   private Language language;
   private Purpose purpose;
+  private Difficulty difficulty;
 }

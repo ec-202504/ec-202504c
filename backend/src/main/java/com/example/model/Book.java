@@ -51,4 +51,9 @@ public class Book {
   @ManyToOne
   @JoinColumn(name = "purpose_id", nullable = false)
   private Purpose purpose;
+
+  /** 対象者. */
+  @ManyToOne
+  @JoinColumn(name = "difficulty_id", nullable = false)
+  private Difficulty difficulty;
 }
