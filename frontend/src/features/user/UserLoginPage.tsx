@@ -46,7 +46,15 @@ function UserLoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      {/* 良い感じのロゴ */}
+      <Link to="/product">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">TechMate</h1>
+          <p className="text-gray-600 mb-4">技術書とPCの専門店</p>
+        </div>
+      </Link>
+
       <Card className="w-xl">
         <CardHeader>
           <CardTitle>ログイン</CardTitle>
@@ -85,7 +93,7 @@ function UserLoginPage() {
                     <div className="flex justify-end mt-1">
                       {/* 仮、後で作る */}
                       <Link to="/user/password-reset">
-                        <span className="text-xs text-blue-600 hover:underline">
+                        <span className="text-sm text-blue-600 hover:underline">
                           パスワードを忘れた方はこちら
                         </span>
                       </Link>
@@ -95,7 +103,7 @@ function UserLoginPage() {
                 rules={{ required: "パスワードは必須です" }}
               />
               <Link to="/user/register">
-                <span className="text-xs text-blue-600 hover:underline">
+                <span className="text-sm text-blue-600 hover:underline">
                   ユーザー登録がまだの方はこちら
                 </span>
               </Link>
