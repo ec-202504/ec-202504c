@@ -11,6 +11,7 @@ import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
 import ReviewInfo from "../components/ReviewInfo";
 import RecommendedProducts from "../components/RecommendedProducts";
+import SimilarUserProducts from "../components/SimilarUserProducts";
 
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
@@ -101,20 +102,29 @@ export default function PcDetail() {
         <>
           {pc ? (
             <>
-              <PcInfo
-                pc={pc}
-                handleClick={handleClick}
-                average={average}
-                totalReviews={totalReviews}
-              />
-              <RecommendedProducts
-                currentPcId={pc.pcId}
-                currentPurpose={pc.purpose}
-              />
+              <div className="w-full max-w-7xl">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                  <div className="lg:col-span-2">
+                    <PcInfo
+                      pc={pc}
+                      handleClick={handleClick}
+                      average={average}
+                      totalReviews={totalReviews}
+                    />
+                  </div>
+                  <div className="lg:col-span-1">
+                    <SimilarUserProducts />
+                  </div>
+                </div>
+              </div>
+              <RecommendedProducts />
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}
                 average={average}
+                productId={pc.pcId}
+                productCategory={PRODUCT_CATEGORY.PC}
+                onReviewPosted={fetchReviews}
               />
             </>
           ) : (
