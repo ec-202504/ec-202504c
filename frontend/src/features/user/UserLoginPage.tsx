@@ -47,7 +47,7 @@ function UserLoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {/* 良い感じのロゴ */}
+      {/* 良い感じのロゴ募 */}
       <Link to="/product">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">TechMate</h1>
