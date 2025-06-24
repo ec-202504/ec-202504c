@@ -82,10 +82,16 @@ export default function PcDetail() {
       const reviewsData = await fetchPcReviews(itemId);
       setReviews(reviewsData);
     } catch (error) {
-      console.error("レビューの取得に失敗しました:", error);
       toast.error("レビューの取得に失敗しました");
     }
   }, [itemId]);
+
+  /**
+   * レビュー投稿後、レビュー一覧を更新する
+   */
+  const handleReviewPosted = () => {
+    fetchReviews();
+  };
 
   useEffect(() => {
     fetchData();
@@ -110,6 +116,9 @@ export default function PcDetail() {
                 reviews={reviews}
                 totalReviews={totalReviews}
                 average={average}
+                productId={pc.pcId}
+                productCategory={PRODUCT_CATEGORY.PC}
+                onReviewPosted={handleReviewPosted}
               />
             </>
           ) : (

@@ -8,7 +8,8 @@ import { Badge } from "../../components/ui/badge";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../../lib/axiosInstance";
 import type { OrderDetailResponse } from "./types/order";
-import { formatDeliveryTime, formatOrderDate } from "./utils/formatLocalDate";
+import { formatDeliveryTime } from "./utils/formatFrontDate";
+import { formatToTimezoneDate } from "../../utils/formatToFrontDate";
 
 function OrderHistory() {
   const [orders, setOrders] = useState<OrderDetailResponse[]>([]);
@@ -33,7 +34,7 @@ function OrderHistory() {
         <Card key={order.orderId} className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <CardTitle className="text-lg">
-              注文日: {formatOrderDate(order.orderDateTime)}
+              注文日: {formatToTimezoneDate(order.orderDateTime)}
             </CardTitle>
 
             <div className="flex items-center gap-2">
