@@ -1,10 +1,11 @@
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import type { ComparePc, CompareBook } from "../types";
 import { toast } from "sonner";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import RatingStars from "@/components/RatingStars";
 
 type CompareProductCardProps = {
   product: ComparePc | CompareBook;
@@ -55,8 +56,8 @@ function CompareProductCard({
             </Badge>
 
             <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm font-medium">{product.rating}</span>
+              <RatingStars average={product.rating} />
+              {product.rating}
             </div>
           </div>
 

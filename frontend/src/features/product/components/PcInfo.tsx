@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PcSpecList from "./PcSpecList";
-import RatingStars from "./RatingStars";
+import RatingStars from "../../../components/RatingStars";
 import {
   Select,
   SelectTrigger,

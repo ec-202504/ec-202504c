@@ -1,6 +1,6 @@
 import { useState } from "react";
 import BookDetails from "./BookSpecList";
-import RatingStars from "./RatingStars";
+import RatingStars from "../../../components/RatingStars";
 import {
   Select,
   SelectTrigger,
