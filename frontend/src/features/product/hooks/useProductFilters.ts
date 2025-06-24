@@ -167,13 +167,13 @@ export const useProductFilters = () => {
     (newPrice: string) => {
       setPrice(newPrice);
       if (selectedTab === TAB_VALUES.PC) {
-        const newPcFilters = { ...pcFilters, price: newPrice };
+        const newPcFilters = { price: newPrice, ...pcFilters };
         setPcFilters(newPcFilters);
         updateUrlParams(newPcFilters, bookFilters, query, 0, newPrice);
       } else {
         const newBookFilters = {
-          ...bookFilters,
           price: newPrice,
+          ...bookFilters,
         };
         setBookFilters(newBookFilters);
         updateUrlParams(pcFilters, newBookFilters, query, 0, newPrice);

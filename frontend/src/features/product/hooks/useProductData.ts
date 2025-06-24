@@ -74,9 +74,9 @@ export const useProductData = (
 
       setFilterTerms([
         {
-          id: "osId",
-          label: "OS",
-          options: osListResponse.data,
+          id: "purposeId",
+          label: "用途",
+          options: purposeListResponse.data,
         },
         {
           id: "deviceType",
@@ -87,6 +87,11 @@ export const useProductData = (
           ],
         },
         {
+          id: "osId",
+          label: "OS",
+          options: osListResponse.data,
+        },
+        {
           id: "cpuId",
           label: "CPU",
           options: cpuListResponse.data,
@@ -95,11 +100,6 @@ export const useProductData = (
           id: "gpuId",
           label: "GPU",
           options: gpuListResponse.data,
-        },
-        {
-          id: "purposeId",
-          label: "用途",
-          options: purposeListResponse.data,
         },
       ]);
     } catch (error) {
@@ -122,14 +122,14 @@ export const useProductData = (
 
       setFilterTerms([
         {
-          id: "languageId",
-          label: "言語",
-          options: languageListResponse.data,
-        },
-        {
           id: "purposeId",
           label: "用途",
           options: purposeListResponse.data,
+        },
+        {
+          id: "languageId",
+          label: "言語",
+          options: languageListResponse.data,
         },
       ]);
     } catch (error) {

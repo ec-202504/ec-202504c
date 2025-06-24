@@ -26,9 +26,29 @@ export default function Sidebar({
   };
 
   return (
-    <div className="w-64 border rounded p-4 flex flex-col">
+    <div className="w-64 border rounded pt-4 px-4 flex flex-col">
       <Label className="mb-4">絞り込み条件</Label>
       <Separator />
+
+      <div className="m-2">
+        <Label htmlFor="price" className="flex items-center">
+          予算（上限）
+        </Label>
+        <div className="flex items-center gap-1 mt-2">
+          <span className="text-sm text-gray-500">¥</span>
+          <input
+            id="price"
+            type="text"
+            min="0"
+            className="w-full border rounded px-2 py-1"
+            placeholder="例: 30000"
+            value={price || ""}
+            onChange={(e) => onPriceChange?.(e.target.value)}
+          />
+        </div>
+      </div>
+      <Separator />
+
       {filterTerms.map((filterTerm) => (
         <Fragment key={filterTerm.id}>
           <div className="m-2">
@@ -64,21 +84,6 @@ export default function Sidebar({
           <Separator />
         </Fragment>
       ))}
-      <div className="mt-4">
-        <Label htmlFor="price">予算（上限）</Label>
-        <div className="flex items-center gap-1 mt-1">
-          <input
-            id="price"
-            type="text"
-            min="0"
-            className="w-full border rounded px-2 py-1"
-            placeholder="例: 30000"
-            value={price || ""}
-            onChange={(e) => onPriceChange?.(e.target.value)}
-          />
-          <span className="text-sm text-gray-500">円</span>
-        </div>
-      </div>
     </div>
   );
 }
