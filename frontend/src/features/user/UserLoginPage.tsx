@@ -44,9 +44,7 @@ function UserLoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      console.log(data);
       const response = await axiosInstance.post("/user/login", data);
-      console.log(response.data);
       const claims = jwtDecoder(response.data.token); // トークンのペイロードを取得
       const expiresAt: number = claims.exp;
       const remaining: number = Date.now() - expiresAt; // トークンの残り時間 (ms)
