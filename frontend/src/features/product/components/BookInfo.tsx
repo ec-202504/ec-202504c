@@ -70,6 +70,7 @@ export default function BookInfo({
 
         <div className="flex items-center gap-2">
           <RatingStars average={average} />
+          <span>{average}</span>
           <span className="underline cursor-pointer">
             {totalReviews}件の評価
           </span>
