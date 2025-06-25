@@ -1,5 +1,5 @@
 import type { Review } from "../types";
-import RatingStars from "./RatingStars";
+import RatingStars from "../../../components/RatingStars";
 import { formatToTimezoneDate } from "../../../utils/formatToFrontDate";
 
 type ReviewItemProps = {
