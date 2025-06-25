@@ -13,7 +13,6 @@ function ComparisonProductList({
   productCategory,
   onRemoveProduct,
 }: ComparisonProductListProps) {
-  console.log(products);
   return (
     <>
       {products.length === 0 ? (

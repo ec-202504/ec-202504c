@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import type { ProductCategory } from "./types";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import {
   pcComparisonAtom,
   bookComparisonAtom,
+  clearBookComparisonAtom,
+  clearPcComparisonAtom,
 } from "../../stores/productComparisonAtom";
 import { axiosInstance } from "../../lib/axiosInstance";
 import type { Pc } from "../product/types/Pc";
@@ -20,11 +22,14 @@ import ComparisonProductSelector from "./components/ComparisonProductSelector";
 import ComparisonProductList from "./components/ComparisonProductList";
 import SpecTable from "./components/SpecTable";
 import { toast } from "sonner";
+import ComparisonStatusBar from "./components/ComparisonStatusBar";
 
 function ComparisonPage() {
   // 商品比較用のatom（読み取り専用）
   const [pcStoredIds] = useAtom(pcComparisonAtom);
   const [bookStoredIds] = useAtom(bookComparisonAtom);
+  const clearPcComparison = useSetAtom(clearPcComparisonAtom);
+  const clearBookComparison = useSetAtom(clearBookComparisonAtom);
 
   // 比較リストに追加された商品の詳細情報を格納するstate
   const [pcDetails, setPcDetails] = useState<Pc[]>([]);
@@ -155,6 +160,26 @@ function ComparisonPage() {
     }
   }, [selectedCategory, pcStoredIds, bookStoredIds]);
 
+  /**
+   * 現在のカテゴリの比較リストをクリア
+   */
+  const handleClearComparison = () => {
+    if (selectedCategory === "pc") {
+      clearPcComparison();
+    } else {
+      clearBookComparison();
+    }
+  };
+
+  /**
+   * 現在のカテゴリの比較リスト数を取得
+   */
+  const getCurrentComparisonCount = () => {
+    return selectedCategory === "pc"
+      ? pcStoredIds.length
+      : bookStoredIds.length;
+  };
+
   return (
     <div className="container mx-auto px-10 py-8">
       <div className="mb-8">
@@ -164,13 +189,19 @@ function ComparisonPage() {
         </p>
       </div>
 
+      {/* 比較リストの数表示とクリアボタン */}
+      <ComparisonStatusBar
+        selectedProductCount={getCurrentComparisonCount()}
+        handleClearComparison={handleClearComparison}
+      />
+
       <Tabs
         value={selectedCategory}
         onValueChange={(value: string) =>
           setSelectedCategory(value as ProductCategory)
         }
       >
-        <TabsList className="grid w-full grid-cols-2 mb-6">
+        <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="pc">PC</TabsTrigger>
           <TabsTrigger value="book">技術書</TabsTrigger>
         </TabsList>
