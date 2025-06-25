@@ -1,4 +1,5 @@
 import type { Book } from "../../product/types/Book";
+import { TAB_VALUES, type TabValues } from "../../product/types/constants";
 import type { Pc } from "../../product/types/Pc";
 
 import {
@@ -13,7 +14,7 @@ import {
 type ComparisonProductSelectorProps = {
   selectedIds: number[];
   availableProducts: (Pc | Book)[];
-  productCategory: "pc" | "book";
+  productCategory: TabValues;
   onProductSelect: (productId: number) => void;
 };
 
@@ -49,12 +50,12 @@ function ComparisonProductSelector({
               {availableProducts.map((product) => (
                 <SelectItem
                   key={
-                    productCategory === "pc"
+                    productCategory === TAB_VALUES.PC
                       ? (product as Pc).pcId
                       : (product as Book).bookId
                   }
                   value={
-                    productCategory === "pc"
+                    productCategory === TAB_VALUES.PC
                       ? (product as Pc).pcId
                       : (product as Book).bookId
                   }

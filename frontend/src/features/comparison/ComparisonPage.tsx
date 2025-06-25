@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import type { ProductCategory } from "./types";
 import { useAtom, useSetAtom } from "jotai";
 import {
   pcComparisonAtom,
@@ -23,6 +22,7 @@ import ComparisonProductList from "./components/ComparisonProductList";
 import SpecTable from "./components/SpecTable";
 import { toast } from "sonner";
 import ComparisonStatusBar from "./components/ComparisonStatusBar";
+import { TAB_VALUES, type TabValues } from "../product/types/constants";
 
 function ComparisonPage() {
   // 商品比較用のatom（読み取り専用）
@@ -38,8 +38,9 @@ function ComparisonPage() {
   const [selectedPcIds, setSelectedPcIds] = useState<number[]>([]);
   const [selectedBookIds, setSelectedBookIds] = useState<number[]>([]);
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<ProductCategory>("pc");
+  const [selectedCategory, setSelectedCategory] = useState<TabValues>(
+    TAB_VALUES.PC,
+  );
 
   /**
    * 比較リストに追加されたPCの詳細情報を取得
@@ -80,7 +81,7 @@ function ComparisonPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedCategory === "pc") {
+    if (selectedCategory === TAB_VALUES.PC) {
       fetchPcDetails(pcStoredIds);
     } else {
       fetchBookDetails(bookStoredIds);
@@ -117,7 +118,7 @@ function ComparisonPage() {
    * @param productId
    */
   const handleProductAdd = (productId: number) => {
-    if (selectedCategory === "pc") {
+    if (selectedCategory === TAB_VALUES.PC) {
       setSelectedPcIds([...selectedPcIds, productId]);
     } else {
       setSelectedBookIds([...selectedBookIds, productId]);
@@ -130,7 +131,7 @@ function ComparisonPage() {
    * @param productId
    */
   const handleProductRemove = (productId: number) => {
-    if (selectedCategory === "pc") {
+    if (selectedCategory === TAB_VALUES.PC) {
       setSelectedPcIds(selectedPcIds.filter((id) => id !== productId));
     } else {
       setSelectedBookIds(selectedBookIds.filter((id) => id !== productId));
@@ -143,7 +144,7 @@ function ComparisonPage() {
    * @returns 選択されている商品
    */
   const getSelectedProducts = () => {
-    if (selectedCategory === "pc") {
+    if (selectedCategory === TAB_VALUES.PC) {
       return pcDetails.filter((pc) => selectedPcIds.includes(pc.pcId));
     }
     return bookDetails.filter((book) => selectedBookIds.includes(book.bookId));
@@ -153,7 +154,7 @@ function ComparisonPage() {
    * デフォルトで3つの商品を選択
    */
   useEffect(() => {
-    if (selectedCategory === "pc") {
+    if (selectedCategory === TAB_VALUES.PC) {
       setSelectedPcIds(pcStoredIds.slice(0, 3));
     } else {
       setSelectedBookIds(bookStoredIds.slice(0, 3));
@@ -164,7 +165,7 @@ function ComparisonPage() {
    * 現在のカテゴリの比較リストをクリア
    */
   const handleClearComparison = () => {
-    if (selectedCategory === "pc") {
+    if (selectedCategory === TAB_VALUES.PC) {
       clearPcComparison();
     } else {
       clearBookComparison();
@@ -175,7 +176,7 @@ function ComparisonPage() {
    * 現在のカテゴリの比較リスト数を取得
    */
   const getCurrentComparisonCount = () => {
-    return selectedCategory === "pc"
+    return selectedCategory === TAB_VALUES.PC
       ? pcStoredIds.length
       : bookStoredIds.length;
   };
@@ -191,6 +192,7 @@ function ComparisonPage() {
 
       {/* 比較リストの数表示とクリアボタン */}
       <ComparisonStatusBar
+        selectedCategory={selectedCategory}
         selectedProductCount={getCurrentComparisonCount()}
         handleClearComparison={handleClearComparison}
       />
@@ -198,19 +200,19 @@ function ComparisonPage() {
       <Tabs
         value={selectedCategory}
         onValueChange={(value: string) =>
-          setSelectedCategory(value as ProductCategory)
+          setSelectedCategory(value as TabValues)
         }
       >
         <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value="pc">PC</TabsTrigger>
-          <TabsTrigger value="book">技術書</TabsTrigger>
+          <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
+          <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="pc" className="space-y-8">
+        <TabsContent value={TAB_VALUES.PC} className="space-y-8">
           <ComparisonProductSelector
             selectedIds={selectedPcIds}
             availableProducts={getAvailablePcs()}
-            productCategory="pc"
+            productCategory={TAB_VALUES.PC}
             onProductSelect={handleProductAdd}
           />
 
@@ -218,7 +220,7 @@ function ComparisonPage() {
             <h2 className="text-xl font-semibold mb-4">PC比較</h2>
             <ComparisonProductList
               products={getSelectedProducts()}
-              productCategory="pc"
+              productCategory={TAB_VALUES.PC}
               onRemoveProduct={handleProductRemove}
             />
           </div>
@@ -230,18 +232,18 @@ function ComparisonPage() {
                 <h3 className="text-lg font-semibold">仕様比較</h3>
                 <SpecTable
                   products={getSelectedProducts()}
-                  productCategory="pc"
+                  productCategory={TAB_VALUES.PC}
                 />
               </div>
             </>
           )}
         </TabsContent>
 
-        <TabsContent value="book" className="space-y-8">
+        <TabsContent value={TAB_VALUES.BOOK} className="space-y-8">
           <ComparisonProductSelector
             selectedIds={selectedBookIds}
             availableProducts={getAvailableBooks()}
-            productCategory="book"
+            productCategory={TAB_VALUES.BOOK}
             onProductSelect={handleProductAdd}
           />
 
@@ -249,7 +251,7 @@ function ComparisonPage() {
             <h2 className="text-xl font-semibold mb-4">書籍比較</h2>
             <ComparisonProductList
               products={getSelectedProducts()}
-              productCategory="book"
+              productCategory={TAB_VALUES.BOOK}
               onRemoveProduct={handleProductRemove}
             />
           </div>
@@ -261,7 +263,7 @@ function ComparisonPage() {
                 <h3 className="text-lg font-semibold">仕様比較</h3>
                 <SpecTable
                   products={getSelectedProducts()}
-                  productCategory="book"
+                  productCategory={TAB_VALUES.BOOK}
                 />
               </div>
             </>

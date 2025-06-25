@@ -10,10 +10,11 @@ import { Button } from "@/components/ui/button";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
 import type { AddCartRequest } from "../../product/types/addCartRequest";
 import { axiosInstance } from "../../../lib/axiosInstance";
+import { TAB_VALUES, type TabValues } from "../../product/types/constants";
 
 type ComparisonProductCardProps = {
   product: Pc | Book;
-  productCategory: "pc" | "book";
+  productCategory: TabValues;
   onRemove: (productId: number) => void;
 };
 
@@ -23,7 +24,9 @@ function ComparisonProductCard({
   onRemove,
 }: ComparisonProductCardProps) {
   const productId =
-    productCategory === "pc" ? (product as Pc).pcId : (product as Book).bookId;
+    productCategory === TAB_VALUES.PC
+      ? (product as Pc).pcId
+      : (product as Book).bookId;
 
   /**
    * カートに追加ボタンをクリックしたときの処理
@@ -38,7 +41,9 @@ function ComparisonProductCard({
     const addCartRequestBody: AddCartRequest = {
       productId: productId,
       productCategory:
-        productCategory === "pc" ? PRODUCT_CATEGORY.PC : PRODUCT_CATEGORY.BOOK,
+        productCategory === TAB_VALUES.PC
+          ? PRODUCT_CATEGORY.PC
+          : PRODUCT_CATEGORY.BOOK,
       quantity: 1,
     };
 
@@ -58,7 +63,7 @@ function ComparisonProductCard({
    * @returns 商品詳細ページのルート
    */
   const getProductDetailRoute = () => {
-    if (productCategory === "pc") {
+    if (productCategory === TAB_VALUES.PC) {
       return `/product/pc/${productId}`;
     }
     return `/product/book/${productId}`;
@@ -89,7 +94,7 @@ function ComparisonProductCard({
             </CardTitle>
 
             <Badge variant="secondary">
-              {productCategory === "pc" ? "PC" : "技術書"}
+              {productCategory === TAB_VALUES.PC ? "PC" : "技術書"}
             </Badge>
 
             <div className="text-2xl font-bold text-primary">

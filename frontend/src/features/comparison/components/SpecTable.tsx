@@ -8,10 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TAB_VALUES, type TabValues } from "../../product/types/constants";
 
 type SpecTableProps = {
   products: (Pc | Book)[];
-  productCategory: "pc" | "book";
+  productCategory: TabValues;
 };
 
 const pcSpecs = {
@@ -41,7 +42,7 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
    */
   const getSpecKeys = (products: (Pc | Book)[]) => {
     if (products.length === 0) return [];
-    return Object.keys(productCategory === "pc" ? pcSpecs : bookSpecs);
+    return Object.keys(productCategory === TAB_VALUES.PC ? pcSpecs : bookSpecs);
   };
 
   return (
@@ -58,7 +59,7 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
                 {products.map((product) => (
                   <TableHead
                     key={
-                      productCategory === "pc"
+                      productCategory === TAB_VALUES.PC
                         ? (product as Pc).pcId
                         : (product as Book).bookId
                     }
@@ -79,13 +80,13 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
                   {products.map((product) => (
                     <TableCell
                       key={
-                        productCategory === "pc"
+                        productCategory === TAB_VALUES.PC
                           ? (product as Pc).pcId
                           : (product as Book).bookId
                       }
                       className="p-4"
                     >
-                      {productCategory === "pc"
+                      {productCategory === TAB_VALUES.PC
                         ? (product as Pc)[
                             pcSpecs[specKey as keyof typeof pcSpecs]
                           ]

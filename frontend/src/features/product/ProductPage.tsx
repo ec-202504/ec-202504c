@@ -4,8 +4,6 @@ import {
   TabsTrigger,
   TabsContent,
 } from "../../components/ui/tabs";
-import { Button } from "../../components/ui/button";
-import { Link } from "@tanstack/react-router";
 import ProductList from "./components/ProductList";
 import { useProductFilters } from "./hooks/useProductFilters";
 import { useProductData } from "./hooks/useProductData";
@@ -22,7 +20,7 @@ import {
   removeBookFromComparisonAtom,
   removePcFromComparisonAtom,
 } from "../../stores/productComparisonAtom";
-import { Scale, ArrowRight, Trash2 } from "lucide-react";
+import ProductComparisonStatusBar from "./components/ProductComparisonStatusBar";
 
 export default function ProductListPage() {
   const {
@@ -83,17 +81,6 @@ export default function ProductListPage() {
   };
 
   /**
-   * 現在のタブで選択されている商品数を取得
-   *
-   * @returns 選択されている商品数
-   */
-  const getSelectedCount = () => {
-    return selectedTab === TAB_VALUES.PC
-      ? pcComparisonIds.length
-      : bookComparisonIds.length;
-  };
-
-  /**
    * 比較リストをクリアするハンドラー
    */
   const handleClearComparison = () => {
@@ -106,33 +93,12 @@ export default function ProductListPage() {
 
   return (
     <div className="p-4 h-80vh">
-      {/* 比較ページへのリンク */}
-      {getSelectedCount() > 0 && (
-        <div className="mb-4 p-3 border rounded-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Scale className="w-5 h-5 text-blue-600" />
-              <span className="text-sm text-blue-800">
-                {getSelectedCount()}個の商品が比較リストに追加されています
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={handleClearComparison}>
-                <Trash2 className="w-4 h-4 mr-1" />
-                クリア
-              </Button>
-
-              <Link to="/product/comparison">
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-800">
-                  比較ページへ
-                  <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
+      <ProductComparisonStatusBar
+        selectedTab={selectedTab}
+        pcComparisonIds={pcComparisonIds}
+        bookComparisonIds={bookComparisonIds}
+        handleClearComparison={handleClearComparison}
+      />
 
       <Tabs
         value={selectedTab}

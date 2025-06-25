@@ -1,12 +1,15 @@
 import { Scale, Trash2 } from "lucide-react";
 import { Button } from "../../../components/ui/button";
+import { TAB_VALUES, type TabValues } from "../../product/types/constants";
 
 type ComparisonStatusBarProps = {
+  selectedCategory: TabValues;
   selectedProductCount: number;
   handleClearComparison: () => void;
 };
 
 function ComparisonStatusBar({
+  selectedCategory,
   selectedProductCount,
   handleClearComparison,
 }: ComparisonStatusBarProps) {
@@ -18,7 +21,9 @@ function ComparisonStatusBar({
             <div className="flex items-center gap-2">
               <Scale className="w-5 h-5 text-blue-600" />
               <span className="text-sm text-blue-800">
-                {selectedProductCount}個の商品が比較リストに追加されています
+                {selectedProductCount}個の
+                {selectedCategory === TAB_VALUES.PC ? "PC" : "技術書"}
+                が比較リストに追加されています
               </span>
             </div>
 
