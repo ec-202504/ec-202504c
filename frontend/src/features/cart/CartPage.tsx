@@ -8,7 +8,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { toast } from "sonner";
 import type { CartProduct } from "../../types/cartProduct";
 import { useAtomValue } from "jotai";
-import { userAtom } from "../../stores/compareAtom";
+import { userAtom } from "../../stores/userAtom";
 
 type UpdateCartQuantityRequest = {
   cartProductId: number;

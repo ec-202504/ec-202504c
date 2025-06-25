@@ -8,7 +8,7 @@ import { Toaster } from "../components/ui/sonner";
 import { useEffect } from "react";
 import { axiosInstance } from "../lib/axiosInstance";
 import { useSetAtom } from "jotai";
-import { userAtom } from "../stores/compareAtom";
+import { userAtom } from "../stores/userAtom";
 
 export const Route = createRootRoute({
   component: () => {

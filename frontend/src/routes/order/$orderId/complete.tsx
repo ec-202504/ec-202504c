@@ -3,7 +3,7 @@ import OrderComplete from "../../../features/order/OrderComplete";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import type { OrderDetailResponse } from "../../../features/order/types/order";
 import { getDefaultStore } from "jotai";
-import { userAtom } from "../../../stores/compareAtom";
+import { userAtom } from "../../../stores/userAtom";
 
 export const Route = createFileRoute("/order/$orderId/complete")({
   beforeLoad: async () => {

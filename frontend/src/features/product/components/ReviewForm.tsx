@@ -15,7 +15,7 @@ import { postBookReview, postPcReview } from "../api/reviewApi";
 import { reviewFormSchema, type ReviewFormData } from "../schema/reviewSchema";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
 import { useAtomValue } from "jotai";
-import { userAtom } from "../../../stores/compareAtom";
+import { userAtom } from "../../../stores/userAtom";
 import { useNavigate } from "@tanstack/react-router";
 
 type ReviewFormProps = {

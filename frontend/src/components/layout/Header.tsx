@@ -2,7 +2,7 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { userAtom } from "../../stores/compareAtom";
+import { userAtom } from "../../stores/userAtom";
 
 function Header() {
   const navigate = useNavigate();

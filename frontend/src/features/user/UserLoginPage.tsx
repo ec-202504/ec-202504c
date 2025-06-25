@@ -15,11 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { ErrorAlert } from "../../components/ui/error-alert";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { axiosInstance } from "../../lib/axiosInstance";
 import { useState } from "react";
 import { jwtDecoder } from "../../utils/jwtDecoder";
+import { Alert, AlertTitle, AlertDescription } from "../../components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 function UserLoginPage() {
   const navigate = useNavigate();
@@ -66,7 +67,12 @@ function UserLoginPage() {
           <CardTitle>ログイン</CardTitle>
         </CardHeader>
         <CardContent>
-          {loginError && <ErrorAlert message={loginError} className="mb-4" />}
+          {loginError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircleIcon />
+              <AlertTitle>{loginError}</AlertTitle>
+            </Alert>
+          )}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <FormField

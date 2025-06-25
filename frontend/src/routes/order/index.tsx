@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import OrderPage from "../../features/order/OrderPage";
-import { userAtom } from "../../stores/compareAtom";
+import { userAtom } from "../../stores/userAtom";
 import { getDefaultStore } from "jotai";
 
 export const Route = createFileRoute("/order/")({
