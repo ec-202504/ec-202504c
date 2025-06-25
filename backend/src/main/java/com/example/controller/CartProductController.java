@@ -17,6 +17,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,15 +45,14 @@ public class CartProductController {
    * @return カート内商品リスト
    */
   @GetMapping
-  public ResponseEntity<?> getCartProducts() {
+  public ResponseEntity<?> getCartProducts(@AuthenticationPrincipal Jwt jwt) {
     // TODO: userIdをjwtから取得するようにする
-    Integer userId = 1;
-    Optional<User> user = userService.findById(userId);
-    if (user.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "ユーザが見つかりません"));
-    }
-    List<CartProduct> cartProducts = cartProductService.getCartProducts(user.get());
-
+    String email = jwt.getSubject();
+    User user =
+        userService
+            .findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
+    List<CartProduct> cartProducts = cartProductService.getCartProducts(user);
     try {
       List<CartProductResponse> responses = cartProducts.stream().map(this::mapToResponse).toList();
       return ResponseEntity.ok(responses);
@@ -64,22 +65,25 @@ public class CartProductController {
    * カート内商品を追加するエンドポイント.
    *
    * @param request カートに追加する商品情報を含むリクエストDTO
-   * @param session HTTPセッション
+   * @param jwt JWTトークン
+   * @param session セッション
    * @return 成功メッセージ
    */
   @PostMapping
   public ResponseEntity<?> addCartProduct(
-      @RequestBody AddCartProductRequest request, HttpSession session) {
-    Integer userId = 1;
-    // ユーザが存在するか確認
-    Optional<User> existingUser = userService.findById(userId);
-    if (existingUser.isEmpty()) {
-      return ResponseEntity.badRequest().build();
-    }
+      @RequestBody AddCartProductRequest request,
+      @AuthenticationPrincipal Jwt jwt,
+      HttpSession session) {
+    // TODO: userIdをjwtから取得するようにする
+    String email = jwt.getSubject();
+    User user =
+        userService
+            .findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
     // 商品がすでにカートに存在するか確認し、存在すれば数量を更新する
     Optional<CartProduct> existingCartProduct =
         cartProductService.getExistingProduct(
-            existingUser.get().getUserId(), request.getProductId(), request.getProductCategory());
+            user.getUserId(), request.getProductId(), request.getProductCategory());
 
     // 既に商品がカートあれば数量を更新
     if (existingCartProduct.isPresent()) {
@@ -92,10 +96,8 @@ public class CartProductController {
       cartProduct.setSessionId(session.getId());
       cartProduct.setProductCategory(request.getProductCategory());
       cartProduct.setProductId(request.getProductId());
-
-      User user = existingUser.get();
       cartProduct.setUserId(user);
-
+      cartProduct.setUserId(user);
       cartProductService.addCartProduct(cartProduct);
     }
 

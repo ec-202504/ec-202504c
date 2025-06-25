@@ -1,29 +1,33 @@
 import Sidebar from "./Sidebar";
-import type { Product, FilterTerm } from "../types";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { Product, FilterTerm, TabValues } from "../types";
 import SearchForm from "./SearchForm";
 import ProductCard from "./ProductCard";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../../../components/ui/pagination";
+import LoadingOverlay from "./LoadingOverlay";
+import ProductPagination from "./ProductPagination";
+import { useAtom } from "jotai";
+import { pcComparisonAtom } from "../../../stores/productComparisonAtom";
+import { bookComparisonAtom } from "../../../stores/productComparisonAtom";
+import { TAB_VALUES } from "../types/constants";
 
 type Props = {
-  selectedTab: string;
+  isLoading: boolean;
+  selectedTab: TabValues;
   products: Product[];
   filterTerms: FilterTerm[];
-  selectedOption: (value: string) => void;
+  selectedOption: (filterTermId: string, termId: string) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>, query: string) => void;
   currentPage: number;
   onPageChange: (page: number) => void;
   totalPages: number;
+  selectedValues?: Record<string, string>;
+  price?: string;
+  onPriceChange?: (price: string) => void;
+  onAddToComparison: (productId: number) => void;
+  onRemoveFromComparison: (productId: number) => void;
 };
 
 export default function ProductList({
+  isLoading,
   selectedTab,
   products,
   filterTerms,
@@ -32,89 +36,86 @@ export default function ProductList({
   currentPage,
   onPageChange,
   totalPages,
+  selectedValues = {},
+  price,
+  onPriceChange,
+  onAddToComparison,
+  onRemoveFromComparison,
 }: Props) {
-  const getPageNumbers = () => {
-    const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(i);
+  // 現在選択されている商品のID
+  const [pcComparisonIds] = useAtom(pcComparisonAtom);
+  const [bookComparisonIds] = useAtom(bookComparisonAtom);
+
+  /**
+   * 選択時のハンドラー
+   *
+   * @param productId 商品ID
+   * @param isSelected 選択状態
+   */
+  const handleSelectionChange = (productId: number, isSelected: boolean) => {
+    if (isSelected) {
+      onAddToComparison(productId);
+    } else {
+      onRemoveFromComparison(productId);
     }
-    return pages;
+  };
+
+  /**
+   * 商品が選択されているかどうかを判定する
+   *
+   * @param productId 商品ID
+   * @returns 選択されているかどうか
+   */
+  const isSelected = (productId: number) => {
+    return selectedTab === TAB_VALUES.PC
+      ? pcComparisonIds.includes(Number(productId))
+      : bookComparisonIds.includes(Number(productId));
   };
 
   return (
     <div className="flex gap-4">
       <Sidebar
-        selectedTab={selectedTab}
         selectedOption={selectedOption}
         filterTerms={filterTerms}
+        selectedValues={selectedValues}
+        price={price}
+        onPriceChange={onPriceChange}
       />
 
       <div className="flex-1">
         <SearchForm onSubmit={handleSubmit} selectedTab={selectedTab} />
 
-        {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-60 w-full bg-gray-50 rounded-md shadow mt-8 mb-8">
-            <div className="text-lg text-gray-600 font-semibold">
-              該当する商品が見つかりません
-            </div>
-          </div>
+        {isLoading ? (
+          <LoadingOverlay />
         ) : (
-          <div className="grid grid-cols-4 gap-4 mb-4">
-            {products.map((product) => (
-              <ProductCard
-                selectedTab={selectedTab}
-                product={product}
-                key={product.id}
-              />
-            ))}
-          </div>
-        )}
+          <>
+            {products.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-60 w-full bg-gray-50 rounded-md shadow mt-8 mb-8">
+                <div className="text-lg text-gray-600 font-semibold">
+                  該当する商品が見つかりません
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-4 mb-4">
+                {products.map((product) => (
+                  <ProductCard
+                    selectedTab={selectedTab}
+                    product={product}
+                    key={product.id}
+                    selected={isSelected(Number(product.id))}
+                    onSelectionChange={handleSelectionChange}
+                  />
+                ))}
+              </div>
+            )}
 
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                size="sm"
-                href="/product"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage > 1) onPageChange(currentPage - 1);
-                }}
-                aria-disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </PaginationPrevious>
-            </PaginationItem>
-            {getPageNumbers().map((page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  href="/product"
-                  size="sm"
-                  isActive={page === currentPage}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (page !== currentPage) onPageChange(page);
-                  }}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext
-                size="sm"
-                href="/product"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage < totalPages) onPageChange(currentPage + 1);
-                }}
-                aria-disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </PaginationNext>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+            <ProductPagination
+              currentPage={currentPage}
+              onPageChange={onPageChange}
+              totalPages={totalPages}
+            />
+          </>
+        )}
       </div>
     </div>
   );

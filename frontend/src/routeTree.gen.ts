@@ -15,7 +15,7 @@ import { Route as OrderIndexRouteImport } from './routes/order/index'
 import { Route as CartIndexRouteImport } from './routes/cart/index'
 import { Route as UserRegisterRouteImport } from './routes/user/register'
 import { Route as UserLoginRouteImport } from './routes/user/login'
-import { Route as ProductRecommendRouteImport } from './routes/product/recommend'
+import { Route as ProductComparisonRouteImport } from './routes/product/comparison'
 import { Route as OrderHistoryRouteImport } from './routes/order/history'
 import { Route as AdminRegisterRouteImport } from './routes/admin/register'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
@@ -53,9 +53,9 @@ const UserLoginRoute = UserLoginRouteImport.update({
   path: '/user/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProductRecommendRoute = ProductRecommendRouteImport.update({
-  id: '/product/recommend',
-  path: '/product/recommend',
+const ProductComparisonRoute = ProductComparisonRouteImport.update({
+  id: '/product/comparison',
+  path: '/product/comparison',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrderHistoryRoute = OrderHistoryRouteImport.update({
@@ -94,7 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/register': typeof AdminRegisterRoute
   '/order/history': typeof OrderHistoryRoute
-  '/product/recommend': typeof ProductRecommendRoute
+  '/product/comparison': typeof ProductComparisonRoute
   '/user/login': typeof UserLoginRoute
   '/user/register': typeof UserRegisterRoute
   '/cart': typeof CartIndexRoute
@@ -109,7 +109,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/register': typeof AdminRegisterRoute
   '/order/history': typeof OrderHistoryRoute
-  '/product/recommend': typeof ProductRecommendRoute
+  '/product/comparison': typeof ProductComparisonRoute
   '/user/login': typeof UserLoginRoute
   '/user/register': typeof UserRegisterRoute
   '/cart': typeof CartIndexRoute
@@ -125,7 +125,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/register': typeof AdminRegisterRoute
   '/order/history': typeof OrderHistoryRoute
-  '/product/recommend': typeof ProductRecommendRoute
+  '/product/comparison': typeof ProductComparisonRoute
   '/user/login': typeof UserLoginRoute
   '/user/register': typeof UserRegisterRoute
   '/cart/': typeof CartIndexRoute
@@ -142,7 +142,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/register'
     | '/order/history'
-    | '/product/recommend'
+    | '/product/comparison'
     | '/user/login'
     | '/user/register'
     | '/cart'
@@ -157,7 +157,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/register'
     | '/order/history'
-    | '/product/recommend'
+    | '/product/comparison'
     | '/user/login'
     | '/user/register'
     | '/cart'
@@ -172,7 +172,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/register'
     | '/order/history'
-    | '/product/recommend'
+    | '/product/comparison'
     | '/user/login'
     | '/user/register'
     | '/cart/'
@@ -188,7 +188,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminRegisterRoute: typeof AdminRegisterRoute
   OrderHistoryRoute: typeof OrderHistoryRoute
-  ProductRecommendRoute: typeof ProductRecommendRoute
+  ProductComparisonRoute: typeof ProductComparisonRoute
   UserLoginRoute: typeof UserLoginRoute
   UserRegisterRoute: typeof UserRegisterRoute
   CartIndexRoute: typeof CartIndexRoute
@@ -243,11 +243,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/product/recommend': {
-      id: '/product/recommend'
-      path: '/product/recommend'
-      fullPath: '/product/recommend'
-      preLoaderRoute: typeof ProductRecommendRouteImport
+    '/product/comparison': {
+      id: '/product/comparison'
+      path: '/product/comparison'
+      fullPath: '/product/comparison'
+      preLoaderRoute: typeof ProductComparisonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/order/history': {
@@ -300,7 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminRegisterRoute: AdminRegisterRoute,
   OrderHistoryRoute: OrderHistoryRoute,
-  ProductRecommendRoute: ProductRecommendRoute,
+  ProductComparisonRoute: ProductComparisonRoute,
   UserLoginRoute: UserLoginRoute,
   UserRegisterRoute: UserRegisterRoute,
   CartIndexRoute: CartIndexRoute,
