@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** 書籍の詳細情報リクエストを表すDTOクラス. */
+/** 書籍の詳細情報レスポンスを表すDTOクラス. */
 @Getter
 @Setter
 @NoArgsConstructor

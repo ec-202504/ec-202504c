@@ -317,7 +317,7 @@ public class PcController {
     result.sort((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")));
 
     // 上位何件出すかをlimitで調整
-    return ResponseEntity.ok(result.stream().limit(5));
+    return ResponseEntity.ok(result.stream().limit(4));
   }
 
   /**
@@ -392,7 +392,7 @@ public class PcController {
                   return map;
                 })
             .sorted((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")))
-            .limit(5)
+            .limit(4)
             .collect(Collectors.toList());
 
     return ResponseEntity.ok(recommendedProducts);

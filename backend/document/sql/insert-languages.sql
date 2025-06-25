@@ -10,8 +10,7 @@ INSERT INTO Languages (name) VALUES
 ('TypeScript'),
 ('Swift'),
 ('Rust'),
-('Kotlin'),
 ('PHP'),
-('Scala'),
-('Perl'),
+('HTML・CSS'),
+('C'),
 ('Others');

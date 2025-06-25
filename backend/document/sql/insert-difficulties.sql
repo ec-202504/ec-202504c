@@ -1,4 +1,4 @@
-INSERT INTO Difficulties (difficulty_id, target) VALUES
-(0, '初学者'),
-(1, '中級者'),
-(2, '上級者');
+INSERT INTO Difficulties (target) VALUES
+('初学者'),
+('中級者'),
+('上級者');
