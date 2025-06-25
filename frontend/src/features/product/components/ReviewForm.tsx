@@ -14,6 +14,9 @@ import { toast } from "sonner";
 import { postBookReview, postPcReview } from "../api/reviewApi";
 import { reviewFormSchema, type ReviewFormData } from "../schema/reviewSchema";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../../stores/userAtom";
+import { useNavigate } from "@tanstack/react-router";
 
 type ReviewFormProps = {
   productId: number;
@@ -29,6 +32,8 @@ function ReviewForm({
   onCancel,
 }: ReviewFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = useAtomValue(userAtom);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -51,8 +56,12 @@ function ReviewForm({
    * レビューを投稿する
    */
   const onSubmit = async (data: ReviewFormData) => {
-    setIsSubmitting(true);
+    // ログインしていない場合はログインページに遷移する
+    if (!user) {
+      navigate({ to: "/user/login" });
+    }
 
+    setIsSubmitting(true);
     try {
       if (productCategory === PRODUCT_CATEGORY.PC) {
         await postPcReview(productId, data);

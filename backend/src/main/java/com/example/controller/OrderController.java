@@ -41,7 +41,7 @@ public class OrderController {
   private final CartProductService cartProductService;
 
   /**
-   * 全ての注文を取得するエンドポイント.
+   * 注文する.
    *
    * @return 全ての注文のリスト
    */
@@ -90,7 +90,7 @@ public class OrderController {
   }
 
   /**
-   * ユーザーの注文履歴を取得するエンドポイント.
+   * ユーザーの注文履歴を取得する.
    *
    * @return ユーザーの注文履歴
    */

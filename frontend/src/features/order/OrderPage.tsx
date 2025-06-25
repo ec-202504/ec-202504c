@@ -23,6 +23,8 @@ import type { CartProduct } from "../../types/cartProduct";
 import { toast } from "sonner";
 import { fetchAddress } from "../../api/fetchAddress";
 import { Loader2 } from "lucide-react";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../stores/userAtom";
 
 type OrderProduct = {
   cartProductId: number;
@@ -44,15 +46,6 @@ type OrderRequest = {
   productList: OrderProduct[];
 };
 
-type UserResponse = {
-  userId: number;
-  name: string;
-  email: string;
-  zipcode: string;
-  address: string;
-  telephone: string;
-};
-
 type OrderCompleteResponse = {
   message: string;
   orderId: number;
@@ -67,6 +60,7 @@ function OrderPage() {
   const [prefecture, setPrefecture] = useState("");
   const [municipalities, setMunicipalities] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = useAtomValue(userAtom);
 
   const navigate = useNavigate();
 
@@ -81,7 +75,7 @@ function OrderPage() {
       paymentMethod: "0",
     },
   });
-  const { setValue, getValues, watch, reset, trigger } = orderForm;
+  const { setValue, getValues, watch, reset } = orderForm;
 
   /**
    * カート内の商品の合計金額を計算する
@@ -97,28 +91,16 @@ function OrderPage() {
    * ログインしているユーザー情報を取得する
    */
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axiosInstance.get<UserResponse>("/user");
-        const user = response.data;
-
-        // ユーザー情報をフォームにセット
-        reset({
-          destinationName: user.name,
-          destinationEmail: user.email,
-          destinationZipcode: user.zipcode,
-          destinationAddress: user.address,
-          destinationTelephone: user.telephone,
-          paymentMethod: "0",
-        });
-        // isValidの状態を更新
-        trigger();
-      } catch (error) {
-        toast.error("ユーザー情報の取得に失敗しました");
-      }
-    };
-    fetchUser();
-  }, [reset, trigger]);
+    // ユーザー情報をフォームにセット
+    reset({
+      destinationName: user?.name,
+      destinationEmail: user?.email,
+      destinationZipcode: user?.zipcode,
+      destinationAddress: user?.address,
+      destinationTelephone: user?.telephone,
+      paymentMethod: "0",
+    });
+  }, [reset, user]);
 
   const onSubmit = async (data: OrderForm) => {
     setIsSubmitting(true);
@@ -256,7 +238,7 @@ function OrderPage() {
                 name="destinationName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>氏名：</FormLabel>
+                    <FormLabel>名前：</FormLabel>
 
                     <FormControl>
                       <Input {...field} />
@@ -272,10 +254,14 @@ function OrderPage() {
                 name="destinationEmail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>メール：</FormLabel>
+                    <FormLabel>メールアドレス：</FormLabel>
 
                     <FormControl>
-                      <Input type="email" {...field} />
+                      <Input
+                        type="email"
+                        {...field}
+                        placeholder="techmate@example.com"
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -291,7 +277,7 @@ function OrderPage() {
                     <FormLabel>郵便番号：</FormLabel>
                     <div className="flex gap-2">
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} placeholder="123-4567" />
                       </FormControl>
 
                       <Button
@@ -333,7 +319,7 @@ function OrderPage() {
                     <FormLabel>電話番号：</FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} placeholder="090-1234-5678" />
                     </FormControl>
 
                     <FormMessage />
@@ -358,8 +344,8 @@ function OrderPage() {
           </Form>
         ) : (
           <div className="grid gap-1 p-5 bg-gray-50 text-sm rounded-lg">
-            <div>氏名：{getValues("destinationName")}</div>
-            <div>メール：{getValues("destinationEmail")}</div>
+            <div>名前：{getValues("destinationName")}</div>
+            <div>メールアドレス：{getValues("destinationEmail")}</div>
             <div>郵便番号：{getValues("destinationZipcode")}</div>
             <div>住所：{getValues("destinationAddress")}</div>
             <div>電話番号：{getValues("destinationTelephone")}</div>
