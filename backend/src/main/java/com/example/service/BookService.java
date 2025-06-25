@@ -1,9 +1,11 @@
 package com.example.service;
 
 import com.example.model.Book;
+import com.example.model.Difficulty;
 import com.example.model.Language;
 import com.example.model.Purpose;
 import com.example.repository.BookRepository;
+import com.example.repository.DifficultyRepository;
 import com.example.repository.LanguageRepository;
 import com.example.repository.PurposeRepository;
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ public class BookService {
   private final BookRepository bookRepository;
   private final LanguageRepository languageRepository;
   private final PurposeRepository purposeRepository;
+  private final DifficultyRepository difficultyRepository;
 
   /**
    * Book一覧を取得するメソッド.
@@ -123,6 +126,16 @@ public class BookService {
   }
 
   /**
+   * 難易度IDと一致するBookのリストを取得するメソッド.
+   *
+   * @param difficultyId 言語ID
+   * @return 難易度IDと一致するBookのリスト
+   */
+  public List<Book> findByDifficultyId(Integer difficultyId) {
+    return bookRepository.findByDifficultyId(difficultyId);
+  }
+
+  /**
    * Book登録を行うメソッド.
    *
    * @param book 登録するBookの詳細情報
@@ -160,6 +173,15 @@ public class BookService {
   }
 
   /**
+   * 難易度一覧を取得するメソッド.
+   *
+   * @return 難易度のリスト
+   */
+  public List<Difficulty> getAllDifficulties() {
+    return difficultyRepository.findAll();
+  }
+
+  /**
    * 　検索結果が含まれるページネーションされたPCのリストを取得するメソッド.
    *
    * @param sort ソート条件（ASC or DESC）
@@ -167,6 +189,7 @@ public class BookService {
    * @param price　価格
    * @param languageId 言語のID
    * @param purposeId 目的ID
+   * @param difficultyId 難易度ID
    * @param pageable ページネーション情報
    * @return 検索結果が含まれるページネーションされたPCのリスト
    */
@@ -178,8 +201,9 @@ public class BookService {
       LocalDate publishDate,
       Integer languageId,
       Integer purposeId,
+      Integer difficultyId,
       Pageable pageable) {
     return bookRepository.findByMultipleConditions(
-        sort, name, price, author, publishDate, languageId, purposeId, pageable);
+        sort, name, price, author, publishDate, languageId, purposeId, difficultyId, pageable);
   }
 }

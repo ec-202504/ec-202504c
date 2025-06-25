@@ -17,4 +17,5 @@ public class BookDetailResponse {
   private Integer price;
   private String language;
   private String purpose;
+  private String difficulty;
 }
