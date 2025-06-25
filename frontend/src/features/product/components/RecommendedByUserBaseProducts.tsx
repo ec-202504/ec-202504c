@@ -59,10 +59,10 @@ export default function RecommendedByUserBaseProducts({
 
                   <div className="space-y-0.5">
                     <h4 className="font-medium text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {pc.name}
+                      {product.name}
                     </h4>
                     <p className="text-sm font-bold text-blue-600">
-                      ¥{formatPrice(pc.price)}
+                      ¥{formatPrice(product.price)}
                     </p>
                   </div>
                 </CardContent>

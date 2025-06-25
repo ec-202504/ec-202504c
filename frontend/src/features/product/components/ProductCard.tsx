@@ -28,7 +28,11 @@ export default function ProductCard({ product, selectedTab }: Props) {
         className="h-64 border rounded p-4 flex flex-col items-center"
         key={product.id}
       >
-        <div className="w-24 h-24 bg-gray-200 mb-2" />
+        <img
+          src={"https://x.gd/BhwYG"}
+          alt={product.name}
+          className="w-32 h-32 object-contain border p-5 border-none mb-2"
+        />
         <div>商品名：{product.name}</div>
         <div>価格：¥{formatPrice(product.price)}</div>
       </Card>

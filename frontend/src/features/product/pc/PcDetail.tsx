@@ -109,7 +109,6 @@ export default function PcDetail() {
   useEffect(() => {
     fetchData();
     fetchReviews();
-    // ページの上部にスクロール
     window.scrollTo(0, 0);
   }, [fetchData, fetchReviews]);
 
