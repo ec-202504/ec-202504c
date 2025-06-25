@@ -126,8 +126,8 @@ export default function BookDetail() {
           {book ? (
             <>
               <div className="w-full max-w-7xl">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                  <div className="lg:col-span-2">
+                <div className="grid grid-cols-3 gap-8 mb-8">
+                  <div className="col-span-2">
                     <BookInfo
                       book={book}
                       handleClick={handleClick}
@@ -135,9 +135,7 @@ export default function BookDetail() {
                       totalReviews={totalReviews}
                     />
                   </div>
-                  <div className="lg:col-span-1">
-                    {/* <RecommendedByUserBaseProducts /> */}
-                  </div>
+                  <div>{/* <RecommendedByUserBaseProducts /> */}</div>
                 </div>
               </div>
               {/* <RecommendedByContentBaseProducts books={contentBasedBooks} /> */}

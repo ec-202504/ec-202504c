@@ -74,7 +74,7 @@ export default function PcInfo({
           <span className="underline">{totalReviews}件の評価</span>
         </div>
 
-        <div className="font-bold mb-1">仕様</div>
+        <div className="font-bold mb-1">詳細情報</div>
         <PcSpecList pc={pc} />
       </div>
     </div>

@@ -27,7 +27,7 @@ export default function BookInfo({
 }: BookInfoProps) {
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   return (
-    <div className="flex gap-12 w-2/3 max-w-5xl mb-8">
+    <div className="flex gap-12 max-w-5xl mb-8">
       <img
         src={book.imageUrl}
         alt={book.name}
