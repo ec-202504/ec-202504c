@@ -20,7 +20,6 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { PasswordInput } from "../../components/password-input";
-import { Link } from "@tanstack/react-router";
 import { ShoppingBag } from "lucide-react";
 
 import type { AxiosResponse } from "axios";

@@ -2,7 +2,6 @@ package com.example.service;
 
 import com.example.model.User;
 import com.example.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,10 +32,8 @@ public class UserService {
    * @param email メールアドレス
    * @return ユーザー
    */
-  public User findByEmail(String email) {
-    return userRepository
-        .findByEmail(email)
-        .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
+  public Optional<User> findByEmail(String email) {
+    return userRepository.findByEmail(email);
   }
 
   /**
