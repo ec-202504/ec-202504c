@@ -72,7 +72,6 @@ function UserLoginPage() {
           </div>
         </Link>
       </div>
-
       <Card className="w-xl">
         <CardHeader className="pb-6">
           <CardTitle className="text-center text-xl">ログイン</CardTitle>
@@ -117,7 +116,7 @@ function UserLoginPage() {
                     <div className="flex justify-end mt-2">
                       {/* 仮、後で作る */}
                       <Link to="/user/password-reset">
-                        <span className="text-xs text-blue-600 hover:underline">
+                        <span className="text-sm text-blue-600 hover:underline">
                           パスワードを忘れた方はこちら
                         </span>
                       </Link>

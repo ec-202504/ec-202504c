@@ -27,7 +27,7 @@ import type { AxiosResponse } from "axios";
 import { useState } from "react";
 import { fetchAddress } from "../../api/fetchAddress";
 import type { RegisterRequest } from "../../types/registerRequest";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 import { axiosInstance } from "../../lib/axiosInstance";
 
 function UserRegisterPage() {

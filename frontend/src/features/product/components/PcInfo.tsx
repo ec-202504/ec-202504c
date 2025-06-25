@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PcSpecList from "./PcSpecList";
-import RatingStars from "./RatingStars";
+import RatingStars from "../../../components/RatingStars";
 import {
   Select,
   SelectTrigger,
@@ -50,7 +50,7 @@ export default function PcInfo({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {Array.from({ length: 5 }, (_, i) => i + 1).map((num) => (
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                   <SelectItem key={num} value={num.toString()}>
                     {num}
                   </SelectItem>
