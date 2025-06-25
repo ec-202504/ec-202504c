@@ -20,7 +20,8 @@ export default function PcDetail() {
   const [userBasePcs, setUserBasePcs] = useState<Pc[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const userId = 1;
+  
   const { itemId } = useParams({ from: "/product/pc/$itemId/" });
   const navigate = useNavigate();
 
@@ -81,12 +82,14 @@ export default function PcDetail() {
       );
       setContentBasedPcs(contentBasePcs);
       console.log("contentBasePcs", contentBasePcs);
-      const UserBaseRowPcsResponse = await axiosInstance.get(
-        // `/pcs/recommend/userBase/${userId}`
-        "/pcs/recommend/userBase/1",
-      );
-      console.log("UserBaseRowPcsResponse", UserBaseRowPcsResponse);
-      setUserBasePcs(UserBaseRowPcsResponse.data);
+      if (typeof userId === "string" || typeof userId === "string" ){
+        const UserBaseRowPcsResponse = await axiosInstance.get(
+          // `/pcs/recommend/userBase/${userId}`
+          "/pcs/recommend/userBase/1",
+        );
+        console.log("UserBaseRowPcsResponse", UserBaseRowPcsResponse);
+        setUserBasePcs(UserBaseRowPcsResponse.data);
+      }
     } catch {
       toast.error("商品情報の取得に失敗しました");
     } finally {
