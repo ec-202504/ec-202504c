@@ -15,5 +15,6 @@ public interface BookRepositoryCustom {
       LocalDate publishDate,
       Integer languageId,
       Integer purposeId,
+      Integer difficultyId,
       Pageable pageable);
 }

@@ -45,7 +45,8 @@ public class BookController {
    * @param price 価格
    * @param author 著者名
    * @param publishDate 出版年度
-   * @param languageId GPU
+   * @param languageId プログラミング言語
+   * @param difficultyId 難易度
    * @param purposeId 使用目的
    * @return 条件に合致するPC一覧結果
    */
@@ -59,11 +60,12 @@ public class BookController {
       @RequestParam(required = false) String author,
       @RequestParam(required = false) LocalDate publishDate,
       @RequestParam(required = false) Integer languageId,
-      @RequestParam(required = false) Integer purposeId) {
+      @RequestParam(required = false) Integer purposeId,
+      @RequestParam(required = false) Integer difficultyId) {
     Pageable pageable = PageRequest.of(page, size);
     return ResponseEntity.ok(
         bookService.findByMultipleConditions(
-            sort, name, price, author, publishDate, languageId, purposeId, pageable));
+            sort, name, price, author, publishDate, languageId, purposeId, difficultyId, pageable));
   }
 
   /**
@@ -102,6 +104,16 @@ public class BookController {
   }
 
   /**
+   * 書籍の難易度一覧を取得するエンドポイント.
+   *
+   * @return 書籍の難易度一覧
+   */
+  @GetMapping("/difficulties")
+  public ResponseEntity<?> getDifficulties() {
+    return ResponseEntity.ok(bookService.getAllDifficulties());
+  }
+
+  /**
    * Bookの詳細情報を取得するエンドポイント.
    *
    * @param bookId BookのID
@@ -127,13 +139,14 @@ public class BookController {
     response.setBookId(book.getId());
     response.setName(book.getName());
     // TODO: 画像URLは実際の画像URLに置き換える必要があります
-    response.setImageUrl("https://placehold.jp/150x100.png");
+    response.setImageUrl(book.getImageUrl());
     response.setAuthor(book.getAuthor());
     response.setPublishDate(
         book.getPublishDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     response.setPrice(book.getPrice());
     response.setLanguage(book.getLanguage().getName());
     response.setPurpose(book.getPurpose().getName());
+    response.setDifficulty(book.getDifficulty().getTarget());
     return response;
   }
 
@@ -158,6 +171,10 @@ public class BookController {
     Purpose purpose = new Purpose();
     purpose.setId(request.getPurposeId());
     book.setPurpose(purpose);
+
+    Difficulty difficulty = new Difficulty();
+    difficulty.setId(request.getDifficultyId());
+    book.setDifficulty(difficulty);
 
     bookService.registerBook(book);
 
@@ -190,6 +207,10 @@ public class BookController {
               Purpose purpose = new Purpose();
               purpose.setId(request.getPurposeId());
               existBook.setPurpose(purpose);
+
+              Difficulty difficulty = new Difficulty();
+              difficulty.setId(request.getDifficultyId());
+              existBook.setDifficulty(difficulty);
 
               bookService.registerBook(existBook);
 
@@ -233,6 +254,9 @@ public class BookController {
     List<Book> allBooksBySamePurpose =
         bookService.findByPurposeId(targetBook.get().getPurpose().getId());
 
+    List<Book> allBooksSameDifficulty =
+        bookService.findByDifficultyId(targetBook.get().getDifficulty().getId());
+
     Set<Integer> sameAuthors =
         allBooksBySameAuthor.stream().map(Book::getId).collect(Collectors.toSet());
     Set<Integer> samePublishDates =
@@ -241,6 +265,8 @@ public class BookController {
         allBooksBySameLanguage.stream().map(Book::getId).collect(Collectors.toSet());
     Set<Integer> samePurposeIds =
         allBooksBySamePurpose.stream().map(Book::getId).collect(Collectors.toSet());
+    Set<Integer> sameDifficultyIds =
+        allBooksSameDifficulty.stream().map(Book::getId).collect(Collectors.toSet());
 
     List<Map<String, Object>> result = new ArrayList<>();
 
@@ -262,6 +288,9 @@ public class BookController {
       if (samePurposeIds.contains(book.getId())) {
         similarity++;
       }
+      if (sameDifficultyIds.contains(book.getId())) {
+        similarity++;
+      }
 
       Map<String, Object> item = new HashMap<>();
       item.put("book", book);
@@ -273,7 +302,7 @@ public class BookController {
     result.sort((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")));
 
     // 上位何件出すかをlimitで調整
-    return ResponseEntity.ok(result.stream().limit(5));
+    return ResponseEntity.ok(result.stream().limit(4));
   }
 
   /**
@@ -348,7 +377,7 @@ public class BookController {
                   return map;
                 })
             .sorted((a, b) -> Integer.compare((int) b.get("similarity"), (int) a.get("similarity")))
-            .limit(5)
+            .limit(4)
             .collect(Collectors.toList());
 
     return ResponseEntity.ok(recommendedProducts);
