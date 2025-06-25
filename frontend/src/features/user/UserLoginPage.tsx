@@ -20,9 +20,10 @@ import { axiosInstance } from "../../lib/axiosInstance";
 import { useState } from "react";
 import { jwtDecoder } from "../../utils/jwtDecoder";
 import { Alert, AlertTitle, AlertDescription } from "../../components/ui/alert";
-import { AlertCircleIcon, ShoppingBag } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 import { PasswordInput } from "../../components/password-input";
 import { TAB_VALUES } from "../product/types/constants";
+import UserHeader from "./components/UserHeader";
 
 type LoginForm = {
   email: string;
@@ -67,16 +68,8 @@ function UserLoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-8">
-      <div className="mb-8">
-        <Link to="/product" className="flex flex-col items-center group">
-          <div className="flex items-center gap-2 mb-2">
-            <ShoppingBag className="h-8 w-8 text-orange-500 group-hover:text-orange-600 transition-colors" />
-            <span className="text-2xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
-              TechMate
-            </span>
-          </div>
-        </Link>
-      </div>
+      <UserHeader />
+
       <Card className="w-xl">
         <CardHeader className="pb-6">
           <CardTitle className="text-center text-xl">ログイン</CardTitle>
