@@ -82,7 +82,7 @@ export default function PcDetail() {
       );
       setContentBasedPcs(contentBasePcs);
       console.log("contentBasePcs", contentBasePcs);
-      if (typeof userId === "string" || typeof userId === "string" ){
+      if (typeof userId === "string" || typeof userId === "number"){
         const UserBaseRowPcsResponse = await axiosInstance.get(
           // `/pcs/recommend/userBase/${userId}`
           "/pcs/recommend/userBase/1",

@@ -20,6 +20,7 @@ export default function BookDetail() {
   const [userBaseBooks, setUserBaseBooks] = useState<Book[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const userId = 1;
 
   const { itemId } = useParams({ from: "/product/book/$itemId/" });
   const navigate = useNavigate();
@@ -81,11 +82,13 @@ export default function BookDetail() {
         fetchBookReviews,
       );
       setContentBasedBooks(contentBaseProducts);
-      const UserBaseRowBooksResponse = await axiosInstance.get(
-        // `/books/recommend/userBase/${userId}`
-        "/books/recommend/userBase/1",
-      );
-      setUserBaseBooks(UserBaseRowBooksResponse.data);
+      if (typeof userId === "string" || typeof userId === "number"){
+        const UserBaseRowBooksResponse = await axiosInstance.get(
+          // `/books/recommend/userBase/${userId}`
+          "/books/recommend/userBase/1",
+        );
+        setUserBaseBooks(UserBaseRowBooksResponse.data);
+      }
     } catch (error) {
       toast.error("商品情報の取得に失敗しました");
     } finally {
