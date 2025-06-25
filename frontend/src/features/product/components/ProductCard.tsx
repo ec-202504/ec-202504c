@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Card } from "../../../components/ui/card";
 import { Checkbox } from "../../../components/ui/checkbox";
 import type { Product, TabValues } from "../types";
+import { Card, CardContent } from "../../../components/ui/card";
+
 import { TAB_VALUES } from "../types/constants";
+// import RatingStars from "./RatingStars";
 
 // 価格をカンマ区切りで整形する関数
 function formatPrice(price: number) {
@@ -32,8 +34,8 @@ export default function ProductCard({
   };
 
   return (
-    <Card className="h-64 border rounded p-4 flex flex-col items-center relative">
-      <div className="absolute top-2 left-2 z-10">
+    <Card className="h-full bg-white border-0 shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1 relative">
+      <div className="absolute top-2 right-2 z-10">
         <Checkbox checked={selected} onCheckedChange={handleCheckboxChange} />
       </div>
 
@@ -43,12 +45,39 @@ export default function ProductCard({
             ? "/product/pc/$itemId"
             : "/product/book/$itemId"
         }
+        key={product.id}
         params={{ itemId: product.id }}
-        className="flex flex-col items-center"
       >
-        <div className="w-24 h-24 bg-gray-200 mb-2" />
-        <div>商品名：{product.name}</div>
-        <div>価格：{formatPrice(product.price)}</div>
+        <CardContent className="px-4">
+          <div className="aspect-[4/3] bg-gray-100 rounded-sm mb-1.5 overflow-hidden">
+            {product.image ? (
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="text-gray-400 text-xs">画像なし</div>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-0.5">
+            <h3 className="font-medium text-gray-900 text-lg leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
+              {product.name}
+            </h3>
+            <p className="text-md font-bold text-blue-600">
+              ¥{formatPrice(product.price)}
+            </p>
+            <div className="text-sm text-gray-500 flex items-center gap-1">
+              {/* <RatingStars
+                average={Math.round(product.averageRating * 10) / 10}
+              /> */}
+              <span>({product.reviewCount})</span>
+            </div>
+          </div>
+        </CardContent>
       </Link>
     </Card>
   );

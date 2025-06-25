@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { TAB_VALUES, type TabValues } from "../types/constants";
 import type { SearchParams, PcFilters, BookFilters } from "../types/filters";
@@ -33,6 +33,32 @@ export const useProductFilters = () => {
   const [page, setPage] = useState<number>(
     search.page ? Number.parseInt(search.page, 10) : 0,
   );
+
+  // searchパラメータが変更された時に状態を同期
+  useEffect(() => {
+    const currentTab = search.tab || TAB_VALUES.PC;
+
+    // タブが変更された場合のみ状態をリセット
+    if (currentTab !== selectedTab) {
+      setPcFilters(getInitialFilters(TAB_VALUES.PC, search) as PcFilters);
+      setBookFilters(getInitialFilters(TAB_VALUES.BOOK, search) as BookFilters);
+      setQuery(search.query || "");
+      setPage(search.page ? Number.parseInt(search.page, 10) : 0);
+      setPrice(search.price || "");
+    } else {
+      // 同じタブ内でのパラメータ変更
+      if (currentTab === TAB_VALUES.PC) {
+        setPcFilters(getInitialFilters(TAB_VALUES.PC, search) as PcFilters);
+      } else {
+        setBookFilters(
+          getInitialFilters(TAB_VALUES.BOOK, search) as BookFilters,
+        );
+      }
+      setQuery(search.query || "");
+      setPage(search.page ? Number.parseInt(search.page, 10) : 0);
+      setPrice(search.price || "");
+    }
+  }, [search, selectedTab]);
 
   // URLパラメータを更新する関数
   const updateUrlParams = useCallback(
@@ -147,19 +173,15 @@ export const useProductFilters = () => {
   // タブ変更ハンドラー
   const handleTabChange = useCallback(
     (newTab: string) => {
-      // フィルター条件をリセット
-      setPcFilters(getInitialFilters(TAB_VALUES.PC, search) as PcFilters);
-      setBookFilters(getInitialFilters(TAB_VALUES.BOOK, search) as BookFilters);
-      setQuery("");
-      setPage(0);
-
+      // URLパラメータを完全にリセットして新しいタブのみ設定
+      // 状態の更新は useEffect で自動的に行われる
       navigate({
         to: "/product",
         search: { tab: newTab },
         replace: true,
       });
     },
-    [navigate, search],
+    [navigate],
   );
 
   // 予算（上限）変更ハンドラ
@@ -167,13 +189,13 @@ export const useProductFilters = () => {
     (newPrice: string) => {
       setPrice(newPrice);
       if (selectedTab === TAB_VALUES.PC) {
-        const newPcFilters = { ...pcFilters, price: newPrice };
+        const newPcFilters = { price: newPrice, ...pcFilters };
         setPcFilters(newPcFilters);
         updateUrlParams(newPcFilters, bookFilters, query, 0, newPrice);
       } else {
         const newBookFilters = {
-          ...bookFilters,
           price: newPrice,
+          ...bookFilters,
         };
         setBookFilters(newBookFilters);
         updateUrlParams(pcFilters, newBookFilters, query, 0, newPrice);

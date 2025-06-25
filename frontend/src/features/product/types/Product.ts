@@ -3,4 +3,6 @@ export type Product = {
   name: string;
   price: number;
   image: string;
+  reviewCount: number;
+  averageRating: number;
 };
