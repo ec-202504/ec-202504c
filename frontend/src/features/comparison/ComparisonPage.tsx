@@ -144,6 +144,17 @@ function ComparisonPage() {
     return bookDetails.filter((book) => selectedBookIds.includes(book.bookId));
   };
 
+  /**
+   * デフォルトで3つの商品を選択
+   */
+  useEffect(() => {
+    if (selectedCategory === "pc") {
+      setSelectedPcIds(pcStoredIds.slice(0, 3));
+    } else {
+      setSelectedBookIds(bookStoredIds.slice(0, 3));
+    }
+  }, [selectedCategory, pcStoredIds, bookStoredIds]);
+
   return (
     <div className="container mx-auto px-10 py-8">
       <div className="mb-8">
