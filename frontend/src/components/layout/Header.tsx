@@ -21,9 +21,7 @@ function Header() {
   return (
     <header className="w-full px-4 py-3 flex items-center bg-white shadow">
       <div className="text-xl font-semibold">
-        <Link to="/product" search={{ tab: TAB_VALUES.PC }}>
-          ECサイト
-        </Link>
+        <Link to="/">ECサイト</Link>
       </div>
 
       <Separator orientation="vertical" className="h-6 mx-4" />
