@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import { toast } from "sonner";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
-import type { AddCartRequest, Pc, RawPc, Review } from "../types";
+import type { AddCartRequest, Pc, Product, RawPc, Review } from "../types";
 import { fetchPcReviews } from "../api/reviewApi";
 
 import PcInfo from "../components/PcInfo";
@@ -11,12 +11,12 @@ import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
 import ReviewInfo from "../components/ReviewInfo";
 import RecommendedByContentBaseProducts from "../components/RecommendedByContentBaseProducts";
-import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
-import { convertToPc } from "../utils/pcConverter";
+import { attachReviewsToProducts } from "../hooks/useProductData";
+import { convertToProduct } from "../utils/productConverter";
 
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
-  const [contentBasedPcs, setContentBasedPcs] = useState<Pc[]>([]);
+  const [contentBasedPcs, setContentBasedPcs] = useState<Product[]>([]);
   const [userBasePcs, setUserBasePcs] = useState<Pc[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -73,11 +73,14 @@ export default function PcDetail() {
       const contentBasePcsResponse = await axiosInstance.get(
         `/pcs/recommend/contentBase/${itemId}`,
       );
-      const ContentBaseRawPcs = contentBasePcsResponse.data;
-      console.log("ContentBaseRawPcs", ContentBaseRawPcs);
-      setContentBasedPcs(
-        ContentBaseRawPcs.map((rawPc: RawPc) => convertToPc(rawPc)),
+      const contentBaseRawPcs: RawPc[] = contentBasePcsResponse.data;
+      console.log("contentBaseRawPcs", contentBaseRawPcs);
+      const contentBasePcs: Product[] = await attachReviewsToProducts(
+        contentBaseRawPcs.map((rawPc: RawPc) => convertToProduct(rawPc)),
+        fetchPcReviews,
       );
+      setContentBasedPcs(contentBasePcs);
+      console.log("contentBasePcs", contentBasePcs);
       const UserBaseRowPcsResponse = await axiosInstance.get(
         // `/pcs/recommend/userBase/${userId}`
         "/pcs/recommend/userBase/1",
@@ -137,7 +140,7 @@ export default function PcDetail() {
                   </div>
                 </div>
               </div>
-              <RecommendedByContentBaseProducts pcs={contentBasedPcs} />
+              <RecommendedByContentBaseProducts products={contentBasedPcs} />
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}

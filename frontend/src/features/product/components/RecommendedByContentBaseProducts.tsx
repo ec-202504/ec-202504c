@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "../../../components/ui/card";
-import type { Pc } from "../types/Pc";
+import type { Product } from "../types";
+import RatingStars from "../../../components/RatingStars";
 
 //価格をカンマ区切りで整形する関数;
 function formatPrice(price: number) {
@@ -8,16 +9,12 @@ function formatPrice(price: number) {
 }
 
 type RecommendedProductsProps = {
-  pcs: Pc[];
+  products: Product[];
 };
 
 export default function RecommendedByContentBaseProducts({
-  pcs,
+  products,
 }: RecommendedProductsProps) {
-  if (pcs.length === 0) {
-    return null;
-  }
-
   return (
     <section className="py-5 mb-5 bg-gray-50 rounded-sm w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,20 +24,20 @@ export default function RecommendedByContentBaseProducts({
         </div>
 
         <div className="grid grid-cols-4 gap-4">
-          {pcs.map((pc) => (
+          {products.map((product) => (
             <Link
-              key={pc.pcId}
+              key={product.id}
               to="/product/pc/$itemId"
-              params={{ itemId: pc.pcId.toString() }}
+              params={{ itemId: product.id.toString() }}
               className="group"
             >
               <Card className="h-full bg-white border-0 shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1">
-                <CardContent className="px-2">
+                <CardContent className="px-4">
                   <div className="aspect-[4/3] bg-gray-100 rounded-sm mb-1.5 overflow-hidden">
-                    {pc.imageUrl ? (
+                    {product.image ? (
                       <img
-                        src={pc.imageUrl}
-                        alt={pc.name}
+                        src={product.image}
+                        alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
@@ -52,11 +49,16 @@ export default function RecommendedByContentBaseProducts({
 
                   <div className="space-y-0.5">
                     <h3 className="font-medium text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {pc.name}
+                      {product.name}
                     </h3>
                     <p className="text-sm font-bold text-blue-600">
-                      ¥{formatPrice(pc.price)}
+                      ¥{formatPrice(product.price)}
                     </p>
+                    <div className="text-sm text-gray-500 flex items-center gap-1">
+                      <RatingStars average={product.averageRating} />
+                      {product.averageRating}
+                      <span>({product.reviewCount})</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

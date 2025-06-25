@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "../../../components/ui/card";
-import { mockRecommendedPcsData } from "../../../mocks/pcData";
-import type { Pc, Product } from "../types";
+import type { Product } from "../types";
 
 // 価格をカンマ区切りで整形する関数
 function formatPrice(price: number) {
@@ -15,8 +14,6 @@ type RecommendedByUserBaseProductsProps = {
 export default function RecommendedByUserBaseProducts({
   products,
 }: RecommendedByUserBaseProductsProps) {
-  products = mockRecommendedPcsData;
-
   return (
     <div className="w-full">
       <div className="mb-4">
@@ -46,7 +43,7 @@ export default function RecommendedByUserBaseProducts({
                   <div className="aspect-[4/3] bg-gray-100 rounded-sm mb-1.5 overflow-hidden">
                     {product.image ? (
                       <img
-                        src={product.imageUrl}
+                        src={product.image}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />

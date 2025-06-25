@@ -1,4 +1,4 @@
-import type { AddCartRequest, Book, Review } from "../types";
+import type { AddCartRequest, Book, Product, Review } from "../types";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
@@ -10,13 +10,13 @@ import { toast } from "sonner";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
 import { fetchBookReviews } from "../api/reviewApi";
 import type { RawBook } from "../types";
-import { convertToBook } from "../utils/bookConverter";
 import RecommendedByContentBaseProducts from "../components/RecommendedByContentBaseProducts";
-import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
+import { attachReviewsToProducts } from "../hooks/useProductData";
+import { convertToProduct } from "../utils/productConverter";
 
 export default function BookDetail() {
   const [book, setBook] = useState<Book>();
-  const [contentBasedBooks, setContentBasedBooks] = useState<Book[]>([]);
+  const [contentBasedBooks, setContentBasedBooks] = useState<Product[]>([]);
   const [userBaseBooks, setUserBaseBooks] = useState<Book[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,15 +68,19 @@ export default function BookDetail() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const BookDetailResponse = await axiosInstance.get(`/books/${itemId}`);
-      setBook(BookDetailResponse.data);
+      const bookDetailResponse = await axiosInstance.get(`/books/${itemId}`);
+      setBook(bookDetailResponse.data);
       const contentBaseBooksResponse = await axiosInstance.get(
         `/books/recommend/contentBase/${itemId}`,
       );
-      const ContentBaseRawBooks = contentBaseBooksResponse.data;
-      setContentBasedBooks(
-        ContentBaseRawBooks.map((rawBook: RawBook) => convertToBook(rawBook)),
+      const contentBaseRawBooks: RawBook[] = contentBaseBooksResponse.data;
+      const contentBaseProducts: Product[] = await attachReviewsToProducts(
+        contentBaseRawBooks.map((rawBook: RawBook) =>
+          convertToProduct(rawBook),
+        ),
+        fetchBookReviews,
       );
+      setContentBasedBooks(contentBaseProducts);
       const UserBaseRowBooksResponse = await axiosInstance.get(
         // `/books/recommend/userBase/${userId}`
         "/books/recommend/userBase/1",
@@ -138,7 +142,7 @@ export default function BookDetail() {
                   <div>{/* <RecommendedByUserBaseProducts /> */}</div>
                 </div>
               </div>
-              {/* <RecommendedByContentBaseProducts books={contentBasedBooks} /> */}
+              <RecommendedByContentBaseProducts products={contentBasedBooks} />
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}
