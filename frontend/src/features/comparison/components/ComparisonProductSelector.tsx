@@ -1,4 +1,5 @@
-import type { ComparisonPc, ComparisonBook } from "../types";
+import type { Book } from "../../product/types/Book";
+import type { Pc } from "../../product/types/Pc";
 
 import {
   Select,
@@ -11,7 +12,7 @@ import {
 
 type ComparisonProductSelectorProps = {
   selectedIds: number[];
-  availableProducts: (ComparisonPc | ComparisonBook)[];
+  availableProducts: (Pc | Book)[];
   productCategory: "pc" | "book";
   onProductSelect: (productId: number) => void;
 };
@@ -35,11 +36,8 @@ function ComparisonProductSelector({
 
       {selectedIds.length < MAX_SELECTIONS && availableProducts.length > 0 && (
         <Select
-          onValueChange={(value: string) => {
-            const productId = Number(value);
-            if (!Number.isNaN(productId)) {
-              onProductSelect(productId);
-            }
+          onValueChange={(value: number) => {
+            onProductSelect(value);
           }}
         >
           <SelectTrigger className="w-64">
@@ -52,13 +50,13 @@ function ComparisonProductSelector({
                 <SelectItem
                   key={
                     productCategory === "pc"
-                      ? (product as ComparisonPc).pcId
-                      : (product as ComparisonBook).bookId
+                      ? (product as Pc).pcId
+                      : (product as Book).bookId
                   }
                   value={
                     productCategory === "pc"
-                      ? (product as ComparisonPc).pcId
-                      : (product as ComparisonBook).bookId
+                      ? (product as Pc).pcId
+                      : (product as Book).bookId
                   }
                 >
                   {product.name}
