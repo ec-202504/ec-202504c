@@ -22,6 +22,7 @@ import { jwtDecoder } from "../../utils/jwtDecoder";
 import { Alert, AlertTitle, AlertDescription } from "../../components/ui/alert";
 import { AlertCircleIcon, ShoppingBag } from "lucide-react";
 import { PasswordInput } from "../../components/password-input";
+import { TAB_VALUES } from "../product/types/constants";
 
 type LoginForm = {
   email: string;
@@ -33,7 +34,7 @@ function UserLoginPage() {
   const [loginError, setLoginError] = useState<boolean>(false);
 
   const form = useForm<LoginForm>({
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: {
       email: "",
       password: "",
@@ -53,7 +54,11 @@ function UserLoginPage() {
       setTimeout(() => {
         localStorage.removeItem("jwt_token");
       }, remaining);
-      navigate({ to: "/product", replace: true });
+      navigate({
+        to: "/product",
+        search: { tab: TAB_VALUES.PC },
+        replace: true,
+      });
     } catch {
       // ログインエラーを全体に表示
       setLoginError(true);

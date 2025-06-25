@@ -66,6 +66,7 @@ function OrderPage() {
 
   const orderForm = useForm<OrderForm>({
     resolver: zodResolver(orderSchema),
+    mode: "onChange",
     defaultValues: {
       destinationName: "",
       destinationEmail: "",
@@ -75,7 +76,7 @@ function OrderPage() {
       paymentMethod: "0",
     },
   });
-  const { setValue, getValues, watch, reset } = orderForm;
+  const { setValue, getValues, watch } = orderForm;
 
   /**
    * カート内の商品の合計金額を計算する
@@ -92,15 +93,13 @@ function OrderPage() {
    */
   useEffect(() => {
     // ユーザー情報をフォームにセット
-    reset({
-      destinationName: user?.name,
-      destinationEmail: user?.email,
-      destinationZipcode: user?.zipcode,
-      destinationAddress: user?.address,
-      destinationTelephone: user?.telephone,
-      paymentMethod: "0",
-    });
-  }, [reset, user]);
+    setValue("destinationName", user?.name ?? "");
+    setValue("destinationEmail", user?.email ?? "");
+    setValue("destinationZipcode", user?.zipcode ?? "");
+    setValue("destinationAddress", user?.address ?? "");
+    setValue("destinationTelephone", user?.telephone ?? "");
+    setValue("paymentMethod", "0");
+  }, [user, setValue]);
 
   const onSubmit = async (data: OrderForm) => {
     setIsSubmitting(true);
@@ -189,27 +188,9 @@ function OrderPage() {
     <div className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">注文内容確認</h1>
 
-      <div className="flex justify-end items-center gap-4 mb-8">
-        <div className="text-lg font-semibold">
-          小計：
-          <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
-        </div>
-
-        <Button
-          onClick={orderForm.handleSubmit(onSubmit)}
-          disabled={
-            cart.length === 0 || !orderForm.formState.isValid || isSubmitting
-          }
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              注文処理中...
-            </>
-          ) : (
-            "注文を確定する"
-          )}
-        </Button>
+      <div className=" flex justify-end gap-2 text-lg font-semibold mb-8">
+        小計：
+        <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
       </div>
 
       <section className="mb-8">
@@ -419,6 +400,22 @@ function OrderPage() {
           ))}
         </ul>
       </section>
+
+      <div className="flex justify-end">
+        <Button
+          onClick={orderForm.handleSubmit(onSubmit)}
+          disabled={cart.length === 0 || isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              注文処理中...
+            </>
+          ) : (
+            "注文を確定する"
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
