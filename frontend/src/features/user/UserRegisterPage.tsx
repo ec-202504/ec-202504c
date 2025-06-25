@@ -35,7 +35,7 @@ function UserRegisterPage() {
   const navigate = useNavigate();
 
   const form = useForm<RegisterForm>({
-    mode: "onBlur",
+    mode: "onChange",
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
       name: "",
