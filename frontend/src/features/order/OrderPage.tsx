@@ -23,6 +23,8 @@ import type { CartProduct } from "../../types/cartProduct";
 import { toast } from "sonner";
 import { fetchAddress } from "../../api/fetchAddress";
 import { Loader2 } from "lucide-react";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../stores/userAtom";
 
 type OrderProduct = {
   cartProductId: number;
@@ -44,15 +46,6 @@ type OrderRequest = {
   productList: OrderProduct[];
 };
 
-type UserResponse = {
-  userId: number;
-  name: string;
-  email: string;
-  zipcode: string;
-  address: string;
-  telephone: string;
-};
-
 type OrderCompleteResponse = {
   message: string;
   orderId: number;
@@ -67,6 +60,7 @@ function OrderPage() {
   const [prefecture, setPrefecture] = useState("");
   const [municipalities, setMunicipalities] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = useAtomValue(userAtom);
 
   const navigate = useNavigate();
 
@@ -81,7 +75,7 @@ function OrderPage() {
       paymentMethod: "0",
     },
   });
-  const { setValue, getValues, watch, reset, trigger } = orderForm;
+  const { setValue, getValues, watch, reset } = orderForm;
 
   /**
    * カート内の商品の合計金額を計算する
@@ -97,28 +91,16 @@ function OrderPage() {
    * ログインしているユーザー情報を取得する
    */
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axiosInstance.get<UserResponse>("/user");
-        const user = response.data;
-
-        // ユーザー情報をフォームにセット
-        reset({
-          destinationName: user.name,
-          destinationEmail: user.email,
-          destinationZipcode: user.zipcode,
-          destinationAddress: user.address,
-          destinationTelephone: user.telephone,
-          paymentMethod: "0",
-        });
-        // isValidの状態を更新
-        trigger();
-      } catch (error) {
-        toast.error("ユーザー情報の取得に失敗しました");
-      }
-    };
-    fetchUser();
-  }, [reset, trigger]);
+    // ユーザー情報をフォームにセット
+    reset({
+      destinationName: user?.name,
+      destinationEmail: user?.email,
+      destinationZipcode: user?.zipcode,
+      destinationAddress: user?.address,
+      destinationTelephone: user?.telephone,
+      paymentMethod: "0",
+    });
+  }, [reset, user]);
 
   const onSubmit = async (data: OrderForm) => {
     setIsSubmitting(true);
