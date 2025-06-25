@@ -1,30 +1,17 @@
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { useState, useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { axiosInstance } from "../../lib/axiosInstance";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../stores/userAtom";
+import { TAB_VALUES } from "../../features/product/types/constants";
 
 function Header() {
-  const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        await axiosInstance.get("/user/me");
-        setIsLogin(true);
-      } catch (error) {
-        console.error("ログイン状態の確認に失敗しました", error);
-      }
-    };
-
-    checkLoginStatus();
-  }, []);
+  const user = useAtomValue(userAtom);
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post("/user/logout");
-      setIsLogin(false);
+      localStorage.removeItem("jwt_token");
       navigate({ to: "/user/login", replace: true });
     } catch (error) {
       console.error("ログアウトに失敗しました", error);
@@ -34,27 +21,39 @@ function Header() {
   return (
     <header className="w-full px-4 py-3 flex items-center bg-white shadow">
       <div className="text-xl font-semibold">
-        <Link to="/product">ECサイト</Link>
+        <Link to="/product" search={{ tab: TAB_VALUES.PC }}>
+          ECサイト
+        </Link>
       </div>
 
       <Separator orientation="vertical" className="h-6 mx-4" />
 
       <nav className="flex items-center gap-3 ml-auto">
-        <Link to="/product/recommend" className="hover:underline">
-          レコメンド
+        <Link
+          to="/product"
+          search={{ tab: TAB_VALUES.PC }}
+          className="hover:underline"
+        >
+          商品一覧
         </Link>
-        <Link to="/order/history" className="hover:underline">
-          注文履歴
+
+        <Link to="/product/comparison" className="hover:underline">
+          商品比較
         </Link>
+
         <Link to="/cart" className="hover:underline">
           カート
+        </Link>
+
+        <Link to="/order/history" className="hover:underline">
+          注文履歴
         </Link>
 
         <div className="h-5 mx-2">
           <Separator orientation="vertical" />
         </div>
 
-        {isLogin ? (
+        {user ? (
           <Button variant="outline" onClick={handleLogout}>
             ログアウト
           </Button>

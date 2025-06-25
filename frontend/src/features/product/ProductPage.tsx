@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useSearch } from "@tanstack/react-router";
 import {
   Tabs,
   TabsList,
@@ -7,165 +5,148 @@ import {
   TabsContent,
 } from "../../components/ui/tabs";
 import ProductList from "./components/ProductList";
-import type { FilterTerm, Product } from "./types";
-import { axiosInstance } from "../../lib/axiosInstance";
-import LoadingOverlay from "./components/LoadingOverlay";
-import { toast } from "sonner";
+import { useProductFilters } from "./hooks/useProductFilters";
+import { useProductData } from "./hooks/useProductData";
+import { createSearchSubmitHandler } from "./utils/searchHandlers";
 import { TAB_VALUES } from "./types/constants";
+import { useAtom, useSetAtom } from "jotai";
+import {
+  pcComparisonAtom,
+  bookComparisonAtom,
+  addPcToComparisonAtom,
+  addBookToComparisonAtom,
+  clearPcComparisonAtom,
+  clearBookComparisonAtom,
+  removeBookFromComparisonAtom,
+  removePcFromComparisonAtom,
+} from "../../stores/productComparisonAtom";
+import ProductComparisonStatusBar from "./components/ProductComparisonStatusBar";
 
 export default function ProductListPage() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [query, setQuery] = useState<string>("");
-  const [pcs, setPcs] = useState<Product[]>([]);
-  const [techBooks, setTechBooks] = useState<Product[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const PAGE_SIZE = 12;
+  const {
+    selectedTab,
+    page,
+    handleFilterChange,
+    handleSearch,
+    handlePageChange,
+    handleTabChange,
+    getSelectedValues,
+    getApiParams,
+    price,
+    handlePriceChange,
+  } = useProductFilters();
 
-  const navigate = useNavigate();
+  const { isLoading, pcs, techBooks, filterTerms, totalPages } = useProductData(
+    selectedTab,
+    getApiParams,
+  );
 
-  // URLパラメータからタブの状態を取得
-  const search = useSearch({ from: "/product/" });
-  const selectedTab = search.tab || TAB_VALUES.PC;
+  // 商品比較用のatom
+  const [pcComparisonIds] = useAtom(pcComparisonAtom);
+  const [bookComparisonIds] = useAtom(bookComparisonAtom);
+  const addPcToComparison = useSetAtom(addPcToComparisonAtom);
+  const addBookToComparison = useSetAtom(addBookToComparisonAtom);
+  const removePcFromComparison = useSetAtom(removePcFromComparisonAtom);
+  const removeBookFromComparison = useSetAtom(removeBookFromComparisonAtom);
+  const clearPcComparison = useSetAtom(clearPcComparisonAtom);
+  const clearBookComparison = useSetAtom(clearBookComparisonAtom);
 
-  const selectedOption = (option: string) => {
-    console.log(option);
-  };
-
-  const filterTerms: FilterTerm[] = [
-    {
-      id: 1,
-      label: "OS",
-      options: ["Mac", "Windows"],
-    },
-    {
-      id: 2,
-      label: "種類",
-      options: ["ノートPC", "デスクトップPC"],
-    },
-    {
-      id: 3,
-      label: "用途",
-      options: ["個人開発", "大規模開発"],
-    },
-    {
-      id: 4,
-      label: "予算",
-      options: ["0", "100"],
-    },
-    {
-      id: 5,
-      label: "ディスプレイサイズ(インチ)",
-      options: ["27以上", "23~26", "20~22", "17~19", "15~16", "14以下"],
-    },
-  ];
+  // 検索フォームの送信ハンドラー
+  const handleSubmit = createSearchSubmitHandler(handleSearch);
 
   /**
-   * 商品データを取得する関数
+   * 商品比較に追加するハンドラー
    *
-   * @returns 商品データ
+   * @param productId 追加する商品ID
    */
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(`/${selectedTab}`, {
-        params: {
-          page: page - 1, // バックエンドのページ番号は0から始まるため、1を引く
-          size: PAGE_SIZE,
-          keyword: query,
-        },
-      });
-
-      if (selectedTab === TAB_VALUES.PC) {
-        setPcs(response.data?.content);
-      } else {
-        setTechBooks(response.data?.content);
-      }
-      setTotalPages(response.data?.totalPages || 1);
-    } catch (error) {
-      toast.error("APIリクエストに失敗しました");
-    } finally {
-      setIsLoading(false);
+  const handleAddToComparison = (productId: number) => {
+    if (selectedTab === TAB_VALUES.PC) {
+      addPcToComparison(productId);
+    } else {
+      addBookToComparison(productId);
     }
-  }, [selectedTab, page, query]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  /**
-   * 検索フォームの送信ハンドラー
-   *
-   * @param e イベントオブジェクト
-   * @param query 検索クエリ
-   */
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
-    query: string,
-  ) => {
-    e.preventDefault();
-    setQuery(query);
-    setPage(1); // 検索ボタンを押したらページを1に戻す
   };
 
   /**
-   * タブ変更時のハンドラー
+   * 商品比較から削除するハンドラー
    *
-   * @param value 選択されたタブの値
+   * @param productId 削除する商品ID
    */
-  const handleTabChange = (value: string) => {
-    navigate({
-      to: "/product",
-      search: { tab: value },
-      replace: true, // tab変更を履歴に残さないようにする
-    });
+  const handleRemoveFromComparison = (productId: number) => {
+    if (selectedTab === TAB_VALUES.PC) {
+      removePcFromComparison(productId);
+    } else {
+      removeBookFromComparison(productId);
+    }
+  };
 
-    setQuery("");
-    setPage(1);
+  /**
+   * 比較リストをクリアするハンドラー
+   */
+  const handleClearComparison = () => {
+    if (selectedTab === TAB_VALUES.PC) {
+      clearPcComparison();
+    } else {
+      clearBookComparison();
+    }
   };
 
   return (
     <div className="p-4 h-80vh">
-      {isLoading ? (
-        <LoadingOverlay />
-      ) : (
-        <Tabs
-          value={selectedTab}
-          onValueChange={handleTabChange}
-          className="mb-4"
-        >
-          <TabsList>
-            <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
-            <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
-          </TabsList>
+      <ProductComparisonStatusBar
+        selectedTab={selectedTab}
+        pcComparisonIds={pcComparisonIds}
+        bookComparisonIds={bookComparisonIds}
+        handleClearComparison={handleClearComparison}
+      />
 
-          <TabsContent value={TAB_VALUES.PC}>
-            <ProductList
-              selectedTab={selectedTab}
-              products={pcs}
-              filterTerms={filterTerms}
-              selectedOption={selectedOption}
-              handleSubmit={handleSubmit}
-              currentPage={page}
-              onPageChange={setPage}
-              totalPages={totalPages}
-            />
-          </TabsContent>
+      <Tabs
+        value={selectedTab}
+        onValueChange={handleTabChange}
+        className="mb-4"
+      >
+        <TabsList>
+          <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
+          <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
+        </TabsList>
+        <TabsContent value={TAB_VALUES.PC}>
+          <ProductList
+            isLoading={isLoading}
+            selectedTab={selectedTab}
+            products={pcs}
+            filterTerms={filterTerms}
+            selectedOption={handleFilterChange}
+            handleSubmit={handleSubmit}
+            currentPage={page}
+            onPageChange={handlePageChange}
+            totalPages={totalPages}
+            selectedValues={getSelectedValues()}
+            price={price}
+            onPriceChange={handlePriceChange}
+            onAddToComparison={handleAddToComparison}
+            onRemoveFromComparison={handleRemoveFromComparison}
+          />
+        </TabsContent>
 
-          <TabsContent value={TAB_VALUES.BOOK}>
-            <ProductList
-              selectedTab={selectedTab}
-              products={techBooks}
-              filterTerms={filterTerms}
-              selectedOption={selectedOption}
-              handleSubmit={handleSubmit}
-              currentPage={page}
-              onPageChange={setPage}
-              totalPages={totalPages}
-            />
-          </TabsContent>
-        </Tabs>
-      )}
+        <TabsContent value={TAB_VALUES.BOOK}>
+          <ProductList
+            isLoading={isLoading}
+            selectedTab={selectedTab}
+            products={techBooks}
+            filterTerms={filterTerms}
+            selectedOption={handleFilterChange}
+            handleSubmit={handleSubmit}
+            currentPage={page}
+            onPageChange={handlePageChange}
+            totalPages={totalPages}
+            selectedValues={getSelectedValues()}
+            price={price}
+            onPriceChange={handlePriceChange}
+            onAddToComparison={handleAddToComparison}
+            onRemoveFromComparison={handleRemoveFromComparison}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

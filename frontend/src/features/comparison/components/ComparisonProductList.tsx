@@ -1,0 +1,43 @@
+import type { Pc } from "../../product/types/Pc";
+import type { Book } from "../../product/types/Book";
+import ComparisonProductCard from "./ComparisonProductCard";
+import { TAB_VALUES, type TabValues } from "../../product/types/constants";
+
+type ComparisonProductListProps = {
+  products: (Pc | Book)[];
+  productCategory: TabValues;
+  onRemoveProduct: (productId: number) => void;
+};
+
+function ComparisonProductList({
+  products,
+  productCategory,
+  onRemoveProduct,
+}: ComparisonProductListProps) {
+  return (
+    <>
+      {products.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">
+          比較する商品を選択してください
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {products.map((product) => (
+            <ComparisonProductCard
+              key={
+                productCategory === TAB_VALUES.PC
+                  ? (product as Pc).pcId
+                  : (product as Book).bookId
+              }
+              product={product}
+              productCategory={productCategory}
+              onRemove={onRemoveProduct}
+            />
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+export default ComparisonProductList;
