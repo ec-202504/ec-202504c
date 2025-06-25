@@ -7,6 +7,9 @@ import { toast } from "sonner";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PRODUCT_CATEGORY } from "../../../types/constants";
+import type { AddCartRequest } from "../../product/types/addCartRequest";
+import { axiosInstance } from "../../../lib/axiosInstance";
 
 type ComparisonProductCardProps = {
   product: Pc | Book;
@@ -27,10 +30,26 @@ function ComparisonProductCard({
    *
    * @param e イベントオブジェクト
    */
-  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    // TODO: カート追加ロジックを共通化する
     e.preventDefault();
     e.stopPropagation();
-    toast.success("カートに追加しました");
+
+    const addCartRequestBody: AddCartRequest = {
+      productId: productId,
+      productCategory:
+        productCategory === "pc" ? PRODUCT_CATEGORY.PC : PRODUCT_CATEGORY.BOOK,
+      quantity: 1,
+    };
+
+    try {
+      await axiosInstance.post("/carts", addCartRequestBody);
+      toast.success(
+        `${product.name}を${addCartRequestBody.quantity}個カートに追加しました`,
+      );
+    } catch {
+      toast.error("カートへの追加に失敗しました");
+    }
   };
 
   /**
