@@ -20,7 +20,6 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { PasswordInput } from "../../components/password-input";
-import { ShoppingBag } from "lucide-react";
 
 import type { AxiosResponse } from "axios";
 import { useState } from "react";
@@ -28,6 +27,7 @@ import { fetchAddress } from "../../api/fetchAddress";
 import type { RegisterRequest } from "../../types/registerRequest";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { axiosInstance } from "../../lib/axiosInstance";
+import UserHeader from "./components/UserHeader";
 
 function UserRegisterPage() {
   const [prefecture, setPrefecture] = useState("");
@@ -91,16 +91,7 @@ function UserRegisterPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-8">
-      <div className="mb-8">
-        <Link to="/product" className="flex flex-col items-center group">
-          <div className="flex items-center gap-2 mb-2">
-            <ShoppingBag className="h-8 w-8 text-orange-500 group-hover:text-orange-600 transition-colors" />
-            <span className="text-2xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
-              TechMate
-            </span>
-          </div>
-        </Link>
-      </div>
+      <UserHeader />
 
       <Card className="w-xl">
         <CardHeader className="pb-6">
