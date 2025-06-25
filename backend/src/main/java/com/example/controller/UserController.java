@@ -59,7 +59,6 @@ public class UserController {
    */
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-    System.out.println("login start");
     // 初回認証
     UsernamePasswordAuthenticationToken token =
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
