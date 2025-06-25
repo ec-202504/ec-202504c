@@ -5,7 +5,9 @@ import com.example.dto.request.LoginRequest;
 import com.example.dto.request.RegisterRequest;
 import com.example.model.User;
 import com.example.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -95,6 +97,10 @@ public class UserController {
    */
   private User getUser(Jwt jwt) {
     String email = jwt.getSubject();
-    return userService.findByEmail(email);
+    Optional<User> user = userService.findByEmail(email);
+    if (user.isEmpty()) {
+      throw new EntityNotFoundException("ユーザーが見つかりません: " + email);
+    }
+    return user.get();
   }
 }
