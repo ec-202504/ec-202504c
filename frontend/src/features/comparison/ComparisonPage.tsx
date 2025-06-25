@@ -19,6 +19,7 @@ import {
 import ComparisonProductSelector from "./components/ComparisonProductSelector";
 import ComparisonProductList from "./components/ComparisonProductList";
 import SpecTable from "./components/SpecTable";
+import { toast } from "sonner";
 
 function ComparisonPage() {
   // 商品比較用のatom（読み取り専用）
@@ -40,7 +41,6 @@ function ComparisonPage() {
    */
   const fetchPcDetails = useCallback(async (pcIds: number[]) => {
     if (pcIds.length === 0) {
-      setPcDetails([]);
       return;
     }
 
@@ -49,9 +49,8 @@ function ComparisonPage() {
       const responses = await Promise.all(promises);
       const details = responses.map((response) => response.data);
       setPcDetails(details);
-    } catch (error) {
-      console.error("PC詳細情報の取得に失敗しました:", error);
-      setPcDetails([]);
+    } catch {
+      toast.error("PC詳細情報の取得に失敗しました");
     }
   }, []);
 
@@ -60,7 +59,6 @@ function ComparisonPage() {
    */
   const fetchBookDetails = useCallback(async (bookIds: number[]) => {
     if (bookIds.length === 0) {
-      setBookDetails([]);
       return;
     }
 
@@ -71,9 +69,8 @@ function ComparisonPage() {
       const responses = await Promise.all(promises);
       const details = responses.map((response) => response.data);
       setBookDetails(details);
-    } catch (error) {
-      console.error("技術書詳細情報の取得に失敗しました:", error);
-      setBookDetails([]);
+    } catch {
+      toast.error("技術書詳細情報の取得に失敗しました");
     }
   }, []);
 
@@ -97,9 +94,7 @@ function ComparisonPage() {
    * @returns 選択されているPCを除いたPC
    */
   const getAvailablePcs = (): Pc[] => {
-    return pcDetails.filter((pc) => {
-      return !selectedPcIds.some((selectedPcId) => selectedPcId === pc.pcId);
-    });
+    return pcDetails.filter((pc) => !selectedPcIds.includes(pc.pcId));
   };
 
   /**
@@ -108,11 +103,7 @@ function ComparisonPage() {
    * @returns 選択されている技術書を除いた技術書
    */
   const getAvailableBooks = (): Book[] => {
-    return bookDetails.filter((book) => {
-      return !selectedBookIds.some(
-        (selectedBookId) => selectedBookId === book.bookId,
-      );
-    });
+    return bookDetails.filter((book) => !selectedBookIds.includes(book.bookId));
   };
 
   /**
@@ -121,8 +112,6 @@ function ComparisonPage() {
    * @param productId
    */
   const handleProductAdd = (productId: number) => {
-    console.log(productId);
-
     if (selectedCategory === "pc") {
       setSelectedPcIds([...selectedPcIds, productId]);
     } else {
