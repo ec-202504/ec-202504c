@@ -3,6 +3,7 @@ import { Separator } from "../ui/separator";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { axiosInstance } from "../../lib/axiosInstance";
+import { TAB_VALUES } from "../../features/product/types/constants";
 
 function Header() {
   const [isLogin, setIsLogin] = useState(false);
@@ -34,13 +35,19 @@ function Header() {
   return (
     <header className="w-full px-4 py-3 flex items-center bg-white shadow">
       <div className="text-xl font-semibold">
-        <Link to="/product">ECサイト</Link>
+        <Link to="/product" search={{ tab: TAB_VALUES.PC }}>
+          ECサイト
+        </Link>
       </div>
 
       <Separator orientation="vertical" className="h-6 mx-4" />
 
       <nav className="flex items-center gap-3 ml-auto">
-        <Link to="/product" className="hover:underline">
+        <Link
+          to="/product"
+          search={{ tab: TAB_VALUES.PC }}
+          className="hover:underline"
+        >
           商品一覧
         </Link>
 
