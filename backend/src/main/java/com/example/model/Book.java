@@ -52,12 +52,12 @@ public class Book {
   @JoinColumn(name = "purpose_id", nullable = false)
   private Purpose purpose;
 
-  /** 対象者. */
+  /** 難易度. */
   @ManyToOne
   @JoinColumn(name = "difficulty_id", nullable = false)
   private Difficulty difficulty;
 
-  /** 難易度. */
+  /** 商品画像URL. */
   @Column(name = "image_url", nullable = false)
   private String imageUrl;
 }

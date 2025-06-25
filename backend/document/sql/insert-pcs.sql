@@ -64,7 +64,7 @@ INSERT INTO PCs
 ('ASUS ProArt StudioBook 16', 329800, 32, 1024, 16.0, 1, 1, 6, 8, 4, 'https://x.gd/4CS1Z'),
 ('ASUS Vivobook 16 M1605', 219800, 32, 1024, 16.0, 1, 1, 9, 11, 3, 'https://x.gd/Kkfh4'),
 ('ASUS Vivobook Flip 14', 140000, 4, 128, 14.0, 1, 1, 4, 4, 2, 'https://x.gd/sFnAb'),
-('ASUS Chromebook CX1', 33000, 4, 32, 11.6, 1, 3, 3, 4, 2, 'https://x.gd/Jp5l9'),
+('ASUS Chromebook CX1', 33000, 4, 32, 11.6, 1, 3, 4, 4, 2, 'https://x.gd/Jp5l9'),
 ('ASUS Chromebook Flip C434', 69319, 4, 64, 14.0, 1, 3, 4, 4, 2, 'https://x.gd/auRjj'),
 ('ASUS Desktop V400', 149800, 16, 512, 27.0, 0, 1, 4, 4, 3, 'https://x.gd/68tu4'),
 ('ASUS G21CX-I9R2080 Gaming Desktop', 629800, 32, 2048, 14.0, 0, 1, 6, 9, 1, 'https://x.gd/RptbH'),
