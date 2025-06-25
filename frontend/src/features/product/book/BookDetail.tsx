@@ -9,9 +9,15 @@ import ReviewInfo from "../components/ReviewInfo";
 import { toast } from "sonner";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
 import { fetchBookReviews } from "../api/reviewApi";
+import type { RawBook } from "../types";
+import { convertToBook } from "../utils/bookConverter";
+import RecommendedByContentBaseProducts from "../components/RecommendedByContentBaseProducts";
+import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
 
-function BookDetail() {
+export default function BookDetail() {
   const [book, setBook] = useState<Book>();
+  const [contentBasedBooks, setContentBasedBooks] = useState<Book[]>([]);
+  const [userBaseBooks, setUserBaseBooks] = useState<Book[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -62,8 +68,20 @@ function BookDetail() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(`/books/${itemId}`);
-      setBook(response.data);
+      const BookDetailResponse = await axiosInstance.get(`/books/${itemId}`);
+      setBook(BookDetailResponse.data);
+      const contentBaseBooksResponse = await axiosInstance.get(
+        `/books/recommend/contentBase/${itemId}`,
+      );
+      const ContentBaseRawBooks = contentBaseBooksResponse.data;
+      setContentBasedBooks(
+        ContentBaseRawBooks.map((rawBook: RawBook) => convertToBook(rawBook)),
+      );
+      const UserBaseRowBooksResponse = await axiosInstance.get(
+        // `/books/recommend/userBase/${userId}`
+        "/books/recommend/userBase/1",
+      );
+      setUserBaseBooks(UserBaseRowBooksResponse.data);
     } catch (error) {
       toast.error("商品情報の取得に失敗しました");
     } finally {
@@ -81,7 +99,6 @@ function BookDetail() {
       const reviewsData = await fetchBookReviews(itemId);
       setReviews(reviewsData);
     } catch (error) {
-      console.error("レビューの取得に失敗しました:", error);
       toast.error("レビューの取得に失敗しました");
     }
   }, [itemId]);
@@ -106,12 +123,22 @@ function BookDetail() {
         <>
           {book ? (
             <>
-              <BookInfo
-                book={book}
-                handleClick={handleClick}
-                average={average}
-                totalReviews={totalReviews}
-              />
+              <div className="w-full max-w-7xl">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                  <div className="lg:col-span-2">
+                    <BookInfo
+                      book={book}
+                      handleClick={handleClick}
+                      average={average}
+                      totalReviews={totalReviews}
+                    />
+                  </div>
+                  <div className="lg:col-span-1">
+                    {/* <RecommendedByUserBaseProducts /> */}
+                  </div>
+                </div>
+              </div>
+              {/* <RecommendedByContentBaseProducts books={contentBasedBooks} /> */}
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}
@@ -129,5 +156,3 @@ function BookDetail() {
     </div>
   );
 }
-
-export default BookDetail;

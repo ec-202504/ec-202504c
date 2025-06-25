@@ -26,6 +26,5 @@ export type RawPc = {
     cpu: { id: number; name: string };
     gpu: { id: number; name: string };
     purpose: { id: number; name: string; productCategory: number };
-    // 他のプロパティがあっても問題なし
   };
 };

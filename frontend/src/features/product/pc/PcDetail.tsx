@@ -10,14 +10,14 @@ import PcInfo from "../components/PcInfo";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ProductNotFound from "../components/ProductNotFound";
 import ReviewInfo from "../components/ReviewInfo";
-import RecommendedProducts from "../components/RecommendedProducts";
-import SimilarUserProducts from "../components/SimilarUserProducts";
+import RecommendedByContentBaseProducts from "../components/RecommendedByContentBaseProducts";
+import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
 import { convertToPc } from "../utils/pcConverter";
 
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
   const [contentBasedPcs, setContentBasedPcs] = useState<Pc[]>([]);
-  const [similarPcs, setSimilarPcs] = useState<Pc[]>([]);
+  const [userBasePcs, setUserBasePcs] = useState<Pc[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -73,13 +73,17 @@ export default function PcDetail() {
       const contentBasePcsResponse = await axiosInstance.get(
         `/pcs/recommend/contentBase/${itemId}`,
       );
-      console.log("contentBasePcsResponse", contentBasePcsResponse);
-      const rawPcs = contentBasePcsResponse.data;
-      setContentBasedPcs(rawPcs.map((rawPc: RawPc) => convertToPc(rawPc)));
-      // const similarPcsResponse = await axiosInstance.get(
-      //     `/pcs/recommend/similar/${itemId}`
-      // );
-      // setSimilarPcs(similarPcsResponse.data);
+      const ContentBaseRawPcs = contentBasePcsResponse.data;
+      console.log("ContentBaseRawPcs", ContentBaseRawPcs);
+      setContentBasedPcs(
+        ContentBaseRawPcs.map((rawPc: RawPc) => convertToPc(rawPc)),
+      );
+      const UserBaseRowPcsResponse = await axiosInstance.get(
+        // `/pcs/recommend/userBase/${userId}`
+        "/pcs/recommend/userBase/1",
+      );
+      console.log("UserBaseRowPcsResponse", UserBaseRowPcsResponse);
+      setUserBasePcs(UserBaseRowPcsResponse.data);
     } catch {
       toast.error("商品情報の取得に失敗しました");
     } finally {
@@ -116,8 +120,8 @@ export default function PcDetail() {
           {pc ? (
             <>
               <div className="w-full max-w-7xl">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                  <div className="lg:col-span-2">
+                <div className="grid grid-cols-3 gap-8 mb-8">
+                  <div className="grid col-span-2">
                     <PcInfo
                       pc={pc}
                       handleClick={handleClick}
@@ -125,12 +129,14 @@ export default function PcDetail() {
                       totalReviews={totalReviews}
                     />
                   </div>
-                  <div className="lg:col-span-1">
-                    <SimilarUserProducts />
+                  <div>
+                    {/* <RecommendedByUserBaseProducts
+                                            products={userBasePcs}
+                                        /> */}
                   </div>
                 </div>
               </div>
-              <RecommendedProducts pcs={contentBasedPcs} />
+              <RecommendedByContentBaseProducts pcs={contentBasedPcs} />
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}

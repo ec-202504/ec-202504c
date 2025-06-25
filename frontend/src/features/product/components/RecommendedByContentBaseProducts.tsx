@@ -11,8 +11,9 @@ type RecommendedProductsProps = {
   pcs: Pc[];
 };
 
-export default function RecommendedProducts({ pcs }: RecommendedProductsProps) {
-  console.log("pcs", pcs);
+export default function RecommendedByContentBaseProducts({
+  pcs,
+}: RecommendedProductsProps) {
   if (pcs.length === 0) {
     return null;
   }

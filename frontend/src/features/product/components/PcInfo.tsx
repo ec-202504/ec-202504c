@@ -27,11 +27,11 @@ export default function PcInfo({
 }: PcInfoProps) {
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   return (
-    <div className="flex gap-12 w-2/3 max-w-5xl mb-8">
+    <div className="flex gap-12 max-w-5xl mb-8">
       <img
         src={pc.imageUrl}
         alt={pc.name}
-        className="w-96 h-96 object-contain border"
+        className="w-96 h-96 object-contain border p-5 border-none"
       />
 
       <div className="flex-1">
@@ -39,7 +39,6 @@ export default function PcInfo({
         <div className="text-xl mb-4">¥{pc.price.toLocaleString()}</div>
         <div className="flex items-center gap-2 mb-4">
           <span>数量</span>
-
           <Select
             value={selectedQuantity.toString()}
             defaultValue="1"
