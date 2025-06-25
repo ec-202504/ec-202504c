@@ -19,6 +19,8 @@ import {
   addBookToComparisonAtom,
   clearPcComparisonAtom,
   clearBookComparisonAtom,
+  removeBookFromComparisonAtom,
+  removePcFromComparisonAtom,
 } from "../../stores/productComparisonAtom";
 import { Scale, ArrowRight, Trash2 } from "lucide-react";
 
@@ -46,6 +48,8 @@ export default function ProductListPage() {
   const [bookComparisonIds] = useAtom(bookComparisonAtom);
   const addPcToComparison = useSetAtom(addPcToComparisonAtom);
   const addBookToComparison = useSetAtom(addBookToComparisonAtom);
+  const removePcFromComparison = useSetAtom(removePcFromComparisonAtom);
+  const removeBookFromComparison = useSetAtom(removeBookFromComparisonAtom);
   const clearPcComparison = useSetAtom(clearPcComparisonAtom);
   const clearBookComparison = useSetAtom(clearBookComparisonAtom);
 
@@ -55,17 +59,26 @@ export default function ProductListPage() {
   /**
    * 商品比較に追加するハンドラー
    *
-   * @param productIds 追加する商品IDの配列
+   * @param productId 追加する商品ID
    */
-  const handleAddToComparison = (productIds: number[]) => {
+  const handleAddToComparison = (productId: number) => {
     if (selectedTab === TAB_VALUES.PC) {
-      for (const productId of productIds) {
-        addPcToComparison(productId);
-      }
+      addPcToComparison(productId);
     } else {
-      for (const productId of productIds) {
-        addBookToComparison(productId);
-      }
+      addBookToComparison(productId);
+    }
+  };
+
+  /**
+   * 商品比較から削除するハンドラー
+   *
+   * @param productId 削除する商品ID
+   */
+  const handleRemoveFromComparison = (productId: number) => {
+    if (selectedTab === TAB_VALUES.PC) {
+      removePcFromComparison(productId);
+    } else {
+      removeBookFromComparison(productId);
     }
   };
 
@@ -146,6 +159,7 @@ export default function ProductListPage() {
             price={price}
             onPriceChange={handlePriceChange}
             onAddToComparison={handleAddToComparison}
+            onRemoveFromComparison={handleRemoveFromComparison}
           />
         </TabsContent>
 
@@ -164,6 +178,7 @@ export default function ProductListPage() {
             price={price}
             onPriceChange={handlePriceChange}
             onAddToComparison={handleAddToComparison}
+            onRemoveFromComparison={handleRemoveFromComparison}
           />
         </TabsContent>
       </Tabs>

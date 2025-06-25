@@ -1,16 +1,17 @@
-import { useState } from "react";
 import Sidebar from "./Sidebar";
-import type { Product, FilterTerm } from "../types";
+import type { Product, FilterTerm, TabValues } from "../types";
 import SearchForm from "./SearchForm";
 import ProductCard from "./ProductCard";
 import LoadingOverlay from "./LoadingOverlay";
 import ProductPagination from "./ProductPagination";
-import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
+import { useAtom } from "jotai";
+import { pcComparisonAtom } from "../../../stores/productComparisonAtom";
+import { bookComparisonAtom } from "../../../stores/productComparisonAtom";
+import { TAB_VALUES } from "../types/constants";
 
 type Props = {
   isLoading: boolean;
-  selectedTab: string;
+  selectedTab: TabValues;
   products: Product[];
   filterTerms: FilterTerm[];
   selectedOption: (filterTermId: string, termId: string) => void;
@@ -21,7 +22,8 @@ type Props = {
   selectedValues?: Record<string, string>;
   price?: string;
   onPriceChange?: (price: string) => void;
-  onAddToComparison: (productIds: number[]) => void;
+  onAddToComparison: (productId: number) => void;
+  onRemoveFromComparison: (productId: number) => void;
 };
 
 export default function ProductList({
@@ -38,31 +40,11 @@ export default function ProductList({
   price,
   onPriceChange,
   onAddToComparison,
+  onRemoveFromComparison,
 }: Props) {
   // 現在選択されている商品のID
-  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
-
-  /**
-   * 比較に追加
-   */
-  const handleAddToComparison = () => {
-    if (selectedProductIds.length > 0) {
-      onAddToComparison(selectedProductIds);
-      setSelectedProductIds([]);
-    }
-  };
-
-  /**
-   * 全選択または全解除のハンドラー
-   */
-  const handleSelectAll = () => {
-    // 全選択の場合は全解除
-    if (selectedProductIds.length === products.length) {
-      setSelectedProductIds([]);
-    } else {
-      setSelectedProductIds(products.map((p) => Number(p.id)));
-    }
-  };
+  const [pcComparisonIds] = useAtom(pcComparisonAtom);
+  const [bookComparisonIds] = useAtom(bookComparisonAtom);
 
   /**
    * 選択時のハンドラー
@@ -72,10 +54,22 @@ export default function ProductList({
    */
   const handleSelectionChange = (productId: number, isSelected: boolean) => {
     if (isSelected) {
-      setSelectedProductIds((prev) => [...prev, productId]);
+      onAddToComparison(productId);
     } else {
-      setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
+      onRemoveFromComparison(productId);
     }
+  };
+
+  /**
+   * 商品が選択されているかどうかを判定する
+   *
+   * @param productId 商品ID
+   * @returns 選択されているかどうか
+   */
+  const isSelected = (productId: number) => {
+    return selectedTab === TAB_VALUES.PC
+      ? pcComparisonIds.includes(Number(productId))
+      : bookComparisonIds.includes(Number(productId));
   };
 
   return (
@@ -90,30 +84,6 @@ export default function ProductList({
 
       <div className="flex-1">
         <SearchForm onSubmit={handleSubmit} selectedTab={selectedTab} />
-
-        {products.length > 0 && (
-          <div className="flex items-center justify-between mb-4 p-3 border rounded">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" onClick={handleSelectAll}>
-                {selectedProductIds.length === products.length
-                  ? "全解除"
-                  : "全選択"}
-              </Button>
-
-              {selectedProductIds.length > 0 && (
-                <Badge variant="secondary">
-                  {selectedProductIds.length}個選択中
-                </Badge>
-              )}
-            </div>
-
-            {selectedProductIds.length > 0 && (
-              <Button onClick={handleAddToComparison} size="sm">
-                比較に追加 ({selectedProductIds.length}個)
-              </Button>
-            )}
-          </div>
-        )}
 
         {isLoading ? (
           <LoadingOverlay />
@@ -132,7 +102,7 @@ export default function ProductList({
                     selectedTab={selectedTab}
                     product={product}
                     key={product.id}
-                    selected={selectedProductIds.includes(Number(product.id))}
+                    selected={isSelected(Number(product.id))}
                     onSelectionChange={handleSelectionChange}
                   />
                 ))}

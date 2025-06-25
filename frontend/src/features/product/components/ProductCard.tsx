@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Card } from "../../../components/ui/card";
 import { Checkbox } from "../../../components/ui/checkbox";
-import type { Product } from "../types";
+import type { Product, TabValues } from "../types";
 import { TAB_VALUES } from "../types/constants";
 
 // 価格をカンマ区切りで整形する関数
@@ -11,7 +11,7 @@ function formatPrice(price: number) {
 
 type Props = {
   product: Product;
-  selectedTab: string;
+  selectedTab: TabValues;
   selected: boolean;
   onSelectionChange: (productId: number, isSelected: boolean) => void;
 };
@@ -22,6 +22,11 @@ export default function ProductCard({
   selected,
   onSelectionChange,
 }: Props) {
+  /**
+   * チェックボックスの状態を変更するハンドラー
+   *
+   * @param checked チェックボックスの状態
+   */
   const handleCheckboxChange = (checked: boolean) => {
     onSelectionChange(Number(product.id), checked);
   };
