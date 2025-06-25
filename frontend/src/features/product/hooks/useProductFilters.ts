@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { TAB_VALUES } from "../types/constants";
+import { TAB_VALUES, type TabValues } from "../types/constants";
 import type { SearchParams, PcFilters, BookFilters } from "../types/filters";
 import {
   getInitialFilters,
@@ -11,7 +11,7 @@ import {
 export const useProductFilters = () => {
   const navigate = useNavigate();
   const search = useSearch({ from: "/product/" }) as SearchParams;
-  const selectedTab = search.tab || TAB_VALUES.PC;
+  const selectedTab = search.tab as TabValues;
 
   // PC用のフィルター条件
   const [pcFilters, setPcFilters] = useState<PcFilters>(

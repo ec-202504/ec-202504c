@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { Checkbox } from "../../../components/ui/checkbox";
+import type { Product, TabValues } from "../types";
 import { Card, CardContent } from "../../../components/ui/card";
-import type { Product } from "../types";
+
 import { TAB_VALUES } from "../types/constants";
-import RatingStars from "./RatingStars";
+// import RatingStars from "./RatingStars";
 
 // 価格をカンマ区切りで整形する関数
 function formatPrice(price: number) {
@@ -11,21 +13,41 @@ function formatPrice(price: number) {
 
 type Props = {
   product: Product;
-  selectedTab: string;
+  selectedTab: TabValues;
+  selected: boolean;
+  onSelectionChange: (productId: number, isSelected: boolean) => void;
 };
 
-export default function ProductCard({ product, selectedTab }: Props) {
+export default function ProductCard({
+  product,
+  selectedTab,
+  selected,
+  onSelectionChange,
+}: Props) {
+  /**
+   * チェックボックスの状態を変更するハンドラー
+   *
+   * @param checked チェックボックスの状態
+   */
+  const handleCheckboxChange = (checked: boolean) => {
+    onSelectionChange(Number(product.id), checked);
+  };
+
   return (
-    <Link
-      to={
-        selectedTab === TAB_VALUES.PC
-          ? "/product/pc/$itemId"
-          : "/product/book/$itemId"
-      }
-      key={product.id}
-      params={{ itemId: product.id }}
-    >
-      <Card className="h-full bg-white border-0 shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1">
+    <Card className="h-full bg-white border-0 shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1 relative">
+      <div className="absolute top-2 right-2 z-10">
+        <Checkbox checked={selected} onCheckedChange={handleCheckboxChange} />
+      </div>
+
+      <Link
+        to={
+          selectedTab === TAB_VALUES.PC
+            ? "/product/pc/$itemId"
+            : "/product/book/$itemId"
+        }
+        key={product.id}
+        params={{ itemId: product.id }}
+      >
         <CardContent className="px-4">
           <div className="aspect-[4/3] bg-gray-100 rounded-sm mb-1.5 overflow-hidden">
             {product.image ? (
@@ -49,14 +71,14 @@ export default function ProductCard({ product, selectedTab }: Props) {
               ¥{formatPrice(product.price)}
             </p>
             <div className="text-sm text-gray-500 flex items-center gap-1">
-              <RatingStars
+              {/* <RatingStars
                 average={Math.round(product.averageRating * 10) / 10}
-              />
+              /> */}
               <span>({product.reviewCount})</span>
             </div>
           </div>
         </CardContent>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 }

@@ -1,13 +1,17 @@
 import Sidebar from "./Sidebar";
-import type { Product, FilterTerm } from "../types";
+import type { Product, FilterTerm, TabValues } from "../types";
 import SearchForm from "./SearchForm";
 import ProductCard from "./ProductCard";
 import LoadingOverlay from "./LoadingOverlay";
 import ProductPagination from "./ProductPagination";
+import { useAtom } from "jotai";
+import { pcComparisonAtom } from "../../../stores/productComparisonAtom";
+import { bookComparisonAtom } from "../../../stores/productComparisonAtom";
+import { TAB_VALUES } from "../types/constants";
 
 type Props = {
   isLoading: boolean;
-  selectedTab: string;
+  selectedTab: TabValues;
   products: Product[];
   filterTerms: FilterTerm[];
   selectedOption: (filterTermId: string, termId: string) => void;
@@ -18,6 +22,8 @@ type Props = {
   selectedValues?: Record<string, string>;
   price?: string;
   onPriceChange?: (price: string) => void;
+  onAddToComparison: (productId: number) => void;
+  onRemoveFromComparison: (productId: number) => void;
 };
 
 export default function ProductList({
@@ -33,7 +39,39 @@ export default function ProductList({
   selectedValues = {},
   price,
   onPriceChange,
+  onAddToComparison,
+  onRemoveFromComparison,
 }: Props) {
+  // 現在選択されている商品のID
+  const [pcComparisonIds] = useAtom(pcComparisonAtom);
+  const [bookComparisonIds] = useAtom(bookComparisonAtom);
+
+  /**
+   * 選択時のハンドラー
+   *
+   * @param productId 商品ID
+   * @param isSelected 選択状態
+   */
+  const handleSelectionChange = (productId: number, isSelected: boolean) => {
+    if (isSelected) {
+      onAddToComparison(productId);
+    } else {
+      onRemoveFromComparison(productId);
+    }
+  };
+
+  /**
+   * 商品が選択されているかどうかを判定する
+   *
+   * @param productId 商品ID
+   * @returns 選択されているかどうか
+   */
+  const isSelected = (productId: number) => {
+    return selectedTab === TAB_VALUES.PC
+      ? pcComparisonIds.includes(Number(productId))
+      : bookComparisonIds.includes(Number(productId));
+  };
+
   return (
     <div className="flex gap-4">
       <Sidebar
@@ -64,6 +102,8 @@ export default function ProductList({
                     selectedTab={selectedTab}
                     product={product}
                     key={product.id}
+                    selected={isSelected(Number(product.id))}
+                    onSelectionChange={handleSelectionChange}
                   />
                 ))}
               </div>
