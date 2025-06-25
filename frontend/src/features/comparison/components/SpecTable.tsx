@@ -53,7 +53,7 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
             <TableHeader>
               <TableRow className="border-b">
                 <TableHead className="text-left p-4 font-medium bg-muted/50">
-                  仕様
+                  商品名
                 </TableHead>
 
                 {products.map((product) => (

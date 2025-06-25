@@ -161,26 +161,6 @@ function ComparisonPage() {
     }
   }, [selectedCategory, pcStoredIds, bookStoredIds]);
 
-  /**
-   * 現在のカテゴリの比較リストをクリア
-   */
-  const handleClearComparison = () => {
-    if (selectedCategory === TAB_VALUES.PC) {
-      clearPcComparison();
-    } else {
-      clearBookComparison();
-    }
-  };
-
-  /**
-   * 現在のカテゴリの比較リスト数を取得
-   */
-  const getCurrentComparisonCount = () => {
-    return selectedCategory === TAB_VALUES.PC
-      ? pcStoredIds.length
-      : bookStoredIds.length;
-  };
-
   return (
     <div className="container mx-auto px-10 py-8">
       <div className="mb-8">
@@ -189,13 +169,6 @@ function ComparisonPage() {
           最大3つまで商品を選択して比較できます
         </p>
       </div>
-
-      {/* 比較リストの数表示とクリアボタン */}
-      <ComparisonStatusBar
-        selectedCategory={selectedCategory}
-        selectedProductCount={getCurrentComparisonCount()}
-        handleClearComparison={handleClearComparison}
-      />
 
       <Tabs
         value={selectedCategory}
@@ -209,6 +182,12 @@ function ComparisonPage() {
         </TabsList>
 
         <TabsContent value={TAB_VALUES.PC} className="space-y-8">
+          <ComparisonStatusBar
+            selectedCategory={selectedCategory}
+            selectedProductCount={selectedPcIds.length}
+            handleClearComparison={clearPcComparison}
+          />
+
           <ComparisonProductSelector
             selectedIds={selectedPcIds}
             availableProducts={getAvailablePcs()}
@@ -229,7 +208,7 @@ function ComparisonPage() {
             <>
               <Separator />
               <div className="space-y-6">
-                <h3 className="text-lg font-semibold">仕様比較</h3>
+                <h3 className="text-lg font-semibold">詳細情報比較</h3>
                 <SpecTable
                   products={getSelectedProducts()}
                   productCategory={TAB_VALUES.PC}
@@ -240,6 +219,12 @@ function ComparisonPage() {
         </TabsContent>
 
         <TabsContent value={TAB_VALUES.BOOK} className="space-y-8">
+          <ComparisonStatusBar
+            selectedCategory={selectedCategory}
+            selectedProductCount={selectedBookIds.length}
+            handleClearComparison={clearBookComparison}
+          />
+
           <ComparisonProductSelector
             selectedIds={selectedBookIds}
             availableProducts={getAvailableBooks()}

@@ -39,7 +39,7 @@ function ProductComparisonStatusBar({
               <span className="text-sm text-blue-800">
                 {getSelectedCount()}個の
                 {selectedTab === TAB_VALUES.PC ? "PC" : "技術書"}
-                が比較リストに追加されています
+                が比較商品に追加されています
               </span>
             </div>
 
