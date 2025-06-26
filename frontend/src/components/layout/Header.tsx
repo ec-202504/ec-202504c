@@ -12,6 +12,7 @@ import {
   UserPlus,
   BarChart3,
   History,
+  ShoppingBag,
 } from "lucide-react";
 
 function Header() {
@@ -32,16 +33,16 @@ function Header() {
       <div className="text-xl font-semibold">
         <Link
           to="/"
-          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
         >
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <Monitor className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-gradient-to-br from-primary via-primary/90 to-primary/70 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+            <ShoppingBag className="w-6 h-6 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="text-gray-900 dark:text-white font-bold">
+            <span className="text-gray-900 dark:text-white font-black bg-gradient-to-r from-primary via-primary/90 via-primary/70 to-primary/50 bg-clip-text text-transparent text-xl">
               Tech Mate
             </span>
-            <span className="text-xs text-gray-600 dark:text-gray-400 font-normal">
+            <span className="text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide">
               初心者に寄り添う
             </span>
           </div>
@@ -54,7 +55,7 @@ function Header() {
         <Link
           to="/product"
           search={{ tab: TAB_VALUES.PC }}
-          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
         >
           <Monitor className="w-4 h-4" />
           <span className="hidden sm:inline">商品一覧</span>
@@ -63,7 +64,7 @@ function Header() {
 
         <Link
           to="/product/comparison"
-          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
         >
           <BarChart3 className="w-4 h-4" />
           <span className="hidden sm:inline">比較</span>
@@ -71,7 +72,7 @@ function Header() {
 
         <Link
           to="/cart"
-          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
         >
           <ShoppingCart className="w-4 h-4" />
           <span className="hidden sm:inline">カート</span>
@@ -79,7 +80,7 @@ function Header() {
 
         <Link
           to="/order/history"
-          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
         >
           <History className="w-4 h-4" />
           <span className="hidden sm:inline">注文履歴</span>
@@ -111,7 +112,7 @@ function Header() {
             <Link to="/user/register">
               <Button
                 variant="default"
-                className="flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               >
                 <UserPlus className="w-4 h-4" />
                 <span className="hidden sm:inline">新規登録</span>

@@ -31,7 +31,7 @@ function TopPage() {
               エンジニア特化ECサイト
             </Badge>
 
-            <h1 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl lg:text-6xl font-black bg-gradient-to-r from-primary via-primary/90 via-[oklch(0.65_0.12_200)] to-[oklch(0.55_0.2_240)] bg-clip-text text-transparent">
               Tech Mate
             </h1>
 
@@ -46,7 +46,7 @@ function TopPage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 >
                   <Monitor className="w-5 h-5 mr-2" />
                   PCを探す
@@ -58,7 +58,7 @@ function TopPage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 >
                   <BookOpen className="w-5 h-5 mr-2" />
                   技術書を探す
@@ -74,7 +74,7 @@ function TopPage() {
       <section className="py-16 bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-primary/80 dark:text-white mb-4">
               なぜTech Mateなのか？
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
@@ -85,8 +85,8 @@ function TopPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-primary" />
                 </div>
                 <CardTitle className="text-xl">信頼できる情報</CardTitle>
               </CardHeader>
@@ -99,8 +99,8 @@ function TopPage() {
 
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-4">
-                  <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
+                <div className="w-12 h-12 bg-[oklch(0.6_0.25_120)]/10 dark:bg-[oklch(0.6_0.25_120)]/20 rounded-lg flex items-center justify-center mb-4">
+                  <TrendingUp className="w-6 h-6 text-[oklch(0.6_0.25_120)]" />
                 </div>
                 <CardTitle className="text-xl">目的別おすすめ</CardTitle>
               </CardHeader>
@@ -113,8 +113,8 @@ function TopPage() {
 
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                <div className="w-12 h-12 bg-[oklch(0.45_0.25_240)]/10 dark:bg-[oklch(0.45_0.25_240)]/20 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-[oklch(0.45_0.25_240)]" />
                 </div>
                 <CardTitle className="text-xl">エンジニア特化</CardTitle>
               </CardHeader>
@@ -132,20 +132,20 @@ function TopPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-primary/80 dark:text-white mb-4">
               こんな方におすすめ
             </h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-[oklch(0.6_0.25_120)]/5 to-[oklch(0.6_0.25_120)]/10 dark:from-[oklch(0.6_0.25_120)]/10 dark:to-[oklch(0.6_0.25_120)]/20">
               <CardHeader>
-                <CardTitle className="text-xl text-blue-900 dark:text-blue-100">
+                <CardTitle className="text-xl text-[oklch(0.6_0.25_120)] dark:text-[oklch(0.6_0.25_120)]">
                   🎓 情報系学部に進学予定の高校生
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-blue-800 dark:text-blue-200">
+                <div className="space-y-3 text-[oklch(0.6_0.25_120)]/80 dark:text-[oklch(0.6_0.25_120)]/90">
                   <p>• 大学の授業や開発学習に必要なPCが知りたい</p>
                   <p>• プログラミングに必要なスペックが分からない</p>
                   <p>• コスパ重視で長く使える一台を探している</p>
@@ -153,14 +153,14 @@ function TopPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-[oklch(0.55_0.2_240)]/5 to-[oklch(0.55_0.2_240)]/10 dark:from-[oklch(0.55_0.2_240)]/10 dark:to-[oklch(0.55_0.2_240)]/20">
               <CardHeader>
-                <CardTitle className="text-xl text-green-900 dark:text-green-100">
+                <CardTitle className="text-xl text-[oklch(0.45_0.25_240)] dark:text-[oklch(0.45_0.25_240)]">
                   👩‍💻 新卒1-2年目のエンジニア
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-green-800 dark:text-green-200">
+                <div className="space-y-3 text-[oklch(0.45_0.25_240)]/80 dark:text-[oklch(0.45_0.25_240)]/90">
                   <p>• 業務で必要な技術書を効率的に選びたい</p>
                   <p>• 自分のレベルに合った学習ロードマップが欲しい</p>
                   <p>• 実務に直結する知識を得たい</p>
@@ -172,12 +172,12 @@ function TopPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="py-16 bg-gradient-to-r from-primary to-primary/80">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl lg:text-4xl font-bold text-primary-foreground mb-6">
             今すぐ始めよう
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
             あなたに最適な商品を見つけて、
             <br />
             エンジニアとしての成長を加速させましょう
@@ -187,7 +187,7 @@ function TopPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+                className="border-white text-white hover:bg-white hover:text-primary bg-transparent"
               >
                 <Monitor className="w-5 h-5 mr-2" />
                 PCを探す
@@ -198,7 +198,7 @@ function TopPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+                className="border-white text-white hover:bg-white hover:text-primary bg-transparent"
               >
                 <BookOpen className="w-5 h-5 mr-2" />
                 技術書を探す
