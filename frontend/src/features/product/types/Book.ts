@@ -7,6 +7,7 @@ export type Book = {
   price: number;
   language: string;
   purpose: string;
+  difficulty: string;
 };
 
 export type RawBook = {
@@ -24,6 +25,10 @@ export type RawBook = {
     purpose: {
       id: number;
       name: string;
+    };
+    difficulty: {
+      id: number;
+      target: string;
     };
   };
 };

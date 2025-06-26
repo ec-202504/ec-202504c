@@ -89,6 +89,8 @@ export const useProductFilters = () => {
           params.languageId = newBookFilters.languageId;
         if (newBookFilters.purposeId)
           params.purposeId = newBookFilters.purposeId;
+        if (newBookFilters.difficultyId)
+          params.difficultyId = newBookFilters.difficultyId;
         if (newBookFilters.price) params.price = newBookFilters.price;
       }
 
