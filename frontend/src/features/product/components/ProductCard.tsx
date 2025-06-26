@@ -4,7 +4,7 @@ import type { Product, TabValues } from "../types";
 import { Card, CardContent } from "../../../components/ui/card";
 
 import { TAB_VALUES } from "../types/constants";
-// import RatingStars from "./RatingStars";
+import RatingStars from "../../../components/RatingStars";
 
 // 価格をカンマ区切りで整形する関数
 function formatPrice(price: number) {
@@ -71,9 +71,9 @@ export default function ProductCard({
               ¥{formatPrice(product.price)}
             </p>
             <div className="text-sm text-gray-500 flex items-center gap-1">
-              {/* <RatingStars
+              <RatingStars
                 average={Math.round(product.averageRating * 10) / 10}
-              /> */}
+              />
               <span>({product.reviewCount})</span>
             </div>
           </div>

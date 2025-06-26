@@ -5,6 +5,7 @@ type PcSpec = {
   memory: number;
   storage: number;
   deviceSize: number;
+  deviceType: number;
 };
 
 type PcSpecListProps = {
@@ -32,11 +33,17 @@ export default function PcSpecList({ pc }: PcSpecListProps) {
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">ストレージ：</div>
-        {pc.storage}GB
+        {pc.storage >= 1024
+          ? `${(pc.storage / 1024).toFixed(1)}TB`
+          : `${pc.storage}GB`}
       </li>
       <li className="flex">
         <div className="w-[80px] font-bold">サイズ：</div>
-        {pc.deviceSize}インチ
+        {pc.deviceType === 0 ? (
+          <span className="text-gray-500">-</span>
+        ) : (
+          `${pc.deviceSize}インチ`
+        )}
       </li>
     </ul>
   );
