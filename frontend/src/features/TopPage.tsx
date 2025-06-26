@@ -31,7 +31,7 @@ function TopPage() {
               エンジニア特化ECサイト
             </Badge>
 
-            <h1 className="text-4xl lg:text-6xl font-black bg-gradient-to-r from-primary via-primary/90 via-[oklch(0.65_0.12_200)] to-[oklch(0.55_0.2_240)] bg-clip-text text-transparent">
+            <h1 className="text-4xl lg:text-6xl font-black bg-gradient-to-r from-primary via-primary/90 via-[#00b7cb] to-[#00b7cb]/80 bg-clip-text text-transparent">
               Tech Mate
             </h1>
 
@@ -113,8 +113,8 @@ function TopPage() {
 
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-[oklch(0.45_0.25_240)]/10 dark:bg-[oklch(0.45_0.25_240)]/20 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-[oklch(0.45_0.25_240)]" />
+                <div className="w-12 h-12 bg-[#00b7cb]/10 dark:bg-[#00b7cb]/20 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-[#00b7cb]" />
                 </div>
                 <CardTitle className="text-xl">エンジニア特化</CardTitle>
               </CardHeader>
@@ -153,14 +153,14 @@ function TopPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-[oklch(0.55_0.2_240)]/5 to-[oklch(0.55_0.2_240)]/10 dark:from-[oklch(0.55_0.2_240)]/10 dark:to-[oklch(0.55_0.2_240)]/20">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-[#00b7cb]/5 to-[#00b7cb]/10 dark:from-[#00b7cb]/10 dark:to-[#00b7cb]/20">
               <CardHeader>
-                <CardTitle className="text-xl text-[oklch(0.45_0.25_240)] dark:text-[oklch(0.45_0.25_240)]">
+                <CardTitle className="text-xl text-[#00b7cb] dark:text-[#00b7cb]">
                   👩‍💻 新卒1-2年目のエンジニア
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-[oklch(0.45_0.25_240)]/80 dark:text-[oklch(0.45_0.25_240)]/90">
+                <div className="space-y-3 text-[#00b7cb]/80 dark:text-[#00b7cb]/90">
                   <p>• 業務で必要な技術書を効率的に選びたい</p>
                   <p>• 自分のレベルに合った学習ロードマップが欲しい</p>
                   <p>• 実務に直結する知識を得たい</p>
