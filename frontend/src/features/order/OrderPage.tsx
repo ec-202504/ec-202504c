@@ -23,6 +23,8 @@ import type { CartProduct } from "../../types/cartProduct";
 import { toast } from "sonner";
 import { fetchAddress } from "../../api/fetchAddress";
 import { Loader2 } from "lucide-react";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../stores/userAtom";
 
 type OrderProduct = {
   cartProductId: number;
@@ -44,15 +46,6 @@ type OrderRequest = {
   productList: OrderProduct[];
 };
 
-type UserResponse = {
-  userId: number;
-  name: string;
-  email: string;
-  zipcode: string;
-  address: string;
-  telephone: string;
-};
-
 type OrderCompleteResponse = {
   message: string;
   orderId: number;
@@ -67,11 +60,13 @@ function OrderPage() {
   const [prefecture, setPrefecture] = useState("");
   const [municipalities, setMunicipalities] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = useAtomValue(userAtom);
 
   const navigate = useNavigate();
 
   const orderForm = useForm<OrderForm>({
     resolver: zodResolver(orderSchema),
+    mode: "onChange",
     defaultValues: {
       destinationName: "",
       destinationEmail: "",
@@ -81,7 +76,7 @@ function OrderPage() {
       paymentMethod: "0",
     },
   });
-  const { setValue, getValues, watch, reset, trigger } = orderForm;
+  const { setValue, getValues, watch } = orderForm;
 
   /**
    * カート内の商品の合計金額を計算する
@@ -97,28 +92,14 @@ function OrderPage() {
    * ログインしているユーザー情報を取得する
    */
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axiosInstance.get<UserResponse>("/user");
-        const user = response.data;
-
-        // ユーザー情報をフォームにセット
-        reset({
-          destinationName: user.name,
-          destinationEmail: user.email,
-          destinationZipcode: user.zipcode,
-          destinationAddress: user.address,
-          destinationTelephone: user.telephone,
-          paymentMethod: "0",
-        });
-        // isValidの状態を更新
-        trigger();
-      } catch (error) {
-        toast.error("ユーザー情報の取得に失敗しました");
-      }
-    };
-    fetchUser();
-  }, [reset, trigger]);
+    // ユーザー情報をフォームにセット
+    setValue("destinationName", user?.name ?? "");
+    setValue("destinationEmail", user?.email ?? "");
+    setValue("destinationZipcode", user?.zipcode ?? "");
+    setValue("destinationAddress", user?.address ?? "");
+    setValue("destinationTelephone", user?.telephone ?? "");
+    setValue("paymentMethod", "0");
+  }, [user, setValue]);
 
   const onSubmit = async (data: OrderForm) => {
     setIsSubmitting(true);
@@ -207,27 +188,9 @@ function OrderPage() {
     <div className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">注文内容確認</h1>
 
-      <div className="flex justify-end items-center gap-4 mb-8">
-        <div className="text-lg font-semibold">
-          小計：
-          <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
-        </div>
-
-        <Button
-          onClick={orderForm.handleSubmit(onSubmit)}
-          disabled={
-            cart.length === 0 || !orderForm.formState.isValid || isSubmitting
-          }
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              注文処理中...
-            </>
-          ) : (
-            "注文を確定する"
-          )}
-        </Button>
+      <div className=" flex justify-end gap-2 text-lg font-semibold mb-8">
+        小計：
+        <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
       </div>
 
       <section className="mb-8">
@@ -256,7 +219,7 @@ function OrderPage() {
                 name="destinationName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>氏名：</FormLabel>
+                    <FormLabel>名前：</FormLabel>
 
                     <FormControl>
                       <Input {...field} />
@@ -272,10 +235,14 @@ function OrderPage() {
                 name="destinationEmail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>メール：</FormLabel>
+                    <FormLabel>メールアドレス：</FormLabel>
 
                     <FormControl>
-                      <Input type="email" {...field} />
+                      <Input
+                        type="email"
+                        {...field}
+                        placeholder="techmate@example.com"
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -291,7 +258,7 @@ function OrderPage() {
                     <FormLabel>郵便番号：</FormLabel>
                     <div className="flex gap-2">
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} placeholder="123-4567" />
                       </FormControl>
 
                       <Button
@@ -333,7 +300,7 @@ function OrderPage() {
                     <FormLabel>電話番号：</FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} placeholder="090-1234-5678" />
                     </FormControl>
 
                     <FormMessage />
@@ -358,8 +325,8 @@ function OrderPage() {
           </Form>
         ) : (
           <div className="grid gap-1 p-5 bg-gray-50 text-sm rounded-lg">
-            <div>氏名：{getValues("destinationName")}</div>
-            <div>メール：{getValues("destinationEmail")}</div>
+            <div>名前：{getValues("destinationName")}</div>
+            <div>メールアドレス：{getValues("destinationEmail")}</div>
             <div>郵便番号：{getValues("destinationZipcode")}</div>
             <div>住所：{getValues("destinationAddress")}</div>
             <div>電話番号：{getValues("destinationTelephone")}</div>
@@ -433,6 +400,22 @@ function OrderPage() {
           ))}
         </ul>
       </section>
+
+      <div className="flex justify-end">
+        <Button
+          onClick={orderForm.handleSubmit(onSubmit)}
+          disabled={cart.length === 0 || isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              注文処理中...
+            </>
+          ) : (
+            "注文を確定する"
+          )}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -27,7 +27,7 @@ public class UserService {
   }
 
   /**
-   * ユーザーをメールアドレスで検索する.
+   * ユーザーをメールアドレスで検索する. (異常系:EntityNotFoundException)
    *
    * @param email メールアドレス
    * @return ユーザー

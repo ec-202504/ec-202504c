@@ -71,4 +71,8 @@ public class Pc {
   @ManyToOne
   @JoinColumn(name = "purpose_id", nullable = false)
   private Purpose purpose;
+
+  /** 商品画像URL. */
+  @Column(name = "image_url", nullable = false)
+  private String imageUrl;
 }

@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -71,5 +72,6 @@ public class User {
 
   /** 注文リスト. */
   @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
+  @JsonIgnore
   private List<Order> orderList;
 }

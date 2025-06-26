@@ -1,6 +1,7 @@
 package com.example.repository;
 
 import com.example.model.Book;
+import com.example.model.Difficulty;
 import com.example.model.Language;
 import com.example.model.Purpose;
 import jakarta.persistence.EntityManager;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+/** Bookエンティティに対するカスタムクエリ操作を実装するクラス. */
 public class BookRepositoryImpl implements BookRepositoryCustom {
 
   @PersistenceContext private EntityManager entityManager;
@@ -31,6 +33,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
       LocalDate publishDate,
       Integer languageId,
       Integer purposeId,
+      Integer difficultyId,
       Pageable pageable) {
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -40,6 +43,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
     Root<Book> root = cq.from(Book.class);
     Join<Book, Language> languageJoin = root.join("language", JoinType.LEFT);
     Join<Book, Purpose> purposeJoin = root.join("purpose", JoinType.LEFT);
+    Join<Book, Difficulty> difficultyJoin = root.join("difficulty", JoinType.LEFT);
 
     List<Predicate> predicates = new ArrayList<>();
 
@@ -67,6 +71,10 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
       predicates.add(cb.equal(purposeJoin.get("id"), purposeId));
     }
 
+    if (difficultyId != null) {
+      predicates.add(cb.equal(difficultyJoin.get("id"), difficultyId));
+    }
+
     cq.where(cb.and(predicates.toArray(new Predicate[0])));
 
     switch (sort) {
@@ -87,6 +95,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
     Root<Book> countRoot = countQuery.from(Book.class);
     Join<Book, Language> countLanguageJoin = countRoot.join("language", JoinType.LEFT);
     Join<Book, Purpose> countPurposeJoin = countRoot.join("purpose", JoinType.LEFT);
+    Join<Book, Difficulty> countDifficultyJoin = countRoot.join("difficulty", JoinType.LEFT);
 
     List<Predicate> countPredicates = new ArrayList<>();
 
@@ -113,6 +122,10 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
 
     if (purposeId != null) {
       countPredicates.add(cb.equal(countPurposeJoin.get("id"), purposeId));
+    }
+
+    if (difficultyId != null) {
+      countPredicates.add(cb.equal(countDifficultyJoin.get("id"), difficultyId));
     }
 
     countQuery.select(cb.count(countRoot)).where(cb.and(countPredicates.toArray(new Predicate[0])));

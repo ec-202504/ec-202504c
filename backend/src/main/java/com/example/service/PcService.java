@@ -184,13 +184,13 @@ public class PcService {
   }
 
   /**
-   * 　検索結果が含まれるページネーションされたPCのリストを取得するメソッド.
+   * 検索結果が含まれるページネーションされたPCのリストを取得するメソッド.
    *
    * @param sort ソート条件（ASC or DESC）
-   * @param name　デバイス名
-   * @param price　価格
-   * @param memory　メモリ
-   * @param storage　ストレージ
+   * @param name デバイス名
+   * @param price 価格
+   * @param memory メモリ
+   * @param storage ストレージ
    * @param deviceSize デバイスサイズ
    * @param deviceType デバイスタイプ
    * @param osId OSのID

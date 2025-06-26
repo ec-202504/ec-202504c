@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
+import { PasswordInput } from "../../components/password-input";
 
 import type { AxiosResponse } from "axios";
 import { useState } from "react";
@@ -26,6 +27,7 @@ import { fetchAddress } from "../../api/fetchAddress";
 import type { RegisterRequest } from "../../types/registerRequest";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { axiosInstance } from "../../lib/axiosInstance";
+import UserHeader from "./components/UserHeader";
 
 function UserRegisterPage() {
   const [prefecture, setPrefecture] = useState("");
@@ -33,6 +35,7 @@ function UserRegisterPage() {
   const navigate = useNavigate();
 
   const form = useForm<RegisterForm>({
+    mode: "onChange",
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
       name: "",
@@ -80,139 +83,145 @@ function UserRegisterPage() {
       setPrefecture(address.prefecture);
       setMunicipalities(address.municipalities);
     } else {
-      alert("住所が見つかりませんでした");
+      form.setError("zipcode", {
+        message: "住所が見つかりませんでした",
+      });
     }
   };
 
   return (
-    <>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        {/* 良い感じのロゴ募 */}
-        <Link to="/product">
-          <div className="my-8 text-center">
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">TechMate</h1>
-            <p className="text-gray-600 mb-4">技術書とPCの専門店</p>
-          </div>
-        </Link>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-8">
+      <UserHeader />
 
-        <Card className="w-xl">
-          <CardHeader>
-            <CardTitle>ユーザー登録</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>名前</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>メールアドレス</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>パスワード</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>確認用パスワード</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="zipcode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>郵便番号</FormLabel>
-                      <div className="flex gap-2">
-                        <Input {...field} className="w-full" />
-                        <Button
-                          type="button"
-                          onClick={handleFetchAddress}
-                          variant="outline"
-                          className="whitespace-nowrap"
-                        >
-                          住所取得
-                        </Button>
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>住所</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="telephone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>電話番号</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full">
+      <Card className="w-xl">
+        <CardHeader className="pb-6">
+          <CardTitle className="text-center text-xl">ユーザー登録</CardTitle>
+        </CardHeader>
+        <CardContent className="px-8 pb-8">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>名前</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>メールアドレス</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="techmate@example.com" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>パスワード</FormLabel>
+                    <PasswordInput
+                      field={field}
+                      placeholder="英大文字・小文字・数字・記号を含む8文字以上16文字以下"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>確認用パスワード</FormLabel>
+                    <PasswordInput field={field} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="zipcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>郵便番号</FormLabel>
+                    <div className="flex gap-2">
+                      <Input
+                        {...field}
+                        className="w-full"
+                        placeholder="123-4567"
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleFetchAddress}
+                        variant="outline"
+                        className="whitespace-nowrap"
+                      >
+                        住所取得
+                      </Button>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>住所</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="telephone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>電話番号</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="090-1234-5678" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="pt-2">
+                <Button type="submit" className="w-full h-11 text-base">
                   登録
                 </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
-    </>
+              </div>
+              <div className="text-center pt-4">
+                <Link
+                  to="/user/login"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  <span className="text-sm text-blue-600 hover:underline">
+                    ログイン画面はこちら
+                  </span>
+                </Link>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

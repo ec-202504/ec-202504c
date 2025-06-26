@@ -17,11 +17,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,28 +42,26 @@ public class OrderController {
   private final CartProductService cartProductService;
 
   /**
-   * 全ての注文を取得するエンドポイント.
+   * 注文する.
    *
    * @return 全ての注文のリスト
    */
   @PostMapping
-  public ResponseEntity<?> createOrder(@RequestBody OrderRequest request)
+  public ResponseEntity<?> createOrder(
+      @RequestBody OrderRequest request, @AuthenticationPrincipal Jwt jwt)
       throws MessagingException {
-    // TODO: userIdをjwtから取得するようにする
-    Integer userId = 1;
-    Optional<User> optionalUser = userService.findById(userId);
-    if (optionalUser.isEmpty()) {
-      return ResponseEntity.badRequest().build();
-    }
     // 　注文情報を登録
     Order order = new Order();
     BeanUtils.copyProperties(request, order);
     order.setOrderDateTime(LocalDateTime.now());
     order.setDeliveryDateTime(LocalDateTime.now().plusDays(3)); // 配送予定日を注文日から3日後に設定
-
-    User user = optionalUser.get();
+    // jwtからユーザーを取得
+    String email = jwt.getSubject();
+    User user =
+        userService
+            .findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
     order.setUserId(user);
-
     orderService.createOrder(order);
 
     List<OrderProduct> orderProductList = new ArrayList<>();
@@ -90,21 +89,19 @@ public class OrderController {
   }
 
   /**
-   * ユーザーの注文履歴を取得するエンドポイント.
+   * ユーザーの注文履歴を取得する.
    *
    * @return ユーザーの注文履歴
    */
   @GetMapping("/history")
-  public ResponseEntity<?> getOrderHistory() {
+  public ResponseEntity<?> getOrderHistory(@AuthenticationPrincipal Jwt jwt) {
     // TODO:  userIdをjwtから取得するようにする
-    Integer userId = 1;
-    // ユーザーが存在するか確認
-    Optional<User> user = userService.findById(userId);
-    if (user.isEmpty()) {
-      return ResponseEntity.badRequest().body(Map.of("message", "ユーザが見つかりません"));
-    }
-
-    List<OrderDetailResponse> orderHistory = orderService.getOrderHistoryByUserId(userId);
+    String email = jwt.getSubject();
+    User user =
+        userService
+            .findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
+    List<OrderDetailResponse> orderHistory = orderService.getOrderHistoryByUserId(user.getUserId());
     return ResponseEntity.ok(orderHistory);
   }
 
