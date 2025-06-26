@@ -168,6 +168,7 @@ export const useProductFilters = () => {
     (newPage: number) => {
       setPage(newPage);
       updateUrlParams(pcFilters, bookFilters, query, newPage, price);
+      window.scrollTo(0, 0);
     },
     [pcFilters, bookFilters, query, updateUrlParams, price],
   );
