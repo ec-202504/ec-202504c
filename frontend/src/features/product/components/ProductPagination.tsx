@@ -21,8 +21,13 @@ export default function ProductPagination({
 }: Props) {
   const getPageNumbers = () => {
     const pages = [];
-    for (let i = 0; i <= totalPages; i++) {
-      pages.push(i);
+    if (totalPages === 1) {
+      pages.push(0);
+      totalPages = 0;
+    } else {
+      for (let i = 0; i <= totalPages; i++) {
+        pages.push(i);
+      }
     }
     return pages;
   };

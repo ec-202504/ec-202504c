@@ -90,7 +90,7 @@ export default function BookDetail() {
       setContentBasedBooks(contentBaseProducts);
       if (user) {
         const UserBaseProductsResponse = await axiosInstance.get(
-          `/books/recommend/userBase/${user.userId}`,
+          `/books/recommend/userBase/${user.userId}/${itemId}`,
         );
         for (const product of UserBaseProductsResponse.data) {
           if (product.productCategory === 0) {
