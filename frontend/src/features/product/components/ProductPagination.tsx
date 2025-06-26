@@ -21,7 +21,7 @@ export default function ProductPagination({
 }: Props) {
   const getPageNumbers = () => {
     const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
+    for (let i = 0; i <= totalPages; i++) {
       pages.push(i);
     }
     return pages;
@@ -36,7 +36,7 @@ export default function ProductPagination({
             href="/product"
             onClick={(e) => {
               e.preventDefault();
-              if (currentPage > 1) onPageChange(currentPage - 1);
+              if (currentPage > 0) onPageChange(currentPage - 1);
             }}
             aria-disabled={currentPage === 1}
           >
@@ -54,7 +54,7 @@ export default function ProductPagination({
                 if (page !== currentPage) onPageChange(page);
               }}
             >
-              {page}
+              {page + 1}
             </PaginationLink>
           </PaginationItem>
         ))}

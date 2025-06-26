@@ -182,11 +182,11 @@ public class BookService {
   }
 
   /**
-   * 　検索結果が含まれるページネーションされたPCのリストを取得するメソッド.
+   * 検索結果が含まれるページネーションされたPCのリストを取得するメソッド.
    *
    * @param sort ソート条件（ASC or DESC）
-   * @param name　デバイス名
-   * @param price　価格
+   * @param name デバイス名
+   * @param price 価格
    * @param languageId 言語のID
    * @param purposeId 目的ID
    * @param difficultyId 難易度ID

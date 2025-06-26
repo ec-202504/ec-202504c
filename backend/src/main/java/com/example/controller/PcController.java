@@ -4,14 +4,7 @@ import com.example.dto.request.AddPcRequest;
 import com.example.dto.request.UpdatePcRequest;
 import com.example.dto.response.OrderProductResponse;
 import com.example.dto.response.PcDetailResponse;
-import com.example.model.Cpu;
-import com.example.model.Gpu;
-import com.example.model.Order;
-import com.example.model.Os;
-import com.example.model.Pc;
-import com.example.model.ProductKey;
-import com.example.model.Purpose;
-import com.example.model.User;
+import com.example.model.*;
 import com.example.service.OrderService;
 import com.example.service.PcService;
 import com.example.service.UserService;
@@ -326,8 +319,9 @@ public class PcController {
    * @param userId ユーザID
    * @return 協調フィルタリングによる商品の推薦結果のリスト
    */
-  @GetMapping("/recommend/userBase/{userId}")
-  public ResponseEntity<?> recommendByUserBasePcs(@PathVariable Integer userId) {
+  @GetMapping("/recommend/userBase/{userId}/{pcId}")
+  public ResponseEntity<?> recommendByUserBasePcs(
+      @PathVariable Integer userId, @PathVariable Integer pcId) {
     Optional<User> targetUser = userService.findById(userId);
     if (targetUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
@@ -341,6 +335,50 @@ public class PcController {
         ProductKey key = new ProductKey(product.getProductId(), product.getProductCategory());
         targetProducts.add(key);
       }
+    }
+
+    // 一度も商品を購入したことがないユーザの場合
+    if (targetProducts.isEmpty()) {
+      Optional<Pc> targetPc = pcService.findById(pcId);
+      if (targetPc.isEmpty()) {
+        return ResponseEntity.badRequest().build();
+      }
+
+      // 全ユーザの購入履歴をチェック
+      List<Order> orderList = orderService.getAllOrders();
+      List<OrderProductResponse> orderedProducts = new ArrayList<>();
+      for (Order order : orderList) {
+        Integer orderUserId = order.getUserId().getUserId();
+        if (targetUser.get().getUserId().equals(orderUserId)) {
+          continue; // ターゲットユーザはスキップ
+        }
+
+        // ユーザが閲覧している商品を既に購入しているユーザが他に購入している商品を検索
+        for (OrderProduct orderProduct : order.getOrderProductList()) {
+          if (orderProduct.getProductId().equals(targetPc.get().getId())) {
+            List<OrderProductResponse> productResponses =
+                orderService.getOrderDetailsByOrderId(order.getOrderId()).getProducts();
+            orderedProducts.addAll(productResponses);
+          }
+        }
+      }
+
+      // 閲覧商品を購入しているユーザが他に購入している商品一覧を取得
+      List<Map<String, Object>> recommendedProducts =
+          orderedProducts.stream()
+              .filter(e -> !e.getProductId().equals(pcId))
+              .map(
+                  e -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("productId", e.getProductId());
+                    map.put("productCategory", e.getProductCategory());
+                    map.put("productName", e.getProductName());
+                    map.put("similarity", 0);
+                    return map;
+                  })
+              .limit(4)
+              .toList();
+      return ResponseEntity.ok(recommendedProducts);
     }
 
     // 推薦商品のスコア（類似度）を管理するMap<ProductKey, Integer>

@@ -28,7 +28,7 @@ public class Purpose {
   @Column(name = "name", nullable = false, length = 255)
   private String name;
 
-  /** 商品カテゴリ（0 → PC，1 → Book） */
+  /** 商品カテゴリ（0 → PC，1 → Book）. */
   @Column(name = "product_category", nullable = false)
   @ColumnDefault("0")
   private Integer productCategory;

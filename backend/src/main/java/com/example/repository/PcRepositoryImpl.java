@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+/** PCエンティティに対するカスタムクエリ操作を実装するクラス. */
 @Repository
 public class PcRepositoryImpl implements PcRepositoryCustom {
 

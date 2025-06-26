@@ -3,6 +3,7 @@ import OrderInfoCard from "./components/OrderInfoCard";
 import OrderProductSummaryCard from "./components/OrderProductSummaryCard";
 import { Button } from "../../components/ui/button";
 import { CheckCircle } from "lucide-react";
+import { TAB_VALUES } from "../product/types/constants";
 
 export default function OrderComplete() {
   const order = useLoaderData({
@@ -33,7 +34,9 @@ export default function OrderComplete() {
           <Link to="/order/history">注文履歴を確認</Link>
         </Button>
         <Button asChild>
-          <Link to="/product">ショッピングを続ける</Link>
+          <Link to="/product" search={{ tab: TAB_VALUES.PC }}>
+            ショッピングを続ける
+          </Link>
         </Button>
       </div>
     </div>
