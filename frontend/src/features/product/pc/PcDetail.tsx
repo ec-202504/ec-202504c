@@ -4,7 +4,7 @@ import { axiosInstance } from "../../../lib/axiosInstance";
 import { toast } from "sonner";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
 import type { AddCartRequest, Pc, Product, RawPc, Review } from "../types";
-import { fetchPcReviews } from "../api/reviewApi";
+import { fetchBookReviews, fetchPcReviews } from "../api/reviewApi";
 
 import PcInfo from "../components/PcInfo";
 import LoadingOverlay from "../components/LoadingOverlay";
@@ -17,10 +17,16 @@ import { useAtomValue } from "jotai";
 import { userAtom } from "../../../stores/userAtom";
 import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
 
+export type ProductWithType = Product & {
+  type: "pc" | "book";
+};
+
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
   const [contentBasedPcs, setContentBasedPcs] = useState<Product[]>([]);
-  const [userBasePcs, setUserBasePcs] = useState<Product[]>([]);
+  const [userBaseProducts, setUserBaseProducts] = useState<ProductWithType[]>(
+    [],
+  );
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = useAtomValue(userAtom);
@@ -84,15 +90,81 @@ export default function PcDetail() {
       );
       setContentBasedPcs(contentBasePcs);
       if (user) {
-        const UserBaseRowPcsResponse = await axiosInstance.get(
+        const UserBaseProductsResponse = await axiosInstance.get(
           `/pcs/recommend/userBase/${user.userId}`,
         );
-        const userBaseRawPcs: RawPc[] = UserBaseRowPcsResponse.data;
-        const userBasePcs: Product[] = await attachReviewsToProducts(
-          userBaseRawPcs.map((rawPc: RawPc) => convertToProduct(rawPc)),
-          fetchPcReviews,
-        );
-        setUserBasePcs(userBasePcs);
+        for (const product of UserBaseProductsResponse.data) {
+          if (product.productCategory === 0) {
+            const productDetailResponse = await axiosInstance.get(
+              `/pcs/${product.productId}`,
+            );
+            console.log(productDetailResponse.data);
+            const reviews = await fetchPcReviews(product.productId);
+            const totalReviews = reviews.length;
+            const average =
+              totalReviews > 0
+                ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+                  totalReviews
+                : 0;
+
+            const productWithType: ProductWithType = {
+              id: productDetailResponse.data.pcId,
+              name: productDetailResponse.data.name,
+              price: productDetailResponse.data.price,
+              image: productDetailResponse.data.imageUrl,
+              reviewCount: totalReviews,
+              averageRating: average,
+              type: "pc",
+            };
+            setUserBaseProducts((prev) => {
+              if (
+                prev.find(
+                  (p) =>
+                    p.id === productWithType.id &&
+                    p.type === productWithType.type,
+                )
+              ) {
+                return prev; // 重複は無視
+              }
+              return [...prev, productWithType];
+            });
+          } else {
+            const productDetailResponse = await axiosInstance.get(
+              `/books/${product.productId}`,
+            );
+            console.log(productDetailResponse.data);
+            const reviews = await fetchBookReviews(product.productId);
+            const totalReviews = reviews.length;
+            const average =
+              totalReviews > 0
+                ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+                  totalReviews
+                : 0;
+
+            const productWithType: ProductWithType = {
+              id: productDetailResponse.data.bookId,
+              name: productDetailResponse.data.name,
+              price: productDetailResponse.data.price,
+              image: productDetailResponse.data.imageUrl,
+              reviewCount: totalReviews,
+              averageRating: average,
+              type: "book",
+            };
+            console.log(productWithType);
+            setUserBaseProducts((prev) => {
+              if (
+                prev.find(
+                  (p) =>
+                    p.id === productWithType.id &&
+                    p.type === productWithType.type,
+                )
+              ) {
+                return prev; // 重複は無視
+              }
+              return [...prev, productWithType];
+            });
+          }
+        }
       }
     } catch {
       toast.error("商品情報の取得に失敗しました");
@@ -140,10 +212,13 @@ export default function PcDetail() {
                       totalReviews={totalReviews}
                     />
                   </div>
-                  <RecommendedByUserBaseProducts products={userBasePcs} />
+                  <RecommendedByUserBaseProducts products={userBaseProducts} />
                 </div>
               </div>
-              <RecommendedByContentBaseProducts products={contentBasedPcs} />
+              <RecommendedByContentBaseProducts
+                products={contentBasedPcs}
+                type="pc"
+              />
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}

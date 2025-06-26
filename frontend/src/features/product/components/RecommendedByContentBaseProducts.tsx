@@ -10,10 +10,12 @@ function formatPrice(price: number) {
 
 type RecommendedProductsProps = {
   products: Product[];
+  type: "pc" | "book";
 };
 
 export default function RecommendedByContentBaseProducts({
   products,
+  type,
 }: RecommendedProductsProps) {
   return (
     <section className="py-5 mb-5 bg-gray-50 rounded-sm w-full">
@@ -27,7 +29,9 @@ export default function RecommendedByContentBaseProducts({
           {products.map((product) => (
             <Link
               key={product.id}
-              to="/product/pc/$itemId"
+              to={
+                type === "pc" ? "/product/pc/$itemId" : "/product/book/$itemId"
+              }
               params={{ itemId: product.id.toString() }}
               className="group"
             >
@@ -56,7 +60,6 @@ export default function RecommendedByContentBaseProducts({
                     </p>
                     <div className="text-sm text-gray-500 flex items-center gap-1">
                       <RatingStars average={product.averageRating} />
-                      {product.averageRating}
                       <span>({product.reviewCount})</span>
                     </div>
                   </div>

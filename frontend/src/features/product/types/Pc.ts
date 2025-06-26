@@ -18,6 +18,7 @@ export type RawPc = {
     id: number;
     name: string;
     price: number;
+    imageUrl: string;
     memory: number;
     storage: number;
     deviceSize: number;

@@ -176,10 +176,6 @@ export async function attachReviewsToProducts(
           ? reviews.reduce((sum, review) => sum + review.rating, 0) /
             totalReviews
           : 0;
-      // console.log("product", product.id);
-      // console.log("reviews", reviews);
-      // console.log("totalReviews", totalReviews);
-      // console.log("average", average);
       return {
         ...product,
         reviewCount: totalReviews,

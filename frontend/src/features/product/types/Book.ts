@@ -12,6 +12,7 @@ export type Book = {
 export type RawBook = {
   book: {
     id: number;
+    imageUrl: string;
     name: string;
     author: string;
     publishDate: string;

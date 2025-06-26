@@ -16,11 +16,14 @@ import { convertToProduct } from "../utils/productConverter";
 import { userAtom } from "../../../stores/userAtom";
 import { useAtomValue } from "jotai";
 import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
+import type { ProductWithType } from "../pc/PcDetail";
 
 export default function BookDetail() {
   const [book, setBook] = useState<Book>();
   const [contentBasedBooks, setContentBasedBooks] = useState<Product[]>([]);
-  const [userBaseBooks, setUserBaseBooks] = useState<Product[]>([]);
+  const [userBaseProducts, setUserBaseProducts] = useState<ProductWithType[]>(
+    [],
+  );
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const user = useAtomValue(userAtom);
@@ -77,6 +80,7 @@ export default function BookDetail() {
       const contentBaseBooksResponse = await axiosInstance.get(
         `/books/recommend/contentBase/${itemId}`,
       );
+      console.log(contentBaseBooksResponse.data);
       const contentBaseRawBooks: RawBook[] = contentBaseBooksResponse.data;
       const contentBaseProducts: Product[] = await attachReviewsToProducts(
         contentBaseRawBooks.map((rawBook: RawBook) =>
@@ -86,15 +90,78 @@ export default function BookDetail() {
       );
       setContentBasedBooks(contentBaseProducts);
       if (user) {
-        const UserBaseRowBooksResponse = await axiosInstance.get(
+        const UserBaseProductsResponse = await axiosInstance.get(
           `/books/recommend/userBase/${user.userId}`,
         );
-        const userBaseRawBooks: RawBook[] = UserBaseRowBooksResponse.data;
-        const userBaseBooks: Product[] = await attachReviewsToProducts(
-          userBaseRawBooks.map((rawBook: RawBook) => convertToProduct(rawBook)),
-          fetchPcReviews,
-        );
-        setUserBaseBooks(userBaseBooks);
+        for (const product of UserBaseProductsResponse.data) {
+          if (product.productCategory === 0) {
+            const productDetailResponse = await axiosInstance.get(
+              `/pcs/${product.productId}`,
+            );
+            const reviews = await fetchPcReviews(product.productId);
+            const totalReviews = reviews.length;
+            const average =
+              totalReviews > 0
+                ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+                  totalReviews
+                : 0;
+
+            const productWithType: ProductWithType = {
+              id: productDetailResponse.data.pcId,
+              name: productDetailResponse.data.name,
+              price: productDetailResponse.data.price,
+              image: productDetailResponse.data.imageUrl,
+              reviewCount: totalReviews,
+              averageRating: average,
+              type: "pc",
+            };
+            setUserBaseProducts((prev) => {
+              if (
+                prev.find(
+                  (p) =>
+                    p.id === productWithType.id &&
+                    p.type === productWithType.type,
+                )
+              ) {
+                return prev; // 重複は無視
+              }
+              return [...prev, productWithType];
+            });
+          } else {
+            const productDetailResponse = await axiosInstance.get(
+              `/books/${product.productId}`,
+            );
+            const reviews = await fetchBookReviews(product.productId);
+            const totalReviews = reviews.length;
+            const average =
+              totalReviews > 0
+                ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+                  totalReviews
+                : 0;
+
+            const productWithType: ProductWithType = {
+              id: productDetailResponse.data.bookId,
+              name: productDetailResponse.data.name,
+              price: productDetailResponse.data.price,
+              image: productDetailResponse.data.imageUrl,
+              reviewCount: totalReviews,
+              averageRating: average,
+              type: "book",
+            };
+            setUserBaseProducts((prev) => {
+              if (
+                prev.find(
+                  (p) =>
+                    p.id === productWithType.id &&
+                    p.type === productWithType.type,
+                )
+              ) {
+                return prev; // 重複は無視
+              }
+              return [...prev, productWithType];
+            });
+          }
+        }
       }
     } catch (error) {
       toast.error("商品情報の取得に失敗しました");
@@ -148,10 +215,13 @@ export default function BookDetail() {
                       totalReviews={totalReviews}
                     />
                   </div>
-                  <RecommendedByUserBaseProducts products={userBaseBooks} />
+                  <RecommendedByUserBaseProducts products={userBaseProducts} />
                 </div>
               </div>
-              <RecommendedByContentBaseProducts products={contentBasedBooks} />
+              <RecommendedByContentBaseProducts
+                products={contentBasedBooks}
+                type="book"
+              />
               <ReviewInfo
                 reviews={reviews}
                 totalReviews={totalReviews}

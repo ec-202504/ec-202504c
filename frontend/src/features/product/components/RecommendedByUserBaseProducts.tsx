@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "../../../components/ui/card";
-import type { Product } from "../types";
+import type { ProductWithType } from "../pc/PcDetail";
+import RatingStars from "../../../components/RatingStars";
 
 // 価格をカンマ区切りで整形する関数
 function formatPrice(price: number) {
@@ -8,13 +9,12 @@ function formatPrice(price: number) {
 }
 
 type RecommendedByUserBaseProductsProps = {
-  products: Product[];
+  products: ProductWithType[];
 };
 
 export default function RecommendedByUserBaseProducts({
   products,
 }: RecommendedByUserBaseProductsProps) {
-  console.log("products", products);
   return (
     <div className="w-full">
       <div className="mb-4">
@@ -35,8 +35,14 @@ export default function RecommendedByUserBaseProducts({
           {products.map((product) => (
             <Link
               key={product.id}
-              to="/product/pc/$itemId"
-              params={{ itemId: product.id.toString() }}
+              to={
+                product.type === "pc"
+                  ? "/product/pc/$itemId"
+                  : "/product/book/$itemId"
+              }
+              params={{
+                itemId: product.id,
+              }}
               className="group"
             >
               <Card className="h-full bg-white border-0 shadow-sm hover:shadow-md transition-all duration-300 group-hover:-translate-y-1">
@@ -62,6 +68,10 @@ export default function RecommendedByUserBaseProducts({
                     <p className="text-sm font-bold text-blue-600">
                       ¥{formatPrice(product.price)}
                     </p>
+                    <div className="text-sm text-gray-500 flex items-center gap-1">
+                      <RatingStars average={product.averageRating} />
+                      <span>({product.reviewCount})</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
