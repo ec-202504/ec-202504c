@@ -24,7 +24,6 @@ public class OrderService {
 
   private static final int CATEGORY_PC = 0;
   private static final int CATEGORY_BOOK = 1;
-  private static final String PLACEHOLDER_IMAGE_URL = "https://placehold.jp/150x100.png";
 
   /**
    * 全ユーザの注文リストを取得するメソッド.
@@ -93,7 +92,6 @@ public class OrderService {
     response.setProductId(productId);
     response.setProductCategory(category);
     response.setQuantity(orderProduct.getQuantity());
-    response.setImageUrl(PLACEHOLDER_IMAGE_URL); // TODO: DBから画像URLを取得するように修正する
 
     switch (category) {
       case CATEGORY_PC -> {
@@ -103,6 +101,7 @@ public class OrderService {
                 pc -> {
                   response.setProductName(pc.getName());
                   response.setPrice(pc.getPrice());
+                  response.setImageUrl(pc.getImageUrl());
                   return response;
                 })
             .orElseThrow(() -> new EntityNotFoundException("PC (ID: " + productId + ") が見つかりません"));
@@ -114,6 +113,7 @@ public class OrderService {
                 book -> {
                   response.setProductName(book.getName());
                   response.setPrice(book.getPrice());
+                  response.setImageUrl(book.getImageUrl());
                   return response;
                 })
             .orElseThrow(() -> new EntityNotFoundException("書籍 (ID: " + productId + ") が見つかりません"));
