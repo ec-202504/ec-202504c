@@ -13,15 +13,18 @@ import ReviewInfo from "../components/ReviewInfo";
 import RecommendedByContentBaseProducts from "../components/RecommendedByContentBaseProducts";
 import { attachReviewsToProducts } from "../hooks/useProductData";
 import { convertToProduct } from "../utils/productConverter";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../../stores/userAtom";
+import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
 
 export default function PcDetail() {
   const [pc, setPc] = useState<Pc>();
   const [contentBasedPcs, setContentBasedPcs] = useState<Product[]>([]);
-  const [userBasePcs, setUserBasePcs] = useState<Pc[]>([]);
+  const [userBasePcs, setUserBasePcs] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const userId = 1;
-  
+  const user = useAtomValue(userAtom);
+
   const { itemId } = useParams({ from: "/product/pc/$itemId/" });
   const navigate = useNavigate();
 
@@ -75,27 +78,28 @@ export default function PcDetail() {
         `/pcs/recommend/contentBase/${itemId}`,
       );
       const contentBaseRawPcs: RawPc[] = contentBasePcsResponse.data;
-      console.log("contentBaseRawPcs", contentBaseRawPcs);
       const contentBasePcs: Product[] = await attachReviewsToProducts(
         contentBaseRawPcs.map((rawPc: RawPc) => convertToProduct(rawPc)),
         fetchPcReviews,
       );
       setContentBasedPcs(contentBasePcs);
-      console.log("contentBasePcs", contentBasePcs);
-      if (typeof userId === "string" || typeof userId === "number"){
+      if (user) {
         const UserBaseRowPcsResponse = await axiosInstance.get(
-          // `/pcs/recommend/userBase/${userId}`
-          "/pcs/recommend/userBase/1",
+          `/pcs/recommend/userBase/${user.userId}`,
         );
-        console.log("UserBaseRowPcsResponse", UserBaseRowPcsResponse);
-        setUserBasePcs(UserBaseRowPcsResponse.data);
+        const userBaseRawPcs: RawPc[] = UserBaseRowPcsResponse.data;
+        const userBasePcs: Product[] = await attachReviewsToProducts(
+          userBaseRawPcs.map((rawPc: RawPc) => convertToProduct(rawPc)),
+          fetchPcReviews,
+        );
+        setUserBasePcs(userBasePcs);
       }
     } catch {
       toast.error("商品情報の取得に失敗しました");
     } finally {
       setIsLoading(false);
     }
-  }, [itemId]);
+  }, [itemId, user]);
 
   /**
    * PCのレビューを取得する
@@ -136,11 +140,7 @@ export default function PcDetail() {
                       totalReviews={totalReviews}
                     />
                   </div>
-                  <div>
-                    {/* <RecommendedByUserBaseProducts
-                                            products={userBasePcs}
-                                        /> */}
-                  </div>
+                  <RecommendedByUserBaseProducts products={userBasePcs} />
                 </div>
               </div>
               <RecommendedByContentBaseProducts products={contentBasedPcs} />

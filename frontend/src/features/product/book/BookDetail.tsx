@@ -8,19 +8,22 @@ import ProductNotFound from "../components/ProductNotFound";
 import ReviewInfo from "../components/ReviewInfo";
 import { toast } from "sonner";
 import { PRODUCT_CATEGORY } from "../../../types/constants";
-import { fetchBookReviews } from "../api/reviewApi";
+import { fetchBookReviews, fetchPcReviews } from "../api/reviewApi";
 import type { RawBook } from "../types";
 import RecommendedByContentBaseProducts from "../components/RecommendedByContentBaseProducts";
 import { attachReviewsToProducts } from "../hooks/useProductData";
 import { convertToProduct } from "../utils/productConverter";
+import { userAtom } from "../../../stores/userAtom";
+import { useAtomValue } from "jotai";
+import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
 
 export default function BookDetail() {
   const [book, setBook] = useState<Book>();
   const [contentBasedBooks, setContentBasedBooks] = useState<Product[]>([]);
-  const [userBaseBooks, setUserBaseBooks] = useState<Book[]>([]);
+  const [userBaseBooks, setUserBaseBooks] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const userId = 1;
+  const user = useAtomValue(userAtom);
 
   const { itemId } = useParams({ from: "/product/book/$itemId/" });
   const navigate = useNavigate();
@@ -82,19 +85,23 @@ export default function BookDetail() {
         fetchBookReviews,
       );
       setContentBasedBooks(contentBaseProducts);
-      if (typeof userId === "string" || typeof userId === "number"){
+      if (user) {
         const UserBaseRowBooksResponse = await axiosInstance.get(
-          // `/books/recommend/userBase/${userId}`
-          "/books/recommend/userBase/1",
+          `/books/recommend/userBase/${user.userId}`,
         );
-        setUserBaseBooks(UserBaseRowBooksResponse.data);
+        const userBaseRawBooks: RawBook[] = UserBaseRowBooksResponse.data;
+        const userBaseBooks: Product[] = await attachReviewsToProducts(
+          userBaseRawBooks.map((rawBook: RawBook) => convertToProduct(rawBook)),
+          fetchPcReviews,
+        );
+        setUserBaseBooks(userBaseBooks);
       }
     } catch (error) {
       toast.error("商品情報の取得に失敗しました");
     } finally {
       setIsLoading(false);
     }
-  }, [itemId]);
+  }, [itemId, user]);
 
   /**
    * 本のレビューを取得する
@@ -120,7 +127,6 @@ export default function BookDetail() {
   useEffect(() => {
     fetchData();
     fetchReviews();
-    // ページの上部にスクロール
     window.scrollTo(0, 0);
   }, [fetchData, fetchReviews]);
 
@@ -142,7 +148,7 @@ export default function BookDetail() {
                       totalReviews={totalReviews}
                     />
                   </div>
-                  <div>{/* <RecommendedByUserBaseProducts /> */}</div>
+                  <RecommendedByUserBaseProducts products={userBaseBooks} />
                 </div>
               </div>
               <RecommendedByContentBaseProducts products={contentBasedBooks} />
