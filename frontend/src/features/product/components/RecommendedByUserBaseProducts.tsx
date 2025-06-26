@@ -14,6 +14,7 @@ type RecommendedByUserBaseProductsProps = {
 export default function RecommendedByUserBaseProducts({
   products,
 }: RecommendedByUserBaseProductsProps) {
+  console.log("products", products);
   return (
     <div className="w-full">
       <div className="mb-4">

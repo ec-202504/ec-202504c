@@ -163,10 +163,10 @@ export const useProductData = (
 };
 
 // 商品配列にレビュー情報を付与する共通メソッド
-export const attachReviewsToProducts = async (
+export async function attachReviewsToProducts(
   products: Product[],
   fetchReviews: (id: string) => Promise<{ rating: number }[]>,
-): Promise<Product[]> => {
+): Promise<Product[]> {
   return Promise.all(
     products.map(async (product) => {
       const reviews = await fetchReviews(product.id);
@@ -187,4 +187,4 @@ export const attachReviewsToProducts = async (
       };
     }),
   );
-};
+}
