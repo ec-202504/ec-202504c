@@ -16,4 +16,5 @@ public class UpdateBookRequest {
   private LocalDate publishDate;
   private Integer languageId;
   private Integer purposeId;
+  private Integer difficultyId;
 }

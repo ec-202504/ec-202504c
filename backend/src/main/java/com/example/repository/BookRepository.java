@@ -68,6 +68,14 @@ public interface BookRepository extends JpaRepository<Book, Integer>, BookReposi
   List<Book> findByPurposeId(Integer purposeId);
 
   /**
+   * 難易度IDと一致する書籍のリストを取得する.
+   *
+   * @param difficultyId 難易度ID
+   * @return 難易度IDと一致する書籍のリスト
+   */
+  List<Book> findByDifficultyId(Integer difficultyId);
+
+  /**
    * PCに含まれる情報と一致するPCのリストを取得する.
    *
    * @param sort 値段の順序を指定する文字列（priceAsc or priceDesc）
@@ -75,6 +83,7 @@ public interface BookRepository extends JpaRepository<Book, Integer>, BookReposi
    * @param price 価格
    * @param languageId 言語
    * @param purposeId 使用目的
+   * @param difficultyId 難易度ID
    * @param pageable ページネーション情報
    * @return PCに含まれる情報と一致するページネーションされたPCのリスト
    */
@@ -86,5 +95,6 @@ public interface BookRepository extends JpaRepository<Book, Integer>, BookReposi
       LocalDate publishDate,
       Integer languageId,
       Integer purposeId,
+      Integer difficultyId,
       Pageable pageable);
 }

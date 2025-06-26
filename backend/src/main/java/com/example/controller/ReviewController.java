@@ -97,17 +97,18 @@ public class ReviewController {
    */
   private void addReview(
       AddReviewRequest request, Integer productCategory, Integer productId, Jwt jwt) {
-    // TODO: jwtからユーザーIDを取得するように変更
-    String email = jwt.getSubject();
-    User user =
-        userService
-            .findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
     // レビューを作成
     Review review = new Review();
     BeanUtils.copyProperties(request, review);
     review.setProductCategory(productCategory);
     review.setProductId(productId);
+
+    // jwtからユーザー情報を取得
+    String email = jwt.getSubject();
+    User user =
+        userService
+            .findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
     review.setUser(user);
     reviewService.addReview(review);
   }

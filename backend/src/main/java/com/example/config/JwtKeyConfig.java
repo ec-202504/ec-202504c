@@ -48,10 +48,10 @@ public class JwtKeyConfig {
   @PostConstruct
   public void initKeys() {
     try {
-      String privateKeyPEM = readKeyFromResource(jwtPrivateKeyResource);
-      String publicKeyPEM = readKeyFromResource(jwtPublicKeyResource);
-      this.rsaPrivateKey = loadPrivateKey(privateKeyPEM);
-      this.rsaPublicKey = loadPublicKey(publicKeyPEM);
+      String privateKeyPem = readKeyFromResource(jwtPrivateKeyResource);
+      String publicKeyPem = readKeyFromResource(jwtPublicKeyResource);
+      this.rsaPrivateKey = loadPrivateKey(privateKeyPem);
+      this.rsaPublicKey = loadPublicKey(publicKeyPem);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException e) {
       throw new RuntimeException("Failed to load RSA keys", e);
     }
@@ -73,7 +73,7 @@ public class JwtKeyConfig {
   }
 
   /**
-   * Base64エンコードされた秘密鍵文字列から RSAPrivateKey を生成する。
+   * Base64エンコードされた秘密鍵文字列から RSAPrivateKey を生成する.
    *
    * @param base64PrivateKey Base64エンコード済み秘密鍵文字列
    * @return 秘密鍵オブジェクト
@@ -89,7 +89,7 @@ public class JwtKeyConfig {
   }
 
   /**
-   * Base64エンコードされた公開鍵文字列から RSAPublicKey を生成する。
+   * Base64エンコードされた公開鍵文字列から RSAPublicKey を生成する.
    *
    * @param base64PublicKey Base64エンコード済み公開鍵文字列
    * @return 公開鍵オブジェクト
@@ -105,7 +105,7 @@ public class JwtKeyConfig {
   }
 
   /**
-   * JwtEncoder (生成用) Bean
+   * JwtEncoder (生成用) Bean.
    *
    * @return JWTエンコーダー
    */
@@ -117,7 +117,7 @@ public class JwtKeyConfig {
   }
 
   /**
-   * JwtDecoder (検証用) Bean
+   * JwtDecoder (検証用) Bean.
    *
    * @return JWTデコーダー
    */
