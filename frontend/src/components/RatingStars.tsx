@@ -3,7 +3,6 @@ type RatingStarsProps = {
 };
 
 export default function RatingStars({ average }: RatingStarsProps) {
-  console.log("average", average);
   return (
     <div className="flex">
       {[1, 2, 3, 4, 5].map((star) => {

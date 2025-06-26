@@ -80,7 +80,6 @@ export default function BookDetail() {
       const contentBaseBooksResponse = await axiosInstance.get(
         `/books/recommend/contentBase/${itemId}`,
       );
-      console.log(contentBaseBooksResponse.data);
       const contentBaseRawBooks: RawBook[] = contentBaseBooksResponse.data;
       const contentBaseProducts: Product[] = await attachReviewsToProducts(
         contentBaseRawBooks.map((rawBook: RawBook) =>

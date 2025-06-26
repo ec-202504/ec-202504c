@@ -98,7 +98,6 @@ export default function PcDetail() {
             const productDetailResponse = await axiosInstance.get(
               `/pcs/${product.productId}`,
             );
-            console.log(productDetailResponse.data);
             const reviews = await fetchPcReviews(product.productId);
             const totalReviews = reviews.length;
             const average =
@@ -132,7 +131,6 @@ export default function PcDetail() {
             const productDetailResponse = await axiosInstance.get(
               `/books/${product.productId}`,
             );
-            console.log(productDetailResponse.data);
             const reviews = await fetchBookReviews(product.productId);
             const totalReviews = reviews.length;
             const average =
@@ -150,7 +148,6 @@ export default function PcDetail() {
               averageRating: average,
               type: "book",
             };
-            console.log(productWithType);
             setUserBaseProducts((prev) => {
               if (
                 prev.find(
