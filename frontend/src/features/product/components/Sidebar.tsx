@@ -41,7 +41,7 @@ export default function Sidebar({
         >
           予算（上限）
         </Label>
-        <div className="flex items-center gap-1 mt-2 bg-muted rounded-md px-2 py-1">
+        <div className="flex items-center gap-1 mt-2 bg-muted rounded-md px-3 py-1.5">
           <span className="text-sm text-muted-foreground">¥</span>
           <input
             id="price"
@@ -79,12 +79,12 @@ export default function Sidebar({
             <RadioGroup
               value={selectedValues[filterTerm.id] || ""}
               onValueChange={(value) => selectedOption(filterTerm.id, value)}
-              className="m-2 flex flex-col gap-2"
+              className="my-2 flex flex-col gap-2"
             >
               {filterTerm.options.map((term) => (
                 <Label
                   key={term.id}
-                  className="flex items-center gap-3 cursor-pointer hover:bg-muted rounded-md px-3 py-2 transition-colors"
+                  className="flex items-center gap-2 cursor-pointer hover:bg-muted rounded-md px-3 py-2 transition-colors"
                 >
                   <RadioGroupItem
                     value={term.id.toString()}

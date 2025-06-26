@@ -71,7 +71,7 @@ export default function ProductCard({
           </div>
 
           <div className="space-y-0.5">
-            <h3 className="font-medium text-foreground text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+            <h3 className="font-medium text-foreground text-lg leading-tight line-clamp-2">
               {product.name}
             </h3>
             <p className="text-md font-bold text-primary">
