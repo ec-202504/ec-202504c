@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TAB_VALUES, type TabValues } from "../../product/types/constants";
+import { DEVICE_TYPE_LABEL, type DeviceType } from "../../../types/constants";
 
 type SpecTableProps = {
   products: (Pc | Book)[];
@@ -87,9 +88,38 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
                       className="p-4"
                     >
                       {productCategory === TAB_VALUES.PC
-                        ? (product as Pc)[
-                            pcSpecs[specKey as keyof typeof pcSpecs]
-                          ]
+                        ? (() => {
+                            const value = (product as Pc)[
+                              pcSpecs[specKey as keyof typeof pcSpecs]
+                            ];
+                            if (
+                              specKey === "メモリ" ||
+                              specKey === "ストレージ"
+                            ) {
+                              if (value !== undefined && value !== null) {
+                                if (
+                                  typeof value === "number" &&
+                                  value >= 1024
+                                ) {
+                                  const tb = value / 1024;
+                                  return `${tb % 1 === 0 ? tb : tb.toFixed(1)}TB`;
+                                }
+                                return `${value}GB`;
+                              }
+                              return "-";
+                            }
+                            if (specKey === "ディスプレイサイズ") {
+                              return value !== undefined && value !== null
+                                ? `${value}インチ`
+                                : "-";
+                            }
+                            if (specKey === "デバイスの種類") {
+                              return value in DEVICE_TYPE_LABEL
+                                ? DEVICE_TYPE_LABEL[value as DeviceType]
+                                : "-";
+                            }
+                            return value ?? "-";
+                          })()
                         : (product as Book)[
                             bookSpecs[specKey as keyof typeof bookSpecs]
                           ] || "-"}
