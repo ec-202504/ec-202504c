@@ -8,7 +8,6 @@ import { Toaster } from "../components/ui/sonner";
 import { axiosInstance } from "../lib/axiosInstance";
 import { getDefaultStore } from "jotai";
 import { userAtom } from "../stores/userAtom";
-import Layout from "../components/layout/Layout";
 
 export const Route = createRootRoute({
   beforeLoad: async () => {
@@ -35,9 +34,7 @@ export const Route = createRootRoute({
       <>
         {showHeader && <Header />}
 
-        <Layout>
-          <Outlet />
-        </Layout>
+        <Outlet />
 
         <Toaster />
       </>
