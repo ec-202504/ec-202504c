@@ -5,7 +5,7 @@ import { Card, CardContent } from "../../../components/ui/card";
 
 import { TAB_VALUES } from "../types/constants";
 import { formatPriceWithComma } from "../../../utils/formatPriceWithComma";
-// import RatingStars from "./RatingStars";
+import RatingStars from "../../../components/RatingStars";
 
 type Props = {
   product: Product;
@@ -78,9 +78,9 @@ export default function ProductCard({
               ¥{formatPriceWithComma(product.price)}
             </p>
             <div className="text-sm text-muted-foreground flex items-center gap-1">
-              {/* <RatingStars
+              <RatingStars
                 average={Math.round(product.averageRating * 10) / 10}
-              /> */}
+              />
               <span>({product.reviewCount})</span>
             </div>
           </div>

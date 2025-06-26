@@ -85,7 +85,6 @@ export default function SearchForm({ onSubmit, selectedTab }: SearchFormProps) {
     e.preventDefault();
     onSubmit(e, query);
     setSuggestions([]); // 検索時に候補をクリア
-    setQuery("");
   };
 
   return (

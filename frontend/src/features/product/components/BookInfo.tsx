@@ -27,7 +27,7 @@ export default function BookInfo({
 }: BookInfoProps) {
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   return (
-    <div className="flex gap-12 w-2/3 max-w-5xl mb-8">
+    <div className="flex gap-12 max-w-5xl mb-8">
       <img
         src={book.imageUrl}
         alt={book.name}
@@ -70,6 +70,7 @@ export default function BookInfo({
 
         <div className="flex items-center gap-2">
           <RatingStars average={average} />
+          <span>{average}</span>
           <span className="underline cursor-pointer">
             {totalReviews}件の評価
           </span>
