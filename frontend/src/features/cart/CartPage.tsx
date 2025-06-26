@@ -148,7 +148,7 @@ function CartPage() {
                       <img
                         src={item.imageUrl}
                         alt={item.name}
-                        className="w-32 h-24 object-cover rounded-lg border shadow-sm"
+                        className="w-32 h-24 object-contain rounded-lg border shadow-sm"
                       />
                     </div>
 
