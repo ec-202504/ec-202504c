@@ -33,7 +33,7 @@ function Header() {
       <div className="text-xl font-semibold">
         <Link
           to="/"
-          className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
         >
           <div className="w-10 h-10 bg-gradient-to-br from-primary via-primary/90 to-primary/70 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
             <ShoppingBag className="w-6 h-6 text-white" />
