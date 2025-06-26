@@ -23,7 +23,7 @@ import SpecTable from "./components/SpecTable";
 import { toast } from "sonner";
 import ComparisonStatusBar from "./components/ComparisonStatusBar";
 import { TAB_VALUES, type TabValues } from "../product/types/constants";
-import { BarChart3, Monitor, BookOpen, Target, List } from "lucide-react";
+import { BarChart3, Monitor, BookOpen, List } from "lucide-react";
 
 function ComparisonPage() {
   // 商品比較用のatom（読み取り専用）
