@@ -11,7 +11,7 @@ import { axiosInstance } from "../../lib/axiosInstance";
 import type { OrderDetailResponse } from "./types/order";
 import { formatDeliveryTime } from "./utils/formatFrontDate";
 import { formatToTimezoneDate } from "../../utils/formatToFrontDate";
-import { Package, ShoppingBag } from "lucide-react";
+import { Package, ShoppingBag, Calendar, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { TAB_VALUES } from "../product/types/constants";
 import { Link } from "@tanstack/react-router";
@@ -37,112 +37,134 @@ function OrderHistory() {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      {orders.length === 0 ? (
-        <div className="text-center py-12">
-          <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            注文履歴がありません
-          </h2>
-
-          <p className="text-gray-600 mb-6">
-            商品を購入すると、ここに履歴が表示されます
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="container mx-auto px-4 py-14">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl lg:text-4xl font-bold text-primary/80 dark:text-white mb-4">
+            注文履歴
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            過去の注文履歴を確認できます
           </p>
-
-          <Link to="/product" search={{ tab: TAB_VALUES.PC }}>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              商品を見る
-            </Button>
-          </Link>
         </div>
-      ) : (
-        <>
-          {/* ヘッダー */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">注文履歴</h1>
-            <p className="text-gray-600">{orders.length}件の注文</p>
-          </div>
 
-          {/* 注文履歴一覧 */}
-          <div className="space-y-4">
-            {orders.map((order) => (
-              <Card
-                key={order.orderId}
-                className="border-0 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                        <Package className="w-4 h-4 text-white" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">
-                          注文 #{order.orderId}
-                        </CardTitle>
-                        <p className="text-sm text-gray-600">
-                          {formatToTimezoneDate(order.orderDateTime)}
-                        </p>
-                      </div>
-                    </div>
+        {/* Main Content */}
+        <div className="max-w-4xl mx-auto">
+          {orders.length === 0 ? (
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80">
+              <CardContent className="text-center py-12">
+                <ShoppingBag className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h2 className="text-xl font-semibold text-foreground mb-2">
+                  注文履歴がありません
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  商品を購入すると、ここに履歴が表示されます
+                </p>
+                <Link to="/product" search={{ tab: TAB_VALUES.PC }}>
+                  <Button className="bg-primary hover:bg-primary/90">
+                    商品を見る
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {/* 注文件数表示 */}
+              <div className="mb-6 text-center">
+                <p className="text-muted-foreground">
+                  {orders.length}件の注文があります
+                </p>
+              </div>
 
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-blue-600">
-                        ¥{order.totalPrice.toLocaleString()}
-                      </div>
-                      <Badge variant="outline" className="mt-1">
-                        {order.paymentMethod === 0
-                          ? "現金"
-                          : "クレジットカード"}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="pt-0">
-                  <div className="border-t pt-4">
-                    <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                      <span>
-                        配達予定: {formatDeliveryTime(order.deliveryDateTime)}
-                      </span>
-                      <span>{order.products.length}点の商品</span>
-                    </div>
-
-                    <div className="space-y-3">
-                      {order.products.map((item) => (
-                        <div
-                          key={item.productName}
-                          className="flex items-center gap-3"
-                        >
-                          <img
-                            src={item.imageUrl}
-                            alt={item.productName}
-                            className="w-12 h-12 object-cover rounded-lg"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">
-                              {item.productName}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {item.quantity}個 × ¥{item.price.toLocaleString()}
-                            </p>
+              {/* 注文履歴一覧 */}
+              <div className="space-y-6">
+                {orders.map((order, index) => (
+                  <Card
+                    key={order.orderId}
+                    className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white/80 dark:bg-slate-900/80"
+                  >
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center">
+                            <Package className="w-6 h-6 text-white" />
                           </div>
-                          <div className="text-right">
-                            <div className="font-semibold text-gray-900">
-                              ¥{(item.price * item.quantity).toLocaleString()}
+                          <div>
+                            <CardTitle className="text-xl text-primary">
+                              注文 #{orders.length - index}
+                            </CardTitle>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                              <Calendar className="w-4 h-4" />
+                              {formatToTimezoneDate(order.orderDateTime)}
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </>
-      )}
+
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-primary">
+                            ¥{order.totalPrice.toLocaleString()}
+                          </div>
+                          <Badge variant="outline" className="mt-2">
+                            <CreditCard className="w-3 h-3 mr-1" />
+                            {order.paymentMethod === 0
+                              ? "現金"
+                              : "クレジットカード"}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-0">
+                      <div className="border-t border-border/50 pt-4">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                          <span>
+                            配達予定:{" "}
+                            {formatDeliveryTime(order.deliveryDateTime)}
+                          </span>
+                          <span>{order.products.length}点の商品</span>
+                        </div>
+
+                        <div className="space-y-4">
+                          {order.products.map((item) => (
+                            <div
+                              key={item.productName}
+                              className="flex items-center gap-4 p-3 rounded-lg bg-muted/30"
+                            >
+                              <img
+                                src={item.imageUrl}
+                                alt={item.productName}
+                                className="w-24 h-20 object-cover rounded-lg shadow-sm"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-foreground truncate">
+                                  {item.productName}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {item.quantity}個 × ¥
+                                  {item.price.toLocaleString()}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-semibold text-primary">
+                                  ¥
+                                  {(
+                                    item.price * item.quantity
+                                  ).toLocaleString()}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
