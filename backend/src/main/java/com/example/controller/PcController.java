@@ -446,7 +446,7 @@ public class PcController {
     PcDetailResponse response = new PcDetailResponse();
     response.setPcId(pc.getId());
     response.setName(pc.getName());
-    response.setImage(pc.getImage());
+    response.setImageUrl(pc.getImageUrl());
     response.setPrice(pc.getPrice());
     response.setMemory(pc.getMemory());
     response.setStorage(pc.getStorage());

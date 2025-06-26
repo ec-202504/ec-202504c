@@ -12,7 +12,7 @@ import lombok.Setter;
 public class PcDetailResponse {
   private Integer pcId;
   private String name;
-  private byte[] image;
+  private byte[] imageUrl;
   private Integer price;
   private Integer memory;
   private Integer storage;

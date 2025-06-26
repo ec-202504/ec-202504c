@@ -11,7 +11,7 @@ import lombok.Setter;
 public class BookDetailResponse {
   private Integer bookId;
   private String name;
-  private byte[] image;
+  private byte[] imageUrl;
   private String author;
   private String publishDate;
   private Integer price;

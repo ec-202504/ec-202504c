@@ -67,6 +67,6 @@ public class Pc {
 
   /** 商品画像. */
   @Lob
-  @Column(name = "image", nullable = false, columnDefinition = "BYTEA")
-  private byte[] image;
+  @Column(name = "image_url", nullable = false, columnDefinition = "BYTEA")
+  private byte[] imageUrl;
 }

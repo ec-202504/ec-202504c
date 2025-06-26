@@ -145,7 +145,7 @@ public class BookController {
     response.setBookId(book.getId());
     response.setName(book.getName());
     // TODO: 画像URLは実際の画像URLに置き換える必要があります
-    response.setImage(book.getImage());
+    response.setImageUrl(book.getImageUrl());
     response.setAuthor(book.getAuthor());
     response.setPublishDate(
         book.getPublishDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));

@@ -253,7 +253,7 @@ VALUES
   (3, NULL, 2, 0, 90),
   (1, 'session-guest123', NULL, 1, 100);
 
-  INSERT INTO Books (name, author, publish_date, price, language_id, purpose_id, difficulty_id, image) VALUES
+  INSERT INTO Books (name, author, publish_date, price, language_id, purpose_id, difficulty_id, image_url) VALUES
   ('Clean Code', 'Robert C. Martin', '2017-12-18', 4180, 3, 14, 2, pg_read_binary_file('/var/lib/postgresql/img/image_102.jpeg')),
   ('The Pragmatic Programmer', 'Andrew Hunt, David Thomas', '2020-11-20', 3520, 6, 8, 2, pg_read_binary_file('/var/lib/postgresql/img/image_103.jpeg')),
   ('Refactoring', 'Martin Fowler', '2018-11-20', 4840, 3, 11, 3, pg_read_binary_file('/var/lib/postgresql/img/image_104.jpeg')),
@@ -356,7 +356,7 @@ VALUES
   ('達人に学ぶSQL徹底指南書', 'ミック', '2018-10-11', 5900, 4, 12, 2, pg_read_binary_file('/var/lib/postgresql/img/image_200.jpeg'));
 
   INSERT INTO PCs
-  (name, price, memory, storage, device_size, device_type, os_id, cpu_id, gpu_id, purpose_id, image) VALUES
+  (name, price, memory, storage, device_size, device_type, os_id, cpu_id, gpu_id, purpose_id, image_url) VALUES
   -- ========== Apple ==========
   ('MacBook Air 13 M2', 115000, 16, 256, 13.0, 1, 2, 2, 2, 3, pg_read_binary_file('/var/lib/postgresql/img/image_001.jpeg')),
   ('MacBook Air 15 M2', 123232, 8, 256, 15.0, 1, 2, 2, 2, 3, pg_read_binary_file('/var/lib/postgresql/img/image_002.jpeg')),
