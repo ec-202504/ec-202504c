@@ -4,13 +4,7 @@ import com.example.dto.request.AddBookRequest;
 import com.example.dto.request.UpdateBookRequest;
 import com.example.dto.response.BookDetailResponse;
 import com.example.dto.response.OrderProductResponse;
-import com.example.model.Book;
-import com.example.model.Difficulty;
-import com.example.model.Language;
-import com.example.model.Order;
-import com.example.model.ProductKey;
-import com.example.model.Purpose;
-import com.example.model.User;
+import com.example.model.*;
 import com.example.service.BookService;
 import com.example.service.OrderService;
 import com.example.service.UserService;
@@ -151,7 +145,7 @@ public class BookController {
     response.setBookId(book.getId());
     response.setName(book.getName());
     // TODO: 画像URLは実際の画像URLに置き換える必要があります
-    response.setImageUrl(book.getImageUrl());
+    response.setImage(book.getImage());
     response.setAuthor(book.getAuthor());
     response.setPublishDate(
         book.getPublishDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));

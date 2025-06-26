@@ -58,6 +58,6 @@ public class Book {
   private Difficulty difficulty;
 
   /** 商品画像URL. */
-  @Column(name = "image_url", nullable = false)
-  private String imageUrl;
+  @Column(name = "image", nullable = false, columnDefinition = "BYTEA")
+  private byte[] image;
 }
