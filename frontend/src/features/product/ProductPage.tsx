@@ -92,7 +92,7 @@ export default function ProductListPage() {
   };
 
   return (
-    <div className="p-4 h-80vh">
+    <div className="p-4">
       <ProductComparisonStatusBar
         selectedTab={selectedTab}
         pcComparisonIds={pcComparisonIds}
