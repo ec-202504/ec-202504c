@@ -63,7 +63,7 @@ export default function PcInfo({
             onClick={() => {
               handleClick(selectedQuantity);
             }}
-            className="ml-4 px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
+            className="ml-4 px-6 py-2 text-primary rounded"
           >
             カートへ追加
           </Button>

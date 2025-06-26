@@ -17,6 +17,7 @@ export const getInitialFilters = (
     : {
         languageId: search.languageId || "",
         purposeId: search.purposeId || "",
+        difficultyId: search.difficultyId || "",
         price: search.price || "",
       };
 

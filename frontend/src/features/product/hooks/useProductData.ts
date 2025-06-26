@@ -126,12 +126,28 @@ export const useProductData = (
    */
   const fetchBookFilterTerms = async () => {
     try {
-      const [languageListResponse, purposeListResponse] = await Promise.all([
+      const [
+        languageListResponse,
+        purposeListResponse,
+        difficultyListResponse,
+      ] = await Promise.all([
         axiosInstance.get("/books/languages"),
         axiosInstance.get("/books/purposes"),
+        axiosInstance.get("/books/difficulties"),
       ]);
+      const difficultyOptions = difficultyListResponse.data.map(
+        (item: { id: number; target: string }) => ({
+          id: item.id,
+          name: item.target,
+        }),
+      );
 
       setFilterTerms([
+        {
+          id: "difficultyId",
+          label: "難易度",
+          options: difficultyOptions,
+        },
         {
           id: "purposeId",
           label: "用途",
