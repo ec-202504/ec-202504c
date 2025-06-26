@@ -1,6 +1,7 @@
 import type { Book } from "../../product/types/Book";
 import { TAB_VALUES, type TabValues } from "../../product/types/constants";
 import type { Pc } from "../../product/types/Pc";
+import { CheckSquare } from "lucide-react";
 
 import {
   Select,
@@ -28,12 +29,14 @@ function ComparisonProductSelector({
 }: ComparisonProductSelectorProps) {
   return (
     <div className="space-y-4 mb-8">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">比較商品を選択</h3>
-        <span className="text-sm text-muted-foreground">
-          {selectedIds.length}/{MAX_SELECTIONS} 選択中
-        </span>
-      </div>
+      <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        <CheckSquare className="w-5 h-5" />
+        比較商品を選択
+      </h3>
+
+      <p className="text-sm text-muted-foreground mb-3">
+        {selectedIds.length}/{MAX_SELECTIONS} 選択中
+      </p>
 
       {selectedIds.length < MAX_SELECTIONS && availableProducts.length > 0 && (
         <Select

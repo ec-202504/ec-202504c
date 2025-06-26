@@ -81,6 +81,10 @@ function ComparisonProductCard({
       <Link to={getProductDetailRoute()}>
         <Card className="h-fit cursor-pointer hover:shadow-lg transition-shadow">
           <CardHeader className="pb-4">
+            <Badge variant="secondary">
+              {productCategory === TAB_VALUES.PC ? "PC" : "技術書"}
+            </Badge>
+
             <div className="aspect-video mb-4 overflow-hidden rounded-lg">
               <img
                 src={product.imageUrl}
@@ -89,13 +93,9 @@ function ComparisonProductCard({
               />
             </div>
 
-            <CardTitle className="text-lg leading-tight">
+            <CardTitle className="text-lg leading-tight h-15">
               {product.name}
             </CardTitle>
-
-            <Badge variant="secondary">
-              {productCategory === TAB_VALUES.PC ? "PC" : "技術書"}
-            </Badge>
 
             <div className="text-2xl font-bold text-primary">
               ¥{product.price.toLocaleString()}

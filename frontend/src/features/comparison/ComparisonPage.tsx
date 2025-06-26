@@ -23,6 +23,7 @@ import SpecTable from "./components/SpecTable";
 import { toast } from "sonner";
 import ComparisonStatusBar from "./components/ComparisonStatusBar";
 import { TAB_VALUES, type TabValues } from "../product/types/constants";
+import { BarChart3, Monitor, BookOpen, Target, List } from "lucide-react";
 
 function ComparisonPage() {
   // 商品比較用のatom（読み取り専用）
@@ -162,99 +163,137 @@ function ComparisonPage() {
   }, [selectedCategory, pcStoredIds, bookStoredIds]);
 
   return (
-    <div className="container mx-auto px-10 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">商品比較</h1>
-        <p className="text-muted-foreground">
-          最大3つまで商品を選択して比較できます
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="container mx-auto px-4 py-14">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl lg:text-4xl font-bold text-primary/80 dark:text-white mb-4">
+            商品比較
+          </h1>
 
-      <Tabs
-        value={selectedCategory}
-        onValueChange={(value: string) =>
-          setSelectedCategory(value as TabValues)
-        }
-      >
-        <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value={TAB_VALUES.PC}>PC</TabsTrigger>
-          <TabsTrigger value={TAB_VALUES.BOOK}>技術書</TabsTrigger>
-        </TabsList>
+          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            最大3つまで商品を選択して、詳細な比較を行えます
+          </p>
+        </div>
 
-        <TabsContent value={TAB_VALUES.PC} className="space-y-8">
-          <ComparisonStatusBar
-            selectedCategory={selectedCategory}
-            selectedProductCount={selectedPcIds.length}
-            handleClearComparison={clearPcComparison}
-          />
+        {/* Main Content */}
+        <div className="max-w-6xl mx-auto">
+          <Tabs
+            value={selectedCategory}
+            onValueChange={(value: string) =>
+              setSelectedCategory(value as TabValues)
+            }
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-2 mb-8 bg-white/50 dark:bg-slate-800/50 border border-border">
+              <TabsTrigger
+                value={TAB_VALUES.PC}
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+              >
+                <Monitor className="w-4 h-4" />
+                PC
+              </TabsTrigger>
+              <TabsTrigger
+                value={TAB_VALUES.BOOK}
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+              >
+                <BookOpen className="w-4 h-4" />
+                技術書
+              </TabsTrigger>
+            </TabsList>
 
-          <ComparisonProductSelector
-            selectedIds={selectedPcIds}
-            availableProducts={getAvailablePcs()}
-            productCategory={TAB_VALUES.PC}
-            onProductSelect={handleProductAdd}
-          />
+            <TabsContent value={TAB_VALUES.PC} className="space-y-8">
+              <ComparisonStatusBar
+                selectedCategory={selectedCategory}
+                selectedProductCount={selectedPcIds.length}
+                handleClearComparison={clearPcComparison}
+              />
 
-          <div>
-            <h2 className="text-xl font-semibold mb-4">PC比較</h2>
-            <ComparisonProductList
-              products={getSelectedProducts()}
-              productCategory={TAB_VALUES.PC}
-              onRemoveProduct={handleProductRemove}
-            />
-          </div>
+              <ComparisonProductSelector
+                selectedIds={selectedPcIds}
+                availableProducts={getAvailablePcs()}
+                productCategory={TAB_VALUES.PC}
+                onProductSelect={handleProductAdd}
+              />
 
-          {pcDetails.length > 0 && (
-            <>
-              <Separator />
-              <div className="space-y-6">
-                <h3 className="text-lg font-semibold">詳細情報比較</h3>
-                <SpecTable
+              <div>
+                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <List className="w-5 h-5" />
+                  PC比較
+                </h3>
+                <ComparisonProductList
                   products={getSelectedProducts()}
                   productCategory={TAB_VALUES.PC}
+                  onRemoveProduct={handleProductRemove}
                 />
               </div>
-            </>
-          )}
-        </TabsContent>
 
-        <TabsContent value={TAB_VALUES.BOOK} className="space-y-8">
-          <ComparisonStatusBar
-            selectedCategory={selectedCategory}
-            selectedProductCount={selectedBookIds.length}
-            handleClearComparison={clearBookComparison}
-          />
+              {pcDetails.length > 0 && (
+                <>
+                  <Separator className="my-8" />
+                  <div>
+                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5" />
+                      詳細情報比較
+                    </h3>
+                    <div className="bg-white/50 dark:bg-slate-800/50 rounded-lg border border-border overflow-hidden">
+                      <SpecTable
+                        products={getSelectedProducts()}
+                        productCategory={TAB_VALUES.PC}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </TabsContent>
 
-          <ComparisonProductSelector
-            selectedIds={selectedBookIds}
-            availableProducts={getAvailableBooks()}
-            productCategory={TAB_VALUES.BOOK}
-            onProductSelect={handleProductAdd}
-          />
+            <TabsContent value={TAB_VALUES.BOOK} className="space-y-8">
+              <ComparisonStatusBar
+                selectedCategory={selectedCategory}
+                selectedProductCount={selectedBookIds.length}
+                handleClearComparison={clearBookComparison}
+              />
 
-          <div>
-            <h2 className="text-xl font-semibold mb-4">書籍比較</h2>
-            <ComparisonProductList
-              products={getSelectedProducts()}
-              productCategory={TAB_VALUES.BOOK}
-              onRemoveProduct={handleProductRemove}
-            />
-          </div>
+              <ComparisonProductSelector
+                selectedIds={selectedBookIds}
+                availableProducts={getAvailableBooks()}
+                productCategory={TAB_VALUES.BOOK}
+                onProductSelect={handleProductAdd}
+              />
 
-          {bookDetails.length > 0 && (
-            <>
-              <Separator />
-              <div className="space-y-6">
-                <h3 className="text-lg font-semibold">仕様比較</h3>
-                <SpecTable
+              <div>
+                <h3 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+                  <List className="w-5 h-5" />
+                  書籍比較
+                </h3>
+                <ComparisonProductList
                   products={getSelectedProducts()}
                   productCategory={TAB_VALUES.BOOK}
+                  onRemoveProduct={handleProductRemove}
                 />
               </div>
-            </>
-          )}
-        </TabsContent>
-      </Tabs>
+
+              {bookDetails.length > 0 && (
+                <>
+                  <Separator className="my-8" />
+                  <div>
+                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5" />
+                      仕様比較
+                    </h3>
+                    <div className="bg-white/50 dark:bg-slate-800/50 rounded-lg border border-border overflow-hidden">
+                      <SpecTable
+                        products={getSelectedProducts()}
+                        productCategory={TAB_VALUES.BOOK}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
     </div>
   );
 }

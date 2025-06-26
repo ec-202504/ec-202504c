@@ -16,7 +16,7 @@ function ComparisonStatusBar({
   return (
     <>
       {selectedProductCount > 0 && (
-        <div className="mb-4 p-4 border border-border rounded-lg bg-card shadow-sm">
+        <div className="mb-8 p-4 border border-border rounded-lg bg-card shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-secondary/10 dark:bg-secondary/20 rounded-lg flex items-center justify-center">

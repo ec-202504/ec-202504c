@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
 import { useNavigate } from "@tanstack/react-router";
 import { Trash2, Plus, Minus, ShoppingCart, ArrowRight } from "lucide-react";
 import { axiosInstance } from "../../lib/axiosInstance";
@@ -98,13 +97,8 @@ function CartPage() {
     <div className="min-h-screen py-14 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Header Section */}
       <div className="text-center mb-8">
-        <Badge variant="secondary" className="mb-4">
-          <ShoppingCart className="w-4 h-4 mr-2" />
-          ショッピングカート
-        </Badge>
-
         <h1 className="text-3xl lg:text-4xl font-bold text-primary/80 dark:text-white mb-4">
-          カート
+          ショッピングカート
         </h1>
 
         <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
