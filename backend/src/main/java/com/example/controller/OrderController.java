@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,10 +48,11 @@ public class OrderController {
    * @return 全ての注文のリスト
    */
   @PostMapping
+  @Transactional
   public ResponseEntity<?> createOrder(
       @RequestBody OrderRequest request, @AuthenticationPrincipal Jwt jwt)
       throws MessagingException {
-    // 　注文情報を登録
+    // 注文情報を登録
     Order order = new Order();
     BeanUtils.copyProperties(request, order);
     order.setOrderDateTime(LocalDateTime.now());

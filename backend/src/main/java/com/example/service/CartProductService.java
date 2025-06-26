@@ -18,12 +18,23 @@ public class CartProductService {
   private final CartProductRepository cartProductRepository;
 
   /**
-   * カート内商品を取得するメソッド.
+   * ユーザIDに紐づくカート内商品を取得するメソッド.
    *
+   * @param user ユーザ
    * @return カート内商品リスト
    */
-  public List<CartProduct> getCartProducts(User user) {
+  public List<CartProduct> getCartProductsByUserId(User user) {
     return cartProductRepository.findByUserIdOrderByCartProductIdDesc(user);
+  }
+
+  /**
+   * セッションIDに紐づくカート内商品を取得するメソッド.
+   *
+   * @param sessionId セッションID
+   * @return カート内商品リスト
+   */
+  public List<CartProduct> getCartProductsBySessionId(String sessionId) {
+    return cartProductRepository.findBySessionIdOrderByCartProductIdDesc(sessionId);
   }
 
   /**
@@ -34,14 +45,28 @@ public class CartProductService {
    * @param productCategory 商品カテゴリ
    * @return カート内商品
    */
-  public Optional<CartProduct> getExistingProduct(
+  public Optional<CartProduct> getExistingCartProduct(
       Integer userId, Integer cartProductId, Integer productCategory) {
     return cartProductRepository.findByUserIdUserIdAndProductIdAndProductCategory(
         userId, cartProductId, productCategory);
   }
 
   /**
-   * カート内商品を追加するメソッド.
+   * セッションID、商品ID、商品カテゴリに紐づくカート内商品を取得するメソッド.
+   *
+   * @param sessionId セッションID
+   * @param cartProductId 商品ID
+   * @param productCategory 商品カテゴリ
+   * @return カート内商品
+   */
+  public Optional<CartProduct> getExistingCartProductBySessionId(
+      String sessionId, Integer cartProductId, Integer productCategory) {
+    return cartProductRepository.findBySessionIdAndProductIdAndProductCategory(
+        sessionId, cartProductId, productCategory);
+  }
+
+  /**
+   * カート内商品を更新するメソッド.
    *
    * @param cartProduct 追加するカート内商品
    */
@@ -58,12 +83,26 @@ public class CartProductService {
   public void updateCartProductQuantity(Integer cartProductId, Integer quantity) {
     Optional<CartProduct> optionalCartProduct = cartProductRepository.findById(cartProductId);
     if (optionalCartProduct.isEmpty()) {
-      throw new EntityNotFoundException("カート商品が見つかりません");
+      throw new EntityNotFoundException("カート商品が見つかりません: " + cartProductId);
     }
-
     CartProduct cartProduct = optionalCartProduct.get();
     cartProduct.setQuantity(quantity);
     cartProductRepository.save(cartProduct);
+  }
+
+  /**
+   * ログイン前のカートをユーザーに紐づける.
+   *
+   * @param sessionId セッションID
+   * @param user ユーザー
+   */
+  public void mergeSessionCartToUser(String sessionId, User user) {
+    List<CartProduct> sessionCart = cartProductRepository.findBySessionId(sessionId);
+    for (CartProduct cartProduct : sessionCart) {
+      cartProduct.setUserId(user);
+      cartProduct.setSessionId(null); // セッション紐付けは不要になる
+    }
+    cartProductRepository.saveAll(sessionCart);
   }
 
   /**

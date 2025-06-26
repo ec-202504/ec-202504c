@@ -38,6 +38,7 @@ public class User {
 
   /** パスワードハッシュ. */
   @Column(name = "password", nullable = false, length = 255)
+  @JsonIgnore
   private String password;
 
   /** 郵便番号. */

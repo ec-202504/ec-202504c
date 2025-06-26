@@ -3,9 +3,12 @@ package com.example.controller;
 import com.example.config.JwtTokenProvider;
 import com.example.dto.request.LoginRequest;
 import com.example.dto.request.RegisterRequest;
+import com.example.dto.security.CustomUserDetails;
 import com.example.model.User;
+import com.example.service.CartProductService;
 import com.example.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +36,7 @@ public class UserController {
   private final UserService userService;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider jwtTokenProvider;
+  private final CartProductService cartProductService;
 
   /**
    * ユーザーを登録する.
@@ -60,12 +65,21 @@ public class UserController {
    * @return JWTトークン
    */
   @PostMapping("/login")
-  public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+  @Transactional
+  public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpSession session) {
     // 初回認証
     UsernamePasswordAuthenticationToken token =
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
     Authentication authentication = authenticationManager.authenticate(token);
-    // 認証成功 → JWTトークン生成
+    // 認証成功 → ログイン前カートをユーザーに紐づける
+    CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    Integer userId = userDetails.getUserId();
+    User user =
+        userService
+            .findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + userId));
+    cartProductService.mergeSessionCartToUser(session.getId(), user);
+    // JWTトークン生成
     String jwt = jwtTokenProvider.generateToken(authentication);
     return ResponseEntity.ok(Map.of("token", jwt));
   }

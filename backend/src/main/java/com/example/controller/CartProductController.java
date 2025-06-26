@@ -17,8 +17,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -45,19 +45,30 @@ public class CartProductController {
    * @return カート内商品リスト
    */
   @GetMapping
-  public ResponseEntity<?> getCartProducts(@AuthenticationPrincipal Jwt jwt) {
-    // TODO: userIdをjwtから取得するようにする
-    String email = jwt.getSubject();
-    User user =
-        userService
-            .findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
-    List<CartProduct> cartProducts = cartProductService.getCartProducts(user);
-    try {
-      List<CartProductResponse> responses = cartProducts.stream().map(this::mapToResponse).toList();
-      return ResponseEntity.ok(responses);
-    } catch (ResponseStatusException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+  public ResponseEntity<?> getCartProducts(HttpSession session) throws ResponseStatusException {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    // ユーザーがログインしている場合
+    if (judgeIsLogin(authentication)) {
+      String email = authentication.getName();
+      User user =
+          userService
+              .findByEmail(email)
+              .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
+      List<CartProduct> cartProducts = cartProductService.getCartProductsByUserId(user);
+      try {
+        List<CartProductResponse> cartProductResponses =
+            cartProducts.stream().map(this::mapToResponse).toList();
+        return ResponseEntity.ok(cartProductResponses);
+      } catch (ResponseStatusException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+      }
+    } else {
+      // sessionIdでカート内商品を取得
+      List<CartProduct> cartProducts =
+          cartProductService.getCartProductsBySessionId(session.getId());
+      List<CartProductResponse> cartProductResponses =
+          cartProducts.stream().map(this::mapToResponse).toList();
+      return ResponseEntity.ok(cartProductResponses);
     }
   }
 
@@ -65,43 +76,61 @@ public class CartProductController {
    * カート内商品を追加するエンドポイント.
    *
    * @param request カートに追加する商品情報を含むリクエストDTO
-   * @param jwt JWTトークン
    * @param session セッション
    * @return 成功メッセージ
    */
   @PostMapping
   public ResponseEntity<?> addCartProduct(
-      @RequestBody AddCartProductRequest request,
-      @AuthenticationPrincipal Jwt jwt,
-      HttpSession session) {
-    // TODO: userIdをjwtから取得するようにする
-    String email = jwt.getSubject();
-    User user =
-        userService
-            .findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
-    // 商品がすでにカートに存在するか確認し、存在すれば数量を更新する
-    Optional<CartProduct> existingCartProduct =
-        cartProductService.getExistingProduct(
-            user.getUserId(), request.getProductId(), request.getProductCategory());
-
-    // 既に商品がカートあれば数量を更新
-    if (existingCartProduct.isPresent()) {
-      CartProduct cartProduct = existingCartProduct.get();
-      Integer quantity = cartProduct.getQuantity() + request.getQuantity();
-      cartProductService.updateCartProductQuantity(cartProduct.getCartProductId(), quantity);
+      @RequestBody AddCartProductRequest request, HttpSession session) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    // ユーザーがログインしている場合
+    if (judgeIsLogin(authentication)) {
+      String email = authentication.getName();
+      User user =
+          userService
+              .findByEmail(email)
+              .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
+      // カートに商品がすでに存在するか確認し、存在すれば数量を更新する
+      Optional<CartProduct> existingCartProduct =
+          cartProductService.getExistingCartProduct(
+              user.getUserId(), request.getProductId(), request.getProductCategory());
+      // 既に商品がカートあれば数量を更新
+      if (existingCartProduct.isPresent()) {
+        CartProduct cartProduct = existingCartProduct.get();
+        Integer quantity = cartProduct.getQuantity() + request.getQuantity();
+        cartProductService.updateCartProductQuantity(cartProduct.getCartProductId(), quantity);
+      } else {
+        // 存在しない場合は新規追加
+        CartProduct cartProduct = new CartProduct();
+        cartProduct.setQuantity(request.getQuantity());
+        cartProduct.setProductCategory(request.getProductCategory());
+        cartProduct.setProductId(request.getProductId());
+        cartProduct.setUserId(user);
+        cartProductService.addCartProduct(cartProduct);
+      }
+      return ResponseEntity.ok().build();
     } else {
-      CartProduct cartProduct = new CartProduct();
-      cartProduct.setQuantity(request.getQuantity());
-      cartProduct.setSessionId(session.getId());
-      cartProduct.setProductCategory(request.getProductCategory());
-      cartProduct.setProductId(request.getProductId());
-      cartProduct.setUserId(user);
-      cartProduct.setUserId(user);
-      cartProductService.addCartProduct(cartProduct);
+      // sessionIdでカート内商品を更新
+      String sessionId = session.getId();
+      Optional<CartProduct> existingCartProduct =
+          cartProductService.getExistingCartProductBySessionId(
+              sessionId, request.getProductId(), request.getProductCategory());
+      // 既に商品がカートあれば数量を更新
+      if (existingCartProduct.isPresent()) {
+        CartProduct cartProduct = existingCartProduct.get();
+        Integer quantity = cartProduct.getQuantity() + request.getQuantity();
+        cartProductService.updateCartProductQuantity(cartProduct.getCartProductId(), quantity);
+      } else {
+        // 存在しない場合は新規追加
+        CartProduct cartProduct = new CartProduct();
+        cartProduct.setQuantity(request.getQuantity());
+        cartProduct.setProductCategory(request.getProductCategory());
+        cartProduct.setProductId(request.getProductId());
+        cartProduct.setSessionId(sessionId);
+        cartProductService.addCartProduct(cartProduct);
+      }
+      return ResponseEntity.ok().build();
     }
-
-    return ResponseEntity.ok().build();
   }
 
   /**
@@ -131,6 +160,18 @@ public class CartProductController {
   public ResponseEntity<?> deleteCartProduct(@PathVariable Integer cartProductId) {
     cartProductService.deleteCartProduct(cartProductId);
     return ResponseEntity.noContent().build();
+  }
+
+  /**
+   * ユーザーがログインしているかを判定する.
+   *
+   * @param authentication 認証情報
+   * @return ログインしているか否か
+   */
+  private boolean judgeIsLogin(Authentication authentication) {
+    // ROLEが匿名ユーザーでなければログインしている
+    return authentication.getAuthorities().stream()
+        .noneMatch(a -> a.getAuthority().equals("ROLE_ANONYMOUS"));
   }
 
   /**
