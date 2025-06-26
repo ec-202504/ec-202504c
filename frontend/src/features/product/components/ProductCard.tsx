@@ -4,12 +4,8 @@ import type { Product, TabValues } from "../types";
 import { Card, CardContent } from "../../../components/ui/card";
 
 import { TAB_VALUES } from "../types/constants";
+import { formatPriceWithComma } from "../../../utils/formatPriceWithComma";
 // import RatingStars from "./RatingStars";
-
-// 価格をカンマ区切りで整形する関数
-function formatPrice(price: number) {
-  return price.toLocaleString();
-}
 
 type Props = {
   product: Product;
@@ -34,7 +30,7 @@ export default function ProductCard({
   };
 
   return (
-    <Card className="h-full bg-white border-0 shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1 relative">
+    <Card className="h-full bg-card border border-border shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1 relative">
       <div className="absolute top-2 right-2 z-10">
         <Checkbox checked={selected} onCheckedChange={handleCheckboxChange} />
       </div>
@@ -49,7 +45,7 @@ export default function ProductCard({
         params={{ itemId: product.id }}
       >
         <CardContent className="px-4">
-          <div className="aspect-[4/3] bg-gray-100 rounded-sm mb-1.5 overflow-hidden">
+          <div className="aspect-[4/3] bg-muted rounded-md mb-1.5 overflow-hidden">
             {product.image ? (
               <img
                 src={product.image}
@@ -58,19 +54,19 @@ export default function ProductCard({
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <div className="text-gray-400 text-xs">画像なし</div>
+                <div className="text-muted-foreground text-xs">画像なし</div>
               </div>
             )}
           </div>
 
           <div className="space-y-0.5">
-            <h3 className="font-medium text-gray-900 text-lg leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
+            <h3 className="font-medium text-foreground text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors">
               {product.name}
             </h3>
-            <p className="text-md font-bold text-blue-600">
-              ¥{formatPrice(product.price)}
+            <p className="text-md font-bold text-primary">
+              ¥{formatPriceWithComma(product.price)}
             </p>
-            <div className="text-sm text-gray-500 flex items-center gap-1">
+            <div className="text-sm text-muted-foreground flex items-center gap-1">
               {/* <RatingStars
                 average={Math.round(product.averageRating * 10) / 10}
               /> */}

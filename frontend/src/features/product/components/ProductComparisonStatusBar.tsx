@@ -52,7 +52,7 @@ function ProductComparisonStatusBar({
                 variant="outline"
                 size="sm"
                 onClick={handleClearComparison}
-                className="border-border hover:bg-muted"
+                className="border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 <Trash2 className="w-4 h-4 mr-1" />
                 クリア
