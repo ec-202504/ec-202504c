@@ -1,13 +1,5 @@
 import type { Pc } from "../../product/types/Pc";
 import type { Book } from "../../product/types/Book";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { TAB_VALUES, type TabValues } from "../../product/types/constants";
 import { DEVICE_TYPE_LABEL, type DeviceType } from "../../../types/constants";
 
