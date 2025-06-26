@@ -29,22 +29,27 @@ export default function OrderInfoCard({
           注文情報
         </CardTitle>
       </CardHeader>
+
       <CardContent className="space-y-4">
         <div className="flex justify-between items-center">
           <span className="text-gray-600">注文日時</span>
           <span className="font-medium">{formatToTimezoneDate(orderDate)}</span>
         </div>
+
         <Separator />
+
         <div className="flex justify-between items-center">
           <span className="text-gray-600">お届け予定日</span>
-          <Badge variant="secondary" className="text-green-700 bg-green-100">
+          <Badge variant="secondary" className="text-primary bg-secondary/10">
             {formatDeliveryTime(deliveryDate)}
           </Badge>
         </div>
+
         <Separator />
+
         <div className="flex justify-between items-center">
           <span className="text-gray-600">合計金額</span>
-          <span className="text-2xl font-bold text-green-600">
+          <span className="text-2xl font-bold text-primary">
             ¥{totalPrice.toLocaleString()}
           </span>
         </div>
