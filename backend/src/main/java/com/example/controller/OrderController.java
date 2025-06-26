@@ -50,16 +50,17 @@ public class OrderController {
   public ResponseEntity<?> createOrder(
       @RequestBody OrderRequest request, @AuthenticationPrincipal Jwt jwt)
       throws MessagingException {
-    String email = jwt.getSubject();
-    User user =
-        userService
-            .findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
     // 　注文情報を登録
     Order order = new Order();
     BeanUtils.copyProperties(request, order);
     order.setOrderDateTime(LocalDateTime.now());
     order.setDeliveryDateTime(LocalDateTime.now().plusDays(3)); // 配送予定日を注文日から3日後に設定
+    // jwtからユーザーを取得
+    String email = jwt.getSubject();
+    User user =
+        userService
+            .findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email));
     order.setUserId(user);
     orderService.createOrder(order);
 

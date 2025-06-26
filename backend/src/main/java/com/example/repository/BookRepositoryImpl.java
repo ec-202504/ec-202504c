@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+/** Bookエンティティに対するカスタムクエリ操作を実装するクラス. */
 public class BookRepositoryImpl implements BookRepositoryCustom {
 
   @PersistenceContext private EntityManager entityManager;
