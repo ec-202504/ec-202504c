@@ -22,6 +22,7 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data # postgres official directory
+      - ./src/main/resources/static/img:/var/lib/postgresql/img
 
 volumes:
   db-data:
