@@ -1,5 +1,5 @@
 INSERT INTO PCs
-(name, price, memory, storage, device_size, device_type, os_id, cpu_id, gpu_id, purpose_id, image_url) VALUES
+(name, price, memory, storage, device_size, device_type, os_id, cpu_id, gpu_id, purpose_id, image) VALUES
 -- ========== Apple ==========
 ('MacBook Air 13 M2', 115000, 16, 256, 13.0, 1, 2, 2, 2, 3, 'https://x.gd/fHtDv'),
 ('MacBook Air 15 M2', 123232, 8, 256, 15.0, 1, 2, 2, 2, 3, 'https://x.gd/dtwSD'),

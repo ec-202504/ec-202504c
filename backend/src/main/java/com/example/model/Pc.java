@@ -1,13 +1,6 @@
 package com.example.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -72,7 +65,8 @@ public class Pc {
   @JoinColumn(name = "purpose_id", nullable = false)
   private Purpose purpose;
 
-  /** 商品画像URL. */
-  @Column(name = "image_url", nullable = false)
-  private String imageUrl;
+  /** 商品画像. */
+  @Lob
+  @Column(name = "image_url", nullable = false, columnDefinition = "BYTEA")
+  private byte[] imageUrl;
 }
