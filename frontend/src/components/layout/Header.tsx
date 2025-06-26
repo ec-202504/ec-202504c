@@ -29,23 +29,13 @@ function Header() {
   };
 
   return (
-    <header className="w-full px-4 py-3 flex items-center bg-white shadow-sm border-b border-slate-200 dark:bg-slate-900 dark:border-slate-700">
+    <header className="w-full px-4 py-4 flex items-center bg-white shadow-sm border-b border-slate-200 dark:bg-slate-900 dark:border-slate-700">
       <div className="text-xl font-semibold">
         <Link
           to="/"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
         >
-          <div className="w-10 h-10 bg-gradient-to-br from-primary via-primary/90 to-primary/70 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-            <ShoppingBag className="w-6 h-6 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-900 dark:text-white font-black bg-gradient-to-r from-primary via-primary/90 via-primary/70 to-primary/50 bg-clip-text text-transparent text-xl">
-              Tech Mate
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide">
-              初学者に寄り添う
-            </span>
-          </div>
+          <img src="/icon.svg" alt="logo" className="absolute top-3 w-40 " />
         </Link>
       </div>
 

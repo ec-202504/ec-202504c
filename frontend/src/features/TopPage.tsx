@@ -31,7 +31,7 @@ function TopPage() {
               エンジニア特化ECサイト
             </Badge>
 
-            <h1 className="text-4xl lg:text-6xl font-black bg-gradient-to-r from-primary via-primary/90 via-[#00b7cb] to-[#00b7cb]/80 bg-clip-text text-transparent">
+            <h1 className="text-4xl lg:text-6xl text-gray-900 dark:text-white font-black font-black bg-gradient-to-r from-primary via-primary/90 via-primary/70 to-primary/50 bg-clip-text text-transparent">
               Tech Mate
             </h1>
 
