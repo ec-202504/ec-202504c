@@ -43,7 +43,7 @@ function Header() {
               Tech Mate
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide">
-              初心者に寄り添う
+              初学者に寄り添う
             </span>
           </div>
         </Link>
