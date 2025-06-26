@@ -19,10 +19,10 @@ export default function RecommendedByUserBaseProducts({
     <div className="w-full">
       <div className="mb-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-1">
-          似たユーザーが購入
+          あなたへのおすすめ商品
         </h3>
         <p className="text-sm text-gray-600">
-          この商品を購入したユーザーが選んだ商品
+          あなたの購入履歴に合わせて厳選した商品をご紹介
         </p>
       </div>
 
