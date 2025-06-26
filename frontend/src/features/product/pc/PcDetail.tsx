@@ -91,7 +91,7 @@ export default function PcDetail() {
       setContentBasedPcs(contentBasePcs);
       if (user) {
         const UserBaseProductsResponse = await axiosInstance.get(
-          `/pcs/recommend/userBase/${user.userId}`,
+          `/pcs/recommend/userBase/${user.userId}/${itemId}`,
         );
         for (const product of UserBaseProductsResponse.data) {
           if (product.productCategory === 0) {
