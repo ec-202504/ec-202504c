@@ -11,6 +11,7 @@ import { PRODUCT_CATEGORY } from "../../../types/constants";
 import type { AddCartRequest } from "../../product/types/addCartRequest";
 import { axiosInstance } from "../../../lib/axiosInstance";
 import { TAB_VALUES, type TabValues } from "../../product/types/constants";
+import { formatImageByte } from "../../product/utils/formatImageByte";
 
 type ComparisonProductCardProps = {
   product: Pc | Book;
@@ -87,7 +88,7 @@ function ComparisonProductCard({
 
             <div className="aspect-video mb-4 overflow-hidden rounded-lg">
               <img
-                src={product.imageUrl}
+                src={formatImageByte(product.imageUrl)}
                 alt={product.name}
                 className="w-full h-full object-contain"
               />

@@ -262,7 +262,7 @@ function ComparisonPage() {
               />
 
               <div>
-                <h3 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                   <List className="w-5 h-5" />
                   書籍比較
                 </h3>

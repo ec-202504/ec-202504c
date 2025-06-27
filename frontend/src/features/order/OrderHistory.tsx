@@ -15,6 +15,7 @@ import { Package, ShoppingBag, Calendar, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { TAB_VALUES } from "../product/types/constants";
 import { Link } from "@tanstack/react-router";
+import { formatImageByte } from "../product/utils/formatImageByte";
 
 function OrderHistory() {
   const [orders, setOrders] = useState<OrderDetailResponse[]>([]);
@@ -132,7 +133,7 @@ function OrderHistory() {
                               className="flex items-center gap-4 p-3 rounded-lg bg-muted/30"
                             >
                               <img
-                                src={item.imageUrl}
+                                src={formatImageByte(item.imageUrl)}
                                 alt={item.productName}
                                 className="w-24 h-20 object-cover rounded-lg shadow-sm"
                               />

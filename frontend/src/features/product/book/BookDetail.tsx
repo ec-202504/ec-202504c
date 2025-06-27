@@ -17,6 +17,7 @@ import { userAtom } from "../../../stores/userAtom";
 import { useAtomValue } from "jotai";
 import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
 import type { ProductWithType } from "../pc/PcDetail";
+import { formatImageByte } from "../utils/formatImageByte";
 
 export default function BookDetail() {
   const [book, setBook] = useState<Book>();
@@ -109,7 +110,7 @@ export default function BookDetail() {
               id: productDetailResponse.data.pcId,
               name: productDetailResponse.data.name,
               price: productDetailResponse.data.price,
-              imageUrl: productDetailResponse.data.imageUrl,
+              imageUrl: formatImageByte(productDetailResponse.data.imageUrl),
               reviewCount: totalReviews,
               averageRating: average,
               type: "pc",
@@ -142,7 +143,7 @@ export default function BookDetail() {
               id: productDetailResponse.data.bookId,
               name: productDetailResponse.data.name,
               price: productDetailResponse.data.price,
-              imageUrl: productDetailResponse.data.imageUrl,
+              imageUrl: formatImageByte(productDetailResponse.data.imageUrl),
               reviewCount: totalReviews,
               averageRating: average,
               type: "book",
