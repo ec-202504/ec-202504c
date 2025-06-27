@@ -19,10 +19,10 @@ export default function RecommendedByUserBaseProducts({
     <div className="w-full">
       <div className="mb-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-1">
-          似たユーザーが購入
+          あなたへのおすすめ商品
         </h3>
         <p className="text-sm text-gray-600">
-          この商品を購入したユーザーが選んだ商品
+          あなたの購入履歴に合わせて厳選した商品をご紹介
         </p>
       </div>
 
@@ -48,9 +48,9 @@ export default function RecommendedByUserBaseProducts({
               <Card className="h-full bg-white border-0 shadow-sm hover:shadow-md transition-all duration-300 group-hover:-translate-y-1">
                 <CardContent className="px-2">
                   <div className="aspect-[4/3] bg-gray-100 rounded-sm mb-1.5 overflow-hidden">
-                    {product.image ? (
+                    {product.imageUrl ? (
                       <img
-                        src={product.image}
+                        src={product.imageUrl}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />

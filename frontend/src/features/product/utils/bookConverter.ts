@@ -10,5 +10,6 @@ export const convertToBook = (raw: RawBook): Book => {
     language: raw.book.language.name,
     purpose: raw.book.purpose.name,
     publishDate: raw.book.publishDate,
+    difficulty: raw.book.difficulty.target,
   };
 };

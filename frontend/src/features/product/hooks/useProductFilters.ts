@@ -89,6 +89,8 @@ export const useProductFilters = () => {
           params.languageId = newBookFilters.languageId;
         if (newBookFilters.purposeId)
           params.purposeId = newBookFilters.purposeId;
+        if (newBookFilters.difficultyId)
+          params.difficultyId = newBookFilters.difficultyId;
         if (newBookFilters.price) params.price = newBookFilters.price;
       }
 
@@ -166,6 +168,7 @@ export const useProductFilters = () => {
     (newPage: number) => {
       setPage(newPage);
       updateUrlParams(pcFilters, bookFilters, query, newPage, price);
+      window.scrollTo(0, 0);
     },
     [pcFilters, bookFilters, query, updateUrlParams, price],
   );

@@ -16,6 +16,7 @@ import { convertToProduct } from "../utils/productConverter";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../../stores/userAtom";
 import RecommendedByUserBaseProducts from "../components/RecommendedByUserBaseProducts";
+import { formatImageByte } from "../utils/formatImageByte";
 
 export type ProductWithType = Product & {
   type: "pc" | "book";
@@ -91,7 +92,7 @@ export default function PcDetail() {
       setContentBasedPcs(contentBasePcs);
       if (user) {
         const UserBaseProductsResponse = await axiosInstance.get(
-          `/pcs/recommend/userBase/${user.userId}`,
+          `/pcs/recommend/userBase/${user.userId}/${itemId}`,
         );
         for (const product of UserBaseProductsResponse.data) {
           if (product.productCategory === 0) {
@@ -110,7 +111,7 @@ export default function PcDetail() {
               id: productDetailResponse.data.pcId,
               name: productDetailResponse.data.name,
               price: productDetailResponse.data.price,
-              image: productDetailResponse.data.imageUrl,
+              imageUrl: formatImageByte(productDetailResponse.data.imageUrl),
               reviewCount: totalReviews,
               averageRating: average,
               type: "pc",
@@ -143,7 +144,7 @@ export default function PcDetail() {
               id: productDetailResponse.data.bookId,
               name: productDetailResponse.data.name,
               price: productDetailResponse.data.price,
-              image: productDetailResponse.data.imageUrl,
+              imageUrl: formatImageByte(productDetailResponse.data.imageUrl),
               reviewCount: totalReviews,
               averageRating: average,
               type: "book",

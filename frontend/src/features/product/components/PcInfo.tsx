@@ -11,6 +11,7 @@ import {
 } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
 import type { Pc } from "../types";
+import { formatImageByte } from "../utils/formatImageByte";
 
 type PcInfoProps = {
   pc: Pc;
@@ -29,7 +30,7 @@ export default function PcInfo({
   return (
     <div className="flex gap-12 max-w-5xl mb-8">
       <img
-        src={pc.imageUrl}
+        src={formatImageByte(pc.imageUrl)}
         alt={pc.name}
         className="w-96 h-96 object-contain border p-5 border-none"
       />
@@ -63,7 +64,7 @@ export default function PcInfo({
             onClick={() => {
               handleClick(selectedQuantity);
             }}
-            className="ml-4 px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
+            className="ml-4 px-6 py-2 text-primary rounded"
           >
             カートへ追加
           </Button>

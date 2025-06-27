@@ -4,13 +4,7 @@ import com.example.dto.request.AddBookRequest;
 import com.example.dto.request.UpdateBookRequest;
 import com.example.dto.response.BookDetailResponse;
 import com.example.dto.response.OrderProductResponse;
-import com.example.model.Book;
-import com.example.model.Difficulty;
-import com.example.model.Language;
-import com.example.model.Order;
-import com.example.model.ProductKey;
-import com.example.model.Purpose;
-import com.example.model.User;
+import com.example.model.*;
 import com.example.service.BookService;
 import com.example.service.OrderService;
 import com.example.service.UserService;
@@ -323,8 +317,9 @@ public class BookController {
    * @param userId ユーザID
    * @return 協調フィルタリングによる商品の推薦結果のリスト
    */
-  @GetMapping("/recommend/userBase/{userId}")
-  public ResponseEntity<?> recommendByUserBaseBooks(@PathVariable Integer userId) {
+  @GetMapping("/recommend/userBase/{userId}/{bookId}")
+  public ResponseEntity<?> recommendByUserBaseBooks(
+      @PathVariable Integer userId, @PathVariable Integer bookId) {
     Optional<User> targetUser = userService.findById(userId);
     if (targetUser.isEmpty()) {
       return ResponseEntity.badRequest().build();
@@ -338,6 +333,50 @@ public class BookController {
         ProductKey key = new ProductKey(product.getProductId(), product.getProductCategory());
         targetProducts.add(key);
       }
+    }
+
+    // 一度も商品を購入したことがないユーザの場合
+    if (targetProducts.isEmpty()) {
+      Optional<Book> targetBook = bookService.findById(bookId);
+      if (targetBook.isEmpty()) {
+        return ResponseEntity.badRequest().build();
+      }
+
+      // 全ユーザの購入履歴をチェック
+      List<Order> orderList = orderService.getAllOrders();
+      List<OrderProductResponse> orderedProducts = new ArrayList<>();
+      for (Order order : orderList) {
+        Integer orderUserId = order.getUserId().getUserId();
+        if (targetUser.get().getUserId().equals(orderUserId)) {
+          continue; // ターゲットユーザはスキップ
+        }
+
+        // ユーザが閲覧している商品を既に購入しているユーザが他に購入している商品を検索
+        for (OrderProduct orderProduct : order.getOrderProductList()) {
+          if (orderProduct.getProductId().equals(targetBook.get().getId())) {
+            List<OrderProductResponse> productResponses =
+                orderService.getOrderDetailsByOrderId(order.getOrderId()).getProducts();
+            orderedProducts.addAll(productResponses);
+          }
+        }
+      }
+
+      // 閲覧商品を購入しているユーザが他に購入している商品一覧を取得
+      List<Map<String, Object>> recommendedProducts =
+          orderedProducts.stream()
+              .filter(e -> !e.getProductId().equals(bookId))
+              .map(
+                  e -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("productId", e.getProductId());
+                    map.put("productCategory", e.getProductCategory());
+                    map.put("productName", e.getProductName());
+                    map.put("similarity", 0);
+                    return map;
+                  })
+              .limit(4)
+              .toList();
+      return ResponseEntity.ok(recommendedProducts);
     }
 
     // 推薦商品のスコア（類似度）を管理するMap<ProductKey, Integer>

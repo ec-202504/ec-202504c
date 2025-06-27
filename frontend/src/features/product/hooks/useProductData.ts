@@ -3,6 +3,7 @@ import { axiosInstance } from "../../../lib/axiosInstance";
 import type { Product, FilterTerm } from "../types";
 import { TAB_VALUES } from "../types/constants";
 import { fetchPcReviews, fetchBookReviews } from "../api/reviewApi";
+import { formatImageByte } from "../utils/formatImageByte";
 
 /**
  * 商品データとフィルター条件を取得・管理するカスタムフック
@@ -126,12 +127,28 @@ export const useProductData = (
    */
   const fetchBookFilterTerms = async () => {
     try {
-      const [languageListResponse, purposeListResponse] = await Promise.all([
+      const [
+        languageListResponse,
+        purposeListResponse,
+        difficultyListResponse,
+      ] = await Promise.all([
         axiosInstance.get("/books/languages"),
         axiosInstance.get("/books/purposes"),
+        axiosInstance.get("/books/difficulties"),
       ]);
+      const difficultyOptions = difficultyListResponse.data.map(
+        (item: { id: number; target: string }) => ({
+          id: item.id,
+          name: item.target,
+        }),
+      );
 
       setFilterTerms([
+        {
+          id: "difficultyId",
+          label: "難易度",
+          options: difficultyOptions,
+        },
         {
           id: "purposeId",
           label: "用途",
@@ -169,6 +186,7 @@ export async function attachReviewsToProducts(
 ): Promise<Product[]> {
   return Promise.all(
     products.map(async (product) => {
+      const imageUrl = await formatImageByte(product.imageUrl);
       const reviews = await fetchReviews(product.id);
       const totalReviews = reviews.length;
       const average =
@@ -178,6 +196,7 @@ export async function attachReviewsToProducts(
           : 0;
       return {
         ...product,
+        imageUrl,
         reviewCount: totalReviews,
         averageRating: average,
       };

@@ -8,6 +8,7 @@ export type SearchParams = {
   purposeId?: string;
   languageId?: string;
   deviceType?: string;
+  difficultyId?: string;
   price?: string;
 };
 
@@ -23,5 +24,6 @@ export type PcFilters = {
 export type BookFilters = {
   languageId: string;
   purposeId: string;
+  difficultyId: string;
   price?: string;
 };

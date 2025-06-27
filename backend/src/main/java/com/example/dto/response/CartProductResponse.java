@@ -16,5 +16,5 @@ public class CartProductResponse {
   // pcs, booksからそれぞれ取得
   private String name;
   private Integer price;
-  private String imageUrl;
+  private byte[] imageUrl;
 }
