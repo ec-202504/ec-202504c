@@ -50,12 +50,14 @@ export default function ProductCard({
       >
         <CardContent className="px-4">
           <div className="aspect-[4/3] bg-gray-100 rounded-sm mb-1.5 overflow-hidden">
-            {product.image ? (
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+            {product.imageUrl ? (
+              <>
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                />
+              </>
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <div className="text-gray-400 text-xs">画像なし</div>

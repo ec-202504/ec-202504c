@@ -7,7 +7,7 @@ export const convertToProduct = (rawProduct: RawBook | RawPc): Product => {
       id: rawProduct.book.id.toString(),
       name: rawProduct.book.name,
       price: rawProduct.book.price,
-      image: rawProduct.book.imageUrl, // 画像URLは未提供なので空文字
+      imageUrl: rawProduct.book.imageUrl, // 画像URLは未提供なので空文字
       reviewCount: 0, // デフォルト値
       averageRating: 0, // デフォルト値
     };
@@ -19,7 +19,7 @@ export const convertToProduct = (rawProduct: RawBook | RawPc): Product => {
       id: rawProduct.pc.id.toString(),
       name: rawProduct.pc.name,
       price: rawProduct.pc.price,
-      image: rawProduct.pc.imageUrl, // 画像URLは未提供なので空文字
+      imageUrl: rawProduct.pc.imageUrl, // 画像URLは未提供なので空文字
       reviewCount: 0, // デフォルト値
       averageRating: 0, // デフォルト値
     };
