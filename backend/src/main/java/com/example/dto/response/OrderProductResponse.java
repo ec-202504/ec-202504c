@@ -13,6 +13,6 @@ public class OrderProductResponse {
   private Integer productCategory; // "PC" or "Book
   private Integer quantity;
   private String productName;
-  private String imageUrl;
+  private byte[] imageUrl;
   private Integer price;
 }

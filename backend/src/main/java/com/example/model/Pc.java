@@ -66,7 +66,6 @@ public class Pc {
   private Purpose purpose;
 
   /** 商品画像. */
-  @Lob
   @Column(name = "image_url", nullable = false, columnDefinition = "BYTEA")
   private byte[] imageUrl;
 }

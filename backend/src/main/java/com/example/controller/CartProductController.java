@@ -210,8 +210,7 @@ public class CartProductController {
             pc -> {
               response.setName(pc.getName());
               response.setPrice(pc.getPrice());
-              // TODO: 画像URLの取得方法を修正
-              response.setImageUrl("https://placehold.jp/150x100.png");
+              response.setImageUrl(pc.getImageUrl());
               return response;
             })
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "カート内にあるPCが見つかりません"));
@@ -231,8 +230,7 @@ public class CartProductController {
             book -> {
               response.setName(book.getName());
               response.setPrice(book.getPrice());
-              // TODO: 対応
-              response.setImageUrl("https://placehold.jp/150x100.png");
+              response.setImageUrl(book.getImageUrl());
               return response;
             })
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "カート内にある本が見つかりません"));

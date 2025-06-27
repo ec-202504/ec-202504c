@@ -48,9 +48,9 @@ export default function RecommendedByUserBaseProducts({
               <Card className="h-full bg-white border-0 shadow-sm hover:shadow-md transition-all duration-300 group-hover:-translate-y-1">
                 <CardContent className="px-2">
                   <div className="aspect-[4/3] bg-gray-100 rounded-sm mb-1.5 overflow-hidden">
-                    {product.image ? (
+                    {product.imageUrl ? (
                       <img
-                        src={product.image}
+                        src={product.imageUrl}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
