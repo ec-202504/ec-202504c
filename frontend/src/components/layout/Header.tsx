@@ -1,7 +1,7 @@
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { userAtom } from "../../stores/userAtom";
 import { TAB_VALUES } from "../../features/product/types/constants";
 import {
@@ -12,16 +12,16 @@ import {
   UserPlus,
   BarChart3,
   History,
-  ShoppingBag,
 } from "lucide-react";
 
 function Header() {
   const navigate = useNavigate();
-  const user = useAtomValue(userAtom);
+  const [user, setUser] = useAtom(userAtom);
 
   const handleLogout = async () => {
     try {
       localStorage.removeItem("jwt_token");
+      setUser(null);
       navigate({ to: "/user/login", replace: true });
     } catch (error) {
       console.error("ログアウトに失敗しました", error);
