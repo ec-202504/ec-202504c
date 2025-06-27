@@ -18,7 +18,7 @@ export default function RecommendedByContentBaseProducts({
   type,
 }: RecommendedProductsProps) {
   return (
-    <section className="py-5 mb-5 bg-gray-50 rounded-sm w-full">
+    <section className="py-12 mb-5 bg-gray-50 rounded-sm w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-5">
           <h2 className="text-2xl font-bold text-gray-900 mb-1">関連商品</h2>
