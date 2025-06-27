@@ -11,6 +11,7 @@ import PaymentForm from "./components/PaymentForm";
 import { Button } from "../../components/ui/button";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import { Input } from "../../components/ui/input";
+import { Separator } from "../../components/ui/separator";
 import {
   Form,
   FormControl,
@@ -22,9 +23,17 @@ import {
 import type { CartProduct } from "../../types/cartProduct";
 import { toast } from "sonner";
 import { fetchAddress } from "../../api/fetchAddress";
-import { Loader2 } from "lucide-react";
+import {
+  Loader2,
+  CreditCard,
+  MapPin,
+  ShoppingCart,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../stores/userAtom";
+import { Card, CardContent } from "../../components/ui/card";
 
 type OrderProduct = {
   cartProductId: number;
@@ -76,7 +85,7 @@ function OrderPage() {
       paymentMethod: "0",
     },
   });
-  const { setValue, getValues, watch } = orderForm;
+  const { setValue, getValues, watch, reset } = orderForm;
 
   /**
    * カート内の商品の合計金額を計算する
@@ -93,13 +102,15 @@ function OrderPage() {
    */
   useEffect(() => {
     // ユーザー情報をフォームにセット
-    setValue("destinationName", user?.name ?? "");
-    setValue("destinationEmail", user?.email ?? "");
-    setValue("destinationZipcode", user?.zipcode ?? "");
-    setValue("destinationAddress", user?.address ?? "");
-    setValue("destinationTelephone", user?.telephone ?? "");
-    setValue("paymentMethod", "0");
-  }, [user, setValue]);
+    reset({
+      destinationName: user?.name ?? "",
+      destinationEmail: user?.email ?? "",
+      destinationZipcode: user?.zipcode ?? "",
+      destinationAddress: user?.address ?? "",
+      destinationTelephone: user?.telephone ?? "",
+      paymentMethod: "0",
+    });
+  }, [user, reset]);
 
   const onSubmit = async (data: OrderForm) => {
     setIsSubmitting(true);
@@ -185,236 +196,287 @@ function OrderPage() {
   }, [fetchCartProducts]);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">注文内容確認</h1>
+    <div className="min-h-screen py-14 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      {/* Header Section */}
+      <div className="text-center mb-8">
+        <h1 className="text-3xl lg:text-4xl font-bold text-primary/80 dark:text-white mb-4">
+          注文内容確認
+        </h1>
 
-      <div className=" flex justify-end gap-2 text-lg font-semibold mb-8">
-        小計：
-        <span className="text-primary">¥{totalPrice.toLocaleString()}</span>
+        <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+          注文内容とお届け先情報を確認して、注文を完了してください
+        </p>
       </div>
 
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-lg font-semibold">お届け先情報</h2>
-          {!isEditing && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setIsEditing(true)}
-            >
-              変更
-            </Button>
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Delivery Information */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-primary" />
+              お届け先情報
+            </h2>
+            {!isEditing && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
+                変更
+              </Button>
+            )}
+          </div>
+
+          {isEditing ? (
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80">
+              <CardContent className="p-6">
+                <Form {...orderForm}>
+                  <form
+                    className="space-y-4 text-sm"
+                    onSubmit={orderForm.handleSubmit(() => setIsEditing(false))}
+                  >
+                    <FormField
+                      control={orderForm.control}
+                      name="destinationName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>名前：</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={orderForm.control}
+                      name="destinationEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>メールアドレス：</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              {...field}
+                              placeholder="techmate@example.com"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={orderForm.control}
+                      name="destinationZipcode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>郵便番号：</FormLabel>
+                          <div className="flex gap-2">
+                            <FormControl>
+                              <Input {...field} placeholder="123-4567" />
+                            </FormControl>
+                            <Button
+                              type="button"
+                              variant="default"
+                              className="cursor-pointer"
+                              onClick={searchAddress}
+                            >
+                              住所検索
+                            </Button>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={orderForm.control}
+                      name="destinationAddress"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>住所：</FormLabel>
+                          <FormControl>
+                            <Input placeholder="住所" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={orderForm.control}
+                      name="destinationTelephone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>電話番号：</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="090-1234-5678" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex gap-2 mt-4">
+                      <Button type="submit">保存</Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setIsEditing(false);
+                          orderForm.reset();
+                        }}
+                      >
+                        キャンセル
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-2 text-sm">
+              <div>名前：{getValues("destinationName")}</div>
+              <div>メールアドレス：{getValues("destinationEmail")}</div>
+              <div>郵便番号：{getValues("destinationZipcode")}</div>
+              <div>住所：{getValues("destinationAddress")}</div>
+              <div>電話番号：{getValues("destinationTelephone")}</div>
+            </div>
           )}
         </div>
 
-        {isEditing ? (
+        <Separator />
+
+        {/* Payment Method */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <CreditCard className="w-5 h-5 text-primary" />
+            決済方法
+          </h2>
           <Form {...orderForm}>
-            <form
-              className="p-5 space-y-4 text-sm bg-gray-50 rounded-lg"
-              onSubmit={orderForm.handleSubmit(() => setIsEditing(false))}
-            >
-              <FormField
-                control={orderForm.control}
-                name="destinationName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>名前：</FormLabel>
+            <FormField
+              control={orderForm.control}
+              name="paymentMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <RadioGroup
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      className="flex gap-6"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="0" id="cash" />
+                        <label htmlFor="cash">現金</label>
+                      </div>
 
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={orderForm.control}
-                name="destinationEmail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>メールアドレス：</FormLabel>
-
-                    <FormControl>
-                      <Input
-                        type="email"
-                        {...field}
-                        placeholder="techmate@example.com"
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={orderForm.control}
-                name="destinationZipcode"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>郵便番号：</FormLabel>
-                    <div className="flex gap-2">
-                      <FormControl>
-                        <Input {...field} placeholder="123-4567" />
-                      </FormControl>
-
-                      <Button
-                        type="button"
-                        variant="default"
-                        className="cursor-pointer"
-                        onClick={searchAddress}
-                      >
-                        住所検索
-                      </Button>
-                    </div>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={orderForm.control}
-                name="destinationAddress"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>住所：</FormLabel>
-
-                    <FormControl>
-                      <Input placeholder="住所" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={orderForm.control}
-                name="destinationTelephone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>電話番号：</FormLabel>
-
-                    <FormControl>
-                      <Input {...field} placeholder="090-1234-5678" />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex gap-2 mt-2">
-                <Button type="submit">保存</Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsEditing(false);
-                    orderForm.reset();
-                  }}
-                >
-                  キャンセル
-                </Button>
-              </div>
-            </form>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="1" id="credit" />
+                        <label htmlFor="credit">クレジットカード</label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </Form>
-        ) : (
-          <div className="grid gap-1 p-5 bg-gray-50 text-sm rounded-lg">
-            <div>名前：{getValues("destinationName")}</div>
-            <div>メールアドレス：{getValues("destinationEmail")}</div>
-            <div>郵便番号：{getValues("destinationZipcode")}</div>
-            <div>住所：{getValues("destinationAddress")}</div>
-            <div>電話番号：{getValues("destinationTelephone")}</div>
-          </div>
-        )}
-      </section>
 
-      <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-2">決済方法</h2>
-        <Form {...orderForm}>
-          <FormField
-            control={orderForm.control}
-            name="paymentMethod"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <RadioGroup
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    className="flex gap-6"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="0" id="cash" />
-                      <label htmlFor="cash">現金</label>
-                    </div>
+          {watch("paymentMethod") === "1" && clientSecret && (
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <PaymentForm />
+            </Elements>
+          )}
+        </div>
 
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="1" id="credit" />
-                      <label htmlFor="credit">クレジットカード</label>
-                    </div>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </Form>
+        <Separator />
 
-        {watch("paymentMethod") === "1" && clientSecret && (
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <PaymentForm />
-          </Elements>
-        )}
-      </section>
+        {/* Cart Items */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <ShoppingCart className="w-5 h-5 text-primary" />
+            カート内容
+          </h2>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-4">カート内容</h2>
-        <ul className="space-y-4">
-          {cart.map((item) => (
-            <li
-              key={item.name}
-              className="flex items-center gap-4 border-b pb-4 last:border-b-0"
-            >
-              <img
-                src={item.imageUrl}
-                alt={item.name}
-                className="w-24 h-16 object-cover rounded border"
-              />
+          <div className="space-y-4">
+            {cart.map((item) => (
+              <div
+                key={item.name}
+                className="flex items-center gap-4 border-b border-border/50 pb-4 last:border-b-0"
+              >
+                <img
+                  src={item.imageUrl}
+                  alt={item.name}
+                  className="w-32 h-24 object-contain rounded-lg shadow-sm"
+                />
 
-              <div className="flex-1">
-                <div className="font-medium">{item.name}</div>
-                <div className="text-sm text-gray-500">
-                  {`¥${item.price.toLocaleString()} × ${item.quantity}`}
+                <div className="flex-1">
+                  <div className="font-medium">{item.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {`¥${item.price.toLocaleString()} × ${item.quantity}`}
+                  </div>
+                </div>
+
+                <div className="text-xl font-semibold text-primary">
+                  {`¥${(item.price * item.quantity).toLocaleString()}`}
                 </div>
               </div>
+            ))}
+          </div>
 
-              <div className="font-semibold">
-                {`¥${(item.price * item.quantity).toLocaleString()}`}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <div className="flex justify-end">
-        <Button
-          onClick={orderForm.handleSubmit(onSubmit)}
-          disabled={cart.length === 0 || isSubmitting}
-        >
-          {isSubmitting ? (
+          {/* Order Summary Section - CartPageと同じデザイン */}
+          {cart.length > 0 && (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              注文処理中...
+              <Separator className="my-6" />
+              <div className="flex flex-col sm:flex-row justify-between items-end gap-4">
+                <div className="text-center sm:text-left">
+                  <div className="text-muted-foreground text-sm mb-1">
+                    合計金額
+                  </div>
+                  <div className="text-3xl font-bold text-primary">
+                    ¥{totalPrice.toLocaleString()}
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    onClick={() => navigate({ to: "/cart" })}
+                    className="px-6"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    カートに戻る
+                  </Button>
+
+                  <Button
+                    onClick={orderForm.handleSubmit(onSubmit)}
+                    disabled={cart.length === 0 || isSubmitting}
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 px-8"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        注文処理中...
+                      </>
+                    ) : (
+                      <>
+                        注文を確定する
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
             </>
-          ) : (
-            "注文を確定する"
           )}
-        </Button>
+        </div>
       </div>
     </div>
   );

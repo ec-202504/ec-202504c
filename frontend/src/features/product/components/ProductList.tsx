@@ -90,8 +90,8 @@ export default function ProductList({
         ) : (
           <>
             {products.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-60 w-full bg-gray-50 rounded-md shadow mt-8 mb-8">
-                <div className="text-lg text-gray-600 font-semibold">
+              <div className="flex flex-col items-center justify-center h-60 w-full bg-card border border-border rounded-lg shadow-sm mt-8 mb-8">
+                <div className="text-lg text-muted-foreground font-semibold">
                   該当する商品が見つかりません
                 </div>
               </div>

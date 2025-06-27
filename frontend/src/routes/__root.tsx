@@ -33,7 +33,9 @@ export const Route = createRootRoute({
     return (
       <>
         {showHeader && <Header />}
+
         <Outlet />
+
         <Toaster />
       </>
     );

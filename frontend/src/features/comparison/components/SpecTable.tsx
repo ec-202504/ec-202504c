@@ -1,14 +1,7 @@
 import type { Pc } from "../../product/types/Pc";
 import type { Book } from "../../product/types/Book";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { TAB_VALUES, type TabValues } from "../../product/types/constants";
+import { DEVICE_TYPE_LABEL, type DeviceType } from "../../../types/constants";
 
 type SpecTableProps = {
   products: (Pc | Book)[];
@@ -46,62 +39,79 @@ function SpecTable({ products, productCategory }: SpecTableProps) {
   };
 
   return (
-    <>
-      {products.length > 0 && (
-        <div className="overflow-x-auto">
-          <Table className="w-full border-collapse">
-            <TableHeader>
-              <TableRow className="border-b">
-                <TableHead className="text-left p-4 font-medium bg-muted/50">
-                  商品名
-                </TableHead>
-
-                {products.map((product) => (
-                  <TableHead
-                    key={
-                      productCategory === TAB_VALUES.PC
-                        ? (product as Pc).pcId
-                        : (product as Book).bookId
-                    }
-                    className="text-left p-4 font-medium bg-muted/50"
-                  >
-                    {product.name}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {getSpecKeys(products).map((specKey) => (
-                <TableRow key={specKey} className="border-b">
-                  <TableCell className="p-4 font-medium bg-muted/30">
-                    {specKey}
-                  </TableCell>
-                  {products.map((product) => (
-                    <TableCell
-                      key={
-                        productCategory === TAB_VALUES.PC
-                          ? (product as Pc).pcId
-                          : (product as Book).bookId
-                      }
-                      className="p-4"
-                    >
-                      {productCategory === TAB_VALUES.PC
-                        ? (product as Pc)[
-                            pcSpecs[specKey as keyof typeof pcSpecs]
-                          ]
-                        : (product as Book)[
-                            bookSpecs[specKey as keyof typeof bookSpecs]
-                          ] || "-"}
-                    </TableCell>
-                  ))}
-                </TableRow>
+    <div className="overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          <tr className="bg-muted/50 border-b border-border">
+            <th className="px-6 py-4 text-left font-semibold text-foreground min-w-[200px]">
+              比較項目
+            </th>
+            {products.map((product) => (
+              <th
+                key={
+                  productCategory === TAB_VALUES.PC
+                    ? (product as Pc).pcId
+                    : (product as Book).bookId
+                }
+                className="px-6 py-4 text-left font-semibold text-foreground min-w-[150px]"
+              >
+                {product.name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {getSpecKeys(products).map((specKey) => (
+            <tr key={specKey} className="border-b border-border/50">
+              <th className="p-4 font-medium text-left bg-muted/20">
+                {specKey}
+              </th>
+              {products.map((product) => (
+                <td
+                  key={
+                    productCategory === TAB_VALUES.PC
+                      ? (product as Pc).pcId
+                      : (product as Book).bookId
+                  }
+                  className="p-4"
+                >
+                  {productCategory === TAB_VALUES.PC
+                    ? (() => {
+                        const value = (product as Pc)[
+                          pcSpecs[specKey as keyof typeof pcSpecs]
+                        ];
+                        if (specKey === "メモリ" || specKey === "ストレージ") {
+                          if (value !== undefined && value !== null) {
+                            if (typeof value === "number" && value >= 1024) {
+                              const tb = value / 1024;
+                              return `${tb % 1 === 0 ? tb : tb.toFixed(1)}TB`;
+                            }
+                            return `${value}GB`;
+                          }
+                          return "-";
+                        }
+                        if (specKey === "ディスプレイサイズ") {
+                          return value !== undefined && value !== null
+                            ? `${value}インチ`
+                            : "-";
+                        }
+                        if (specKey === "デバイスの種類") {
+                          return value in DEVICE_TYPE_LABEL
+                            ? DEVICE_TYPE_LABEL[value as DeviceType]
+                            : "-";
+                        }
+                        return value ?? "-";
+                      })()
+                    : (product as Book)[
+                        bookSpecs[specKey as keyof typeof bookSpecs]
+                      ] || "-"}
+                </td>
               ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-    </>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

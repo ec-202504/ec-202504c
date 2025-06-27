@@ -67,13 +67,14 @@ function UserLoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-12">
       <UserHeader />
 
       <Card className="w-xl">
-        <CardHeader className="pb-6">
-          <CardTitle className="text-center text-xl">ログイン</CardTitle>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-center text-2xl">ログイン</CardTitle>
         </CardHeader>
+
         <CardContent className="px-8 pb-8">
           {loginError && (
             <Alert variant="destructive" className="mb-6">
@@ -84,6 +85,7 @@ function UserLoginPage() {
               </AlertDescription>
             </Alert>
           )}
+
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -111,14 +113,6 @@ function UserLoginPage() {
                       autoComplete="current-password"
                     />
                     <FormMessage />
-                    <div className="flex justify-end mt-2">
-                      {/* 仮、後で作る */}
-                      <Link to="/user/password-reset">
-                        <span className="text-sm text-blue-600 hover:underline">
-                          パスワードを忘れた方はこちら
-                        </span>
-                      </Link>
-                    </div>
                   </FormItem>
                 )}
                 rules={{ required: "パスワードは必須です" }}
@@ -129,10 +123,11 @@ function UserLoginPage() {
                 </Button>
               </div>
               <div className="text-center pt-4">
-                <Link to="/user/register">
-                  <span className="text-sm text-blue-600 hover:underline">
-                    ユーザー登録がまだの方はこちら
-                  </span>
+                <Link
+                  to="/user/register"
+                  className="text-sm text-primary hover:underline"
+                >
+                  ユーザー登録がまだの方はこちら
                 </Link>
               </div>
             </form>

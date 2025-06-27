@@ -90,12 +90,12 @@ function UserRegisterPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-12">
       <UserHeader />
 
       <Card className="w-xl">
-        <CardHeader className="pb-6">
-          <CardTitle className="text-center text-xl">ユーザー登録</CardTitle>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-center text-2xl">ユーザー登録</CardTitle>
         </CardHeader>
         <CardContent className="px-8 pb-8">
           <Form {...form}>
@@ -210,11 +210,9 @@ function UserRegisterPage() {
               <div className="text-center pt-4">
                 <Link
                   to="/user/login"
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-sm text-primary hover:underline"
                 >
-                  <span className="text-sm text-blue-600 hover:underline">
-                    ログイン画面はこちら
-                  </span>
+                  ログイン画面はこちら
                 </Link>
               </div>
             </form>
