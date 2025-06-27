@@ -198,7 +198,7 @@ export default function BookDetail() {
   }, [fetchData, fetchReviews]);
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-white px-4 py-8">
+    <div className="flex flex-col items-center min-h-screen bg-white px-4 py-14">
       {isLoading ? (
         <LoadingOverlay />
       ) : (

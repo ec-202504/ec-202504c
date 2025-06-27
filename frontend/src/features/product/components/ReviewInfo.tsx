@@ -55,7 +55,7 @@ function ReviewInfo({
   }, initialCounts);
 
   return (
-    <div className="flex gap-8 w-full max-w-5xl mb-8">
+    <div className="flex gap-8 w-full max-w-5xl mt-8">
       <div>
         <h2 className="text-lg font-bold mb-2">カスタマーレビュー</h2>
         <div className="flex items-center gap-2 mb-2">
