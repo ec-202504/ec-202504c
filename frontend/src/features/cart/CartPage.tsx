@@ -10,6 +10,7 @@ import type { CartProduct } from "../../types/cartProduct";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../stores/userAtom";
 import { TAB_VALUES } from "../product/types/constants";
+import { formatImageByte } from "../product/utils/formatImageByte";
 
 type UpdateCartQuantityRequest = {
   cartProductId: number;
@@ -140,7 +141,7 @@ function CartPage() {
                   <div className="flex flex-col sm:flex-row gap-6 items-center">
                     <div className="flex-shrink-0">
                       <img
-                        src={item.imageUrl}
+                        src={formatImageByte(item.imageUrl)}
                         alt={item.name}
                         className="w-32 h-24 object-contain rounded-lg shadow-sm"
                       />

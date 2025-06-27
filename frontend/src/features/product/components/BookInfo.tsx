@@ -12,6 +12,7 @@ import {
 import { Button } from "../../../components/ui/button";
 import type { Book } from "../types";
 import { Badge } from "../../../components/ui/badge";
+import { formatImageByte } from "../utils/formatImageByte";
 
 type BookInfoProps = {
   book: Book;
@@ -44,7 +45,7 @@ export default function BookInfo({
   return (
     <div className="flex gap-12 max-w-5xl mb-8">
       <img
-        src={book.imageUrl}
+        src={formatImageByte(book.imageUrl)}
         alt={book.name}
         className="w-96 h-96 object-contain border"
       />
@@ -84,7 +85,7 @@ export default function BookInfo({
             onClick={() => {
               handleClick(selectedQuantity);
             }}
-            className="ml-4 px-6 py-2 text-primary rounded"
+            className="ml-4"
           >
             カートへ追加
           </Button>

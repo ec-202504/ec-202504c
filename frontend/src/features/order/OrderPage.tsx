@@ -34,6 +34,7 @@ import {
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../stores/userAtom";
 import { Card, CardContent } from "../../components/ui/card";
+import { formatImageByte } from "../product/utils/formatImageByte";
 
 type OrderProduct = {
   cartProductId: number;
@@ -409,7 +410,7 @@ function OrderPage() {
                 className="flex items-center gap-4 border-b border-border/50 pb-4 last:border-b-0"
               >
                 <img
-                  src={item.imageUrl}
+                  src={formatImageByte(item.imageUrl)}
                   alt={item.name}
                   className="w-32 h-24 object-contain rounded-lg shadow-sm"
                 />

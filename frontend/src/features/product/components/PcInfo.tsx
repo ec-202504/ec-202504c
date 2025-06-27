@@ -64,7 +64,7 @@ export default function PcInfo({
             onClick={() => {
               handleClick(selectedQuantity);
             }}
-            className="ml-4 px-6 py-2 text-primary rounded"
+            className="ml-4"
           >
             カートへ追加
           </Button>
